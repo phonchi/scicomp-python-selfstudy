@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 4 · High-level Scientific Computing with SciPy — Self-Study Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:17px;}
+
+/* Hero */
+.hero{min-height:56vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2.5rem 2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:880px;}
+.hero .chapter-tag{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#f39c12;letter-spacing:.3em;margin-bottom:.8rem;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(1.9rem,4.6vw,3rem);font-weight:900;color:#fff;letter-spacing:.02em;line-height:1.25;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.15rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{font-family:'JetBrains Mono',monospace;color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.0rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+ul,ol{margin:0 0 1rem 1.4rem;}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:40px;}
+.toc-grid a .toc-dur{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent3);margin-left:auto;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box p:last-child,.info-box ul:last-child,.info-box ol:last-child{margin-bottom:0;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+.cmp-table td.tl{font-family:'Noto Sans TC',sans-serif;text-align:left;font-size:.85rem;}
+
+/* Viz layout */
+.viz-layout{display:grid;grid-template-columns:1fr 320px;gap:1.3rem;margin:1.2rem 0;align-items:start;}
+@media(max-width:900px){.viz-layout{grid-template-columns:1fr;}}
+.viz-panel{background:linear-gradient(160deg,#fffdf7 0%,#f4efe3 100%);border:1px solid var(--card-border);border-radius:12px;padding:1rem;box-shadow:0 4px 18px rgba(0,0,0,.06);position:relative;}
+.side-panel{display:flex;flex-direction:column;gap:.85rem;}
+.info-card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.info-card .ic-title{font-size:.72rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem;border-bottom:1px solid var(--card-border);padding-bottom:.3rem;display:flex;align-items:center;justify-content:space-between;}
+.info-card .ic-title .ic-badge{font-size:.7rem;color:#fff;background:var(--accent3);padding:1px 7px;border-radius:3px;letter-spacing:.05em;font-weight:700;}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.65;overflow-x:auto;margin:.8rem 0;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .line.active{background:rgba(243,156,18,.3);color:#fff;border-left:3px solid #f39c12;padding-left:6px;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .str{color:#f1fa8c;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+
+/* Status banner */
+.status-banner{margin-top:.8rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;min-height:42px;display:flex;align-items:center;gap:.6rem;}
+.status-banner .status-icon{color:#2ecc71;font-weight:700;}
+.status-banner .status-text{flex:1;}
+
+/* Controls */
+.controls-bar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--card-border);}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-play.active{background:var(--accent);}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-step:disabled{background:#ccc;cursor:not-allowed;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+
+/* Preset buttons */
+.preset-row{display:flex;gap:.4rem;flex-wrap:wrap;margin:.6rem 0 1rem;}
+.preset-btn{font-family:'JetBrains Mono',monospace;font-size:.78rem;padding:.4rem .85rem;border-radius:6px;border:2px solid var(--card-border);background:var(--card);cursor:pointer;transition:all .2s;color:var(--ink);}
+.preset-btn:hover{border-color:var(--accent2);}
+.preset-btn.active{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+
+/* Variable state table */
+.var-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+.var-table td{padding:.25rem .4rem;border-bottom:1px dashed var(--card-border);}
+.var-table td.vname{color:var(--accent2);font-weight:600;}
+.var-table td.vval{color:var(--ink);}
+.var-table td.vtype{color:var(--muted);font-size:.72rem;text-align:right;}
+.var-table tr.changed td{background:var(--highlight);}
+.var-empty{color:var(--muted);font-size:.8rem;font-style:italic;}
+
+/* Console */
+.console{background:#111;border-radius:8px;padding:.6rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#d4d4d4;min-height:70px;max-height:220px;overflow-y:auto;line-height:1.6;}
+.console .out-line{white-space:pre-wrap;}
+.console .out-line.new{color:#2ecc71;}
+.console .in-line{color:#f39c12;}
+.console .err-line{color:#e74c3c;}
+
+/* Sandbox */
+.sandbox{background:var(--card);border:2px solid var(--accent3);border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.sandbox .sandbox-label{position:absolute;top:-11px;left:14px;background:var(--accent3);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.input-row{display:flex;gap:.5rem;align-items:center;margin:.5rem 0;flex-wrap:wrap;}
+.input-row label{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent2);font-weight:600;}
+.input-row input[type="text"]{font-family:'JetBrains Mono',monospace;font-size:.9rem;padding:.45rem .7rem;border:1px solid var(--card-border);border-radius:6px;background:#fff;flex:1;min-width:120px;}
+.sandbox-result{margin-top:.6rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.9rem;min-height:46px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+.sandbox-result .ok{color:#2ecc71;font-weight:700;}
+.sandbox-result .bad{color:#e67e22;font-weight:700;}
+.sandbox-result .type-badge{background:#50fa7b;color:#1a1a2e;font-weight:700;padding:1px 10px;border-radius:4px;font-size:.82rem;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.quiz-box .quiz-label .multi-badge{background:#8e44ad;color:#fff;font-size:.68rem;padding:1px 8px;border-radius:3px;}
+.quiz-box .quiz-q{font-weight:600;margin-bottom:.6rem;}
+.quiz-box .quiz-code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:.6rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.84rem;margin-bottom:.8rem;white-space:pre-wrap;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0 0;}
+.quiz-opt{display:flex;flex-direction:column;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.9rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-head{display:flex;align-items:baseline;gap:.6rem;}
+.quiz-opt .opt-letter{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt .opt-fb{display:none;font-size:.82rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--card-border);color:#555;}
+.quiz-opt.revealed .opt-fb{display:block;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.correct .opt-fb{color:#14532d;}
+.quiz-opt.wrong{background:#fef5e7;border-color:#d68910;}
+.quiz-opt.wrong .opt-letter{color:#d68910;}
+.quiz-progress{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;margin:.8rem 0;}
+
+/* Flashcards */
+.card-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.flashcard{perspective:900px;height:160px;cursor:pointer;}
+.flashcard .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+.flashcard .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.flashcard .fc-front{background:linear-gradient(150deg,#2c3e7a,#1a1a2e);color:#fff;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.flashcard .fc-front .fc-hint{font-size:.66rem;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.flashcard .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:34px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+/* Chapter nav */
+.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin:2rem 0 0;flex-wrap:wrap;}
+.chapter-nav a{flex:1;min-width:220px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.3rem;text-decoration:none;color:var(--ink);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.chapter-nav a:hover{border-color:var(--accent2);transform:translateY(-2px);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+footer a{color:var(--accent2);}
+
+/* 🤖 Ask-AI / discussion box */
+.ai-box{background:var(--card);border:2px dashed #8e44ad;border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.ai-box .ai-label{position:absolute;top:-11px;left:14px;background:#8e44ad;color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.ai-box p:last-child{margin-bottom:0;}
+.ai-box .ai-prompt{font-family:'JetBrains Mono',monospace;font-size:.85rem;background:rgba(142,68,173,.08);border-radius:6px;padding:.4rem .8rem;display:block;margin:.4rem 0;color:#6c3485;}
+
+/* 🎓 Chapter-end bridge */
+.bridge-box{background:#eafaf1;border:2px solid var(--accent3);border-radius:12px;padding:1.3rem 1.5rem;margin:2rem 0 0;}
+.bridge-box .bb-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent3);font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.bridge-box ul{margin:.3rem 0 .8rem 1.3rem;font-size:.92rem;}
+.bridge-box .bb-next{font-size:.9rem;color:var(--accent2);border-top:1px dashed var(--accent3);padding-top:.6rem;margin-bottom:0;}
+
+/* ===== Course-companion components ===== */
+
+/* 📺 Video card */
+.video-card{background:linear-gradient(150deg,#1a1a2e 0%,#232345 100%);border-radius:14px;padding:1.3rem 1.6rem;margin:1.2rem 0;color:#fff;position:relative;overflow:hidden;}
+.video-card::before{content:'📺';position:absolute;top:-12px;right:8px;font-size:4.8rem;opacity:.09;}
+.video-card .vc-tag{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#f39c12;letter-spacing:.2em;margin-bottom:.45rem;}
+.video-card .vc-file{font-family:'JetBrains Mono',monospace;font-size:.95rem;color:#8be9fd;word-break:break-all;}
+.video-card .vc-meta{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.6rem 0 .1rem;}
+.vc-dur{font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.14);color:#f1fa8c;font-size:.78rem;font-weight:600;padding:2px 10px;border-radius:4px;}
+.vc-lms{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;background:var(--accent3);color:#fff;text-decoration:none;transition:background .2s;}
+.vc-lms:hover{background:#22845c;}
+.vc-lms.placeholder{background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);cursor:default;}
+.video-card details{margin-top:.7rem;}
+.video-card details summary{cursor:pointer;color:#5dade2;font-size:.85rem;font-family:'JetBrains Mono',monospace;}
+.vb-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:.6rem;}
+.vb-table td{padding:.32rem .5rem;border-bottom:1px dashed rgba(255,255,255,.12);color:rgba(255,255,255,.85);}
+.vb-table tr:last-child td{border-bottom:none;}
+.vb-table td.vb-time{font-family:'JetBrains Mono',monospace;color:#2ecc71;white-space:nowrap;font-size:.76rem;}
+
+/* Materials map */
+.mat-map{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.9rem 0;padding:.7rem 1rem;background:var(--card);border:1px solid var(--card-border);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.mat-map .mm-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.12em;margin-right:.3rem;}
+.mat-map a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;text-decoration:none;border:2px solid var(--card-border);color:var(--accent2);transition:all .2s;background:var(--paper);}
+.mat-map a:hover{border-color:var(--accent2);}
+.mat-map span.mm-video{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);padding:3px 6px;}
+
+/* Array grid visualization */
+.ag-stage{background:#fafafa;border:1px solid #ececec;border-radius:8px;padding:1.1rem;display:flex;gap:1.8rem;align-items:center;justify-content:center;flex-wrap:wrap;min-height:170px;margin-bottom:.6rem;}
+.ag-block{display:flex;flex-direction:column;align-items:center;gap:.45rem;}
+.ag-name{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent2);font-weight:700;}
+.array-grid{display:grid;gap:4px;}
+.ag-cell{width:52px;height:38px;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--card-border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.82rem;transition:all .25s;position:relative;}
+.ag-cell.sel{background:var(--highlight);border-color:#f39c12;color:#b9770e;font-weight:700;transform:scale(1.07);z-index:1;}
+.ag-cell.dim{opacity:.32;}
+.ag-cell.res{background:#eafaf1;border-color:var(--accent3);color:var(--accent3);font-weight:700;}
+.ag-cell.ghost{background:repeating-linear-gradient(45deg,#f6f2ea,#f6f2ea 5px,#efe9dd 5px,#efe9dd 10px);border-style:dashed;color:var(--muted);}
+.ag-axis{font-family:'JetBrains Mono',monospace;font-size:.64rem;color:var(--muted);}
+@media(max-width:600px){.ag-cell{width:42px;height:32px;font-size:.72rem;}}
+
+/* Materials links become placeholders until DOCS_BASE is configured */
+a.mm-doc.placeholder{opacity:.55;cursor:default;pointer-events:none;border-style:dashed !important;color:var(--muted) !important;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<!-- Floating navigation sidebar -->
+<nav class="float-nav" id="floatNav" aria-label="Module navigation">
+  <div class="fn-title">MODULE 4</div>
+  <a href="#s41" data-target="s41"><span class="fn-num">4.1</span><span class="fn-name">Introduction to SciPy</span></a>
+  <a href="#s42" data-target="s42"><span class="fn-num">4.2</span><span class="fn-name">Linear algebra — 1</span></a>
+  <a href="#s43" data-target="s43"><span class="fn-num">4.3</span><span class="fn-name">Linear algebra — 2</span></a>
+  <a href="#s44" data-target="s44"><span class="fn-num">4.4</span><span class="fn-name">Numerical integration</span></a>
+  <a href="#s45" data-target="s45"><span class="fn-num">4.5</span><span class="fn-name">Optimization</span></a>
+  <a href="#s46" data-target="s46"><span class="fn-num">4.6</span><span class="fn-name">Statistics</span></a>
+  <a href="#quiz" data-target="quiz"><span class="fn-num">QUIZ</span><span class="fn-name">Self-check quiz</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">Key-term flashcards</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">Cheat sheet</span></a>
+  <a href="#top" class="fn-top" title="Back to top"><span class="fn-num">↑ TOP</span></a>
+</nav>
+
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="chapter-tag">MODULE 04 · 6 VIDEOS · ≈ 54 MIN</div>
+    <h1>High-level Scientific Computing with <span class="blue">SciPy</span></h1>
+    <div class="subtitle">Don't rebuild the algorithm — call it. Optimized, battle-tested routines for linear algebra, integration, optimization and statistics, all working on your NumPy arrays.</div>
+    <div class="big-formula">linalg.solve｜eigenvalues｜integrate.quad｜curve_fit｜minimize &amp; root｜stats</div>
+    <div class="scroll-hint">Scroll down and study along with the videos<span>↓</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · WATCH THE VIDEO, THEN WORK THROUGH EACH SECTION</div>
+  <div class="toc-grid">
+    <a href="#s41"><span class="toc-num">4.1</span>Introduction to SciPy<span class="toc-dur">06:23</span></a>
+    <a href="#s42"><span class="toc-num">4.2</span>Linear algebra with SciPy — 1<span class="toc-dur">08:20</span></a>
+    <a href="#s43"><span class="toc-num">4.3</span>Linear algebra with SciPy — 2<span class="toc-dur">08:38</span></a>
+    <a href="#s44"><span class="toc-num">4.4</span>Numerical integration<span class="toc-dur">07:40</span></a>
+    <a href="#s45"><span class="toc-num">4.5</span>Optimization<span class="toc-dur">15:23</span></a>
+    <a href="#s46"><span class="toc-num">4.6</span>Statistics<span class="toc-dur">07:19</span></a>
+    <a href="#quiz"><span class="toc-num">QUIZ</span>Self-check quiz (8 questions)</a>
+    <a href="#cards"><span class="toc-num">CARD</span>Key-term flashcards (11 cards)</a>
+    <a href="#reference"><span class="toc-num">REF</span>SciPy cheat sheet</a>
+  </div>
+</div>
+
+<div class="info-box green">
+  <div class="info-label">📖 HOW TO USE THIS PAGE</div>
+  <p style="margin-bottom:.4rem;">Each numbered section below matches one course video. A suggested study loop:</p>
+  <p style="margin-bottom:0;">① <strong>Watch</strong> the video on 網路大學 (the breakdown table tells you what happens when) → ② <strong>Read</strong> the digest and run the code yourself in the notebook → ③ <strong>Play</strong> with the interactive widgets to test your intuition → ④ <strong>Discuss</strong> the think-about-it questions (an AI assistant is a great sparring partner) → ⑤ Finish the module with the <a href="#quiz">quiz</a> and <a href="#cards">flashcards</a>.</p>
+</div>
+
+<!-- ============================================================ -->
+<section id="s41">
+  <div class="section-number">SUBMODULE 4.1 · INTRODUCTION</div>
+  <h2>4.1 Introduction to SciPy</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 4.1</div>
+    <div class="vc-file">4.1_Introduction to SciPy.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 06:23</span><a class="vc-lms" data-video="4.1_Introduction to SciPy.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details open>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 02:38</td><td>Overview of the module</td></tr>
+        <tr><td class="vb-time">02:38 – 04:27</td><td>Introduction to SciPy and a brief overview of its submodules</td></tr>
+        <tr><td class="vb-time">04:27 – 06:23</td><td>Steps to install SciPy and how to import it into your environment</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Explain why you should reach for SciPy's optimized, tested routines instead of coding algorithms from scratch, name the four sub-modules this course uses, and install / import SciPy in your own environment.</p>
+  </div>
+
+  <p><strong>SciPy</strong> (<em>Scientific Python</em>) is the central package for scientific operations in Python, designed to work directly on NumPy arrays. Before you write a new numerical routine, check whether SciPy already ships it: home-grown re-implementations tend to be <strong>error-prone, suboptimal, hard to share and unmaintainable</strong>, while SciPy's routines are optimized and tested by a huge community.</p>
+
+  <p>SciPy is organized into task-specific <strong>sub-modules</strong> that all depend on NumPy but are mostly independent of each other. This course visits four of them:</p>
+  <table class="cmp-table">
+    <tr><th>Sub-module</th><th>Functionality</th><th>This module's stars</th></tr>
+    <tr><td>scipy.linalg</td><td class="tl">Linear algebra routines</td><td>solve, det, eig, eigh</td></tr>
+    <tr><td>scipy.integrate</td><td class="tl">Integration routines</td><td>quad, simpson</td></tr>
+    <tr><td>scipy.optimize</td><td class="tl">Optimization</td><td>curve_fit, minimize, root</td></tr>
+    <tr><td>scipy.stats</td><td class="tl">Statistics</td><td>norm, ttest_ind</td></tr>
+  </table>
+
+  <p>The standard way to import them — one sub-module at a time:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">from</span> scipy <span class="kw">import</span> linalg      <span class="com"># linear algebra</span></span>
+<span class="line"><span class="kw">from</span> scipy <span class="kw">import</span> integrate   <span class="com"># integration</span></span>
+<span class="line"><span class="kw">from</span> scipy <span class="kw">import</span> optimize    <span class="com"># optimization</span></span>
+<span class="line"><span class="kw">from</span> scipy <span class="kw">import</span> stats       <span class="com"># statistics</span></span></div>
+
+  <div class="info-box warm">
+    <div class="info-label">⚠ NAMESPACE FINE PRINT</div>
+    <p style="margin-bottom:0;">The primary <code>scipy</code> <strong>namespace</strong> mostly contains functions that actually belong to NumPy — they are exposed for historical reasons only. That is why you practically never write <code>import scipy</code>: you import the sub-module you need instead.</p>
+  </div>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="04_SciPy_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="04_SciPy_notebook.html" data-frag="Introduction">📓 Notebook §Introduction</a>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <p>Predict your answer first, then check it against the video — or debate it with ChatGPT / Gemini / Claude:</p>
+    <span class="ai-prompt">How does SciPy differ from SymPy? When would a numerical answer beat an exact symbolic one, and vice versa?</span>
+    <span class="ai-prompt">Delve into the design philosophy of SciPy — the SciPy 1.0 paper and the official website give comprehensive insights.</span>
+    <span class="ai-prompt">Apart from the four sub-modules discussed in the video, what other SciPy functionality might be beneficial for your own tasks?</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) The SciPy/NumPy ecosystem encompasses a vast array of scientific-computing packages. Explore the official website, then share one library within this ecosystem that interests you.</p>
+    <p style="margin-bottom:0;">(b) Beyond plain NumPy arrays, SciPy supports several <strong>sparse-matrix</strong> representations — see <code>scipy.sparse</code> and <code>scipy.sparse.linalg</code>. Discuss their pros and cons compared to a dense array.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s42">
+  <div class="section-number">SUBMODULE 4.2 · LINEAR ALGEBRA I</div>
+  <h2>4.2 Linear algebra with SciPy — 1</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 4.2</div>
+    <div class="vc-file">4.2_Linear algebra with SciPy-1.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 08:20</span><a class="vc-lms" data-video="4.2_Linear algebra with SciPy-1.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 00:19</td><td>Introduction to the submodule</td></tr>
+        <tr><td class="vb-time">00:19 – 03:02</td><td>Highlighting the distinctions between linear algebra routines in SciPy and NumPy</td></tr>
+        <tr><td class="vb-time">03:02 – 06:13</td><td>Utilization of the solve() method to solve linear equations</td></tr>
+        <tr><td class="vb-time">06:13 – 07:30</td><td>Utilization of the inv() function to solve linear equations</td></tr>
+        <tr><td class="vb-time">07:30 – 08:20</td><td>A brief introduction to the det() function for determinant calculations</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Choose <code>scipy.linalg</code> over <code>numpy.linalg</code> (and say why), solve a linear system with <code>solve()</code>, contrast that with the <code>inv()</code> approach, and compute a determinant with <code>det()</code>.</p>
+  </div>
+
+  <h3>Why scipy.linalg, not numpy.linalg?</h3>
+  <table class="cmp-table">
+    <tr><th></th><th>numpy.linalg</th><th>scipy.linalg</th></tr>
+    <tr><td>Function coverage</td><td class="worst">Basic set</td><td class="best">Superset — everything in numpy.linalg plus more advanced routines</td></tr>
+    <tr><td>BLAS / LAPACK backend</td><td class="worst">Optional (depends on your NumPy build)</td><td class="best">Always compiled in — consistently optimized</td></tr>
+    <tr><td>When to prefer it</td><td class="tl">Only to avoid the SciPy dependency</td><td class="tl">Scientific work — the course default</td></tr>
+  </table>
+  <p><strong>BLAS</strong> (Basic Linear Algebra Subprograms) standardizes the elementary vector/matrix operations; <strong>LAPACK</strong> builds on BLAS to solve linear systems, eigenvalue problems and SVDs (singular value decompositions — a matrix factorization you will meet later) efficiently. <code>scipy.linalg</code> is always backed by both.</p>
+
+  <h3>Two ways to solve Ax = b</h3>
+  <p>The video's system — 3x + 2y = 12 and 2x − y = 1 — becomes a matrix product:</p>
+  <div class="pseudo-code">
+<span class="line">A = np.array([[<span class="num">3</span>, <span class="num">2</span>], [<span class="num">2</span>, -<span class="num">1</span>]])</span>
+<span class="line">b = np.array([<span class="num">12</span>, <span class="num">1</span>]).reshape((<span class="num">2</span>, <span class="num">1</span>))   <span class="com"># a column vector</span></span>
+<span class="line">x = linalg.solve(A, b)                <span class="com"># [[2.], [3.]] → x = 2, y = 3</span></span>
+<span class="line">A @ x                                 <span class="com"># [[12.], [1.]] — check: reproduces b</span></span>
+<span class="line"></span>
+<span class="line">A_inv = linalg.inv(A)                 <span class="com"># route 2: the matrix inverse…</span></span>
+<span class="line">x = A_inv @ b                         <span class="com"># …same answer, but see the warning below</span></span>
+<span class="line">linalg.det(A)                         <span class="com"># -7.0 — nonzero ⇒ A is invertible, unique solution</span></span></div>
+
+  <div class="info-box warm">
+    <div class="info-label">⚠ SOLVE() BEATS INV() — EXAMPLE 1</div>
+    <p style="margin-bottom:0;">Computing <code>A⁻¹</code> and then multiplying is <strong>slower and less numerically stable</strong> than calling <code>solve()</code> directly — the course's Example 1 benchmarks both routes on a large random system. Invert a matrix only when you genuinely need the inverse itself.</p>
+  </div>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="04_SciPy_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="04_SciPy_notebook.html" data-frag="Linear-algebra-with-SciPy---1">📓 Notebook §Linear algebra 1</a>
+    <span class="mm-video">🎬 Example video: 4.2_Example.mp4 (solve() vs inv() benchmark)</span>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <span class="ai-prompt">The official documentation asserts that scipy.linalg encompasses all functionality of numpy.linalg — yet a few routines exist only on the NumPy side. Dig into the NumPy documentation and find these discrepancies.</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) Work along with the example video <code>4.2_Example.mp4</code>.</p>
+    <p style="margin-bottom:0;">(b) A linear system can have infinite solutions, a unique solution, or none — depending on the rank of the coefficient matrix A versus its augmented matrix. Verify this with random matrices and SciPy (hint: <code>matrix_rank()</code>).</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s43">
+  <div class="section-number">SUBMODULE 4.3 · LINEAR ALGEBRA II</div>
+  <h2>4.3 Linear algebra with SciPy — 2</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 4.3</div>
+    <div class="vc-file">4.3_Linear algebra with SciPy-2.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 08:38</span><a class="vc-lms" data-video="4.3_Linear algebra with SciPy-2.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 00:16</td><td>Introduction to the submodule</td></tr>
+        <tr><td class="vb-time">00:16 – 03:45</td><td>Delving into eigenvalues and eigenvectors with scipy.linalg.eig()</td></tr>
+        <tr><td class="vb-time">03:45 – 06:01</td><td>Investigating matrices with real eigenvalues</td></tr>
+        <tr><td class="vb-time">06:01 – 08:38</td><td>Construction and analysis of symmetric matrices using SciPy</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Extract eigenvalues and eigenvectors of a square matrix with <code>eig()</code>, interpret the returned tuple, and obtain purely real eigenvalues from real symmetric matrices.</p>
+  </div>
+
+  <p>A non-zero vector <strong>v</strong> is an <strong>eigenvector</strong> of A with <strong>eigenvalue</strong> λ if <code>A v = λ v</code>. Rearranged, v solves the <strong>homogeneous</strong> system <code>(A − λI) v = 0</code> (homogeneous = the right-hand side is all zeros) — and a <strong>non-trivial solution</strong> (v ≠ 0) can only exist when A − λI is <strong>singular</strong>, i.e. <code>det(A − λI) = 0</code>. The eigenvalues are the roots of that characteristic polynomial.</p>
+
+  <div class="pseudo-code">
+<span class="line">A = np.array([[<span class="num">1</span>, <span class="num">0</span>], [<span class="num">0</span>, -<span class="num">2</span>]])</span>
+<span class="line">eigvals, eigvecs = linalg.eig(A)   <span class="com"># tuple: 1-D eigenvalues, 2-D eigenvectors (in COLUMNS)</span></span>
+<span class="line">eigvals                            <span class="com"># [ 1.+0.j  -2.+0.j] — complex dtype, even for a real matrix!</span></span>
+<span class="line">eigvals = eigvals.real             <span class="com"># [ 1. -2.] — drop the zero imaginary part yourself</span></span>
+<span class="line">v1 = eigvecs[:, <span class="num">1</span>].reshape(<span class="num">2</span>, <span class="num">1</span>)  <span class="com"># SECOND column ↔ second eigenvalue</span></span>
+<span class="line">A @ v1 == eigvals[<span class="num">1</span>] * v1          <span class="com"># [[True], [True]] here — but in general compare floats with np.allclose()</span></span></div>
+
+  <h3>Symmetric matrices — where eigenvalues turn real</h3>
+  <p>For a <strong>real symmetric</strong> matrix the eigenvalues are always real and the eigenvectors are mutually orthogonal. The video builds one from any random P via <code>S = P @ P.T</code>, then verifies <code>v1 @ v2 ≈ 0</code>. When you <em>know</em> the matrix is symmetric (or Hermitian), tell SciPy:</p>
+  <table class="cmp-table">
+    <tr><th></th><th>eig()</th><th>eigh()</th></tr>
+    <tr><td>Input</td><td class="tl">any square matrix</td><td class="tl">symmetric / Hermitian only</td></tr>
+    <tr><td>Eigenvalue dtype</td><td class="worst">complex128 — always</td><td class="best">real (float64), sorted ascending</td></tr>
+    <tr><td>Speed &amp; stability</td><td class="tl">general algorithm</td><td class="best">exploits symmetry — faster, more accurate</td></tr>
+  </table>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="04_SciPy_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="04_SciPy_notebook.html" data-frag="Linear-algebra-with-SciPy---2">📓 Notebook §Linear algebra 2</a>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <span class="ai-prompt">SciPy can execute the matrix decompositions we studied in linear algebra (LU, QR, Cholesky…). Pick a few from the official documentation and use them to solve problems from your linear-algebra textbook.</span>
+    <span class="ai-prompt">Build a real symmetric matrix and run scipy.linalg.svd() on it. What are the pros and cons of SVD versus scipy.linalg.eig() for finding eigenvalues and eigenvectors?</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) When only the top-k eigenvectors are needed, <code>scipy.sparse.linalg.eigs()</code> or <code>svds()</code> can be more advantageous. Construct a real symmetric matrix, apply them, and compare against <code>scipy.linalg.eig()</code> (watch out: ordering — and even the sign of eigenvectors — may differ between methods).</p>
+    <p style="margin-bottom:0;">(b) A square matrix M is diagonalizable when M = PDP⁻¹, with eigenvectors as the columns of P and eigenvalues along the diagonal of D. Use <code>np.diag()</code> to build M with eigenvalues λ₁ = 3, λ₂ = 1 and eigenvectors v₁ = [1, 1]ᵀ, v₂ = [1, −1]ᵀ — then verify with SciPy that the eigenvalues of M really are 3 and 1.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s44">
+  <div class="section-number">SUBMODULE 4.4 · INTEGRATION</div>
+  <h2>4.4 Numerical Integration with SciPy</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 4.4</div>
+    <div class="vc-file">4.4_Numerical Integration with SciPy.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 07:40</span><a class="vc-lms" data-video="4.4_Numerical Integration with SciPy.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 00:10</td><td>Introduction to the submodule</td></tr>
+        <tr><td class="vb-time">00:10 – 02:05</td><td>Overview of numerical integration</td></tr>
+        <tr><td class="vb-time">02:05 – 05:54</td><td>Using SciPy for numerical integration of functions with an analytic solution</td></tr>
+        <tr><td class="vb-time">05:54 – 07:40</td><td>Using SciPy for numerical integration of functions without an analytic solution</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Approximate definite integrals numerically — <code>quad()</code> when you can call the function, <code>simpson()</code> when you only have sampled points — and read the <code>(value, error)</code> tuple that <code>quad()</code> returns.</p>
+  </div>
+
+  <p>A definite integral is the limit of a sum of rectangle areas: partition [a, b] into N subintervals and add up <code>f(xᵢ*)·Δx</code>. <strong>Numerical integration</strong> stops short of the limit — it evaluates cleverly chosen finite sums, which is exactly what you need when no closed-form antiderivative exists (like the Gaussian <code>e^(−x²)</code>).</p>
+
+  <h3>🧪 Interactive: Riemann sums — the idea inside every numerical integrator</h3>
+  <p>Below is <code>f(x) = x² + 1</code> on [0, 2]. The exact area is 2³/3 + 2 = <strong>14/3 ≈ 4.66667</strong>. Drag the slider to add left-endpoint rectangles and watch the error melt away:</p>
+  <div class="sandbox">
+    <div class="sandbox-label">🧪 SANDBOX</div>
+    <div class="input-row">
+      <label for="riemannN">n rectangles:</label>
+      <input type="range" id="riemannN" min="2" max="200" value="8" style="flex:1;min-width:160px;">
+      <span id="riemannNVal" style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent2);font-weight:700;">n = 8</span>
+    </div>
+    <canvas id="riemannCanvas" width="640" height="360" style="width:100%;max-width:640px;display:block;margin:.6rem auto 0;background:#fff;border:1px solid var(--card-border);border-radius:8px;"></canvas>
+    <div class="sandbox-result" id="riemannReadout"></div>
+  </div>
+  <p>Left-endpoint rectangles are the crudest scheme — <code>scipy.integrate.quad()</code> pursues the same idea with adaptive, high-order rules and reaches ~15 digits in a handful of evaluations. And when you can't call the function at all — you only <em>have</em> sampled points — <code>simpson()</code> fits parabolas through your samples:</p>
+
+  <div class="pseudo-code">
+<span class="line">f = <span class="kw">lambda</span> x: x**<span class="num">2</span> + <span class="num">1</span></span>
+<span class="line">integrate.quad(f, <span class="num">0</span>, <span class="num">2</span>)        <span class="com"># (4.666666666666667, 5.18e-14) — (value, error estimate)</span></span>
+<span class="line"></span>
+<span class="line">xi = np.linspace(<span class="num">0</span>, <span class="num">2</span>, <span class="num">100</span>)    <span class="com"># suppose only these samples exist</span></span>
+<span class="line">integrate.simpson(f(xi), x=xi) <span class="com"># 4.666666666666666 — from points alone</span></span>
+<span class="line"></span>
+<span class="line">g = <span class="kw">lambda</span> x: <span class="num">2</span>/np.pi**<span class="num">0.5</span> * np.exp(-x**<span class="num">2</span>)   <span class="com"># no antiderivative in closed form…</span></span>
+<span class="line">integrate.quad(g, <span class="num">0</span>, <span class="num">1.96</span>)     <span class="com"># …no problem for numerical integration</span></span></div>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="04_SciPy_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="04_SciPy_notebook.html" data-frag="Numerical-Integration-with-SciPy">📓 Notebook §Numerical integration</a>
+    <span class="mm-video">🎬 Exercise video: 4.4_Exercise.mp4</span>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <span class="ai-prompt">Can we approximate or perform improper integration (infinite limits, singular endpoints) using SciPy?</span>
+    <span class="ai-prompt">What are the advantages of numerical integration compared to solving the integral analytically? And what do you give up?</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) Work along with the exercise video <code>4.4_Exercise.mp4</code>.</p>
+    <p style="margin-bottom:0;">(b) With <code>f = lambda x: x**2 + 1</code> and <code>xi = np.linspace(0, 10, 100)</code>, integrate using both <code>quad()</code> (function known) and <code>simpson()</code> (samples known) and compare the results.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s45">
+  <div class="section-number">SUBMODULE 4.5 · OPTIMIZATION</div>
+  <h2>4.5 Optimization with SciPy</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 4.5 · LONGEST VIDEO OF THE MODULE</div>
+    <div class="vc-file">4.5_Optimization with SciPy.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 15:23</span><a class="vc-lms" data-video="4.5_Optimization with SciPy.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 00:10</td><td>Introduction to the submodule</td></tr>
+        <tr><td class="vb-time">00:10 – 01:33</td><td>Exploring the optimization submodule in SciPy</td></tr>
+        <tr><td class="vb-time">01:33 – 06:02</td><td>Curve fitting techniques with SciPy</td></tr>
+        <tr><td class="vb-time">06:02 – 13:20</td><td>Techniques for finding extrema using SciPy</td></tr>
+        <tr><td class="vb-time">13:20 – 15:23</td><td>Methods to find roots of functions with SciPy</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Fit a model to noisy data with <code>curve_fit()</code>, find extrema with <code>minimize()</code>, locate zeros with <code>root()</code> — and explain why every one of them is sensitive to its starting point.</p>
+  </div>
+
+  <h3>The scipy.optimize toolbox</h3>
+  <table class="cmp-table">
+    <tr><th>Task</th><th>One variable</th><th>Many variables</th></tr>
+    <tr><td>Fit a function to data</td><td colspan="2">curve_fit(model, x_data, y_data, p0=…)</td></tr>
+    <tr><td>Minimize a function</td><td>minimize_scalar()</td><td>minimize(f, x0=…)</td></tr>
+    <tr><td>Find zeros f(x) = 0</td><td>root_scalar()</td><td>root(f, x0=…)</td></tr>
+    <tr><td>Linear objective + linear constraints</td><td colspan="2">linprog()</td></tr>
+  </table>
+
+  <p><strong>Least-squares curve fitting</strong> in one call — fit <code>a·sin(b·x)</code> to a noisy sine wave:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">def</span> <span class="fn">test_func</span>(x, a, b):</span>
+<span class="line">    <span class="kw">return</span> a * np.sin(b * x)</span>
+<span class="line">params, params_covariance = optimize.curve_fit(test_func, x_data, y_data, p0=[<span class="num">2</span>, <span class="num">2</span>])</span>
+<span class="line">params        <span class="com"># ≈ [2.9, 1.5] — the amplitude and frequency that minimize Σ(residual)²</span></span></div>
+
+  <h3>🎬 Interactive: the local-minimum trap — why x0 decides everything</h3>
+  <p>The video's function <code>f(x) = x² + 10·sin(x)</code> has a <strong>global</strong> minimum near x ≈ −1.31 and a <strong>local</strong> one near x ≈ 3.84. Watch the search roll downhill from two different starting points — <strong>predict where each run will land before you press play</strong>. (The path shown is a simplified rolling-downhill illustration; the real <code>minimize()</code> takes smarter, bigger steps — but lands in the same places.)</p>
+
+  <div class="viz-layout">
+    <div class="viz-panel">
+      <canvas id="trapCanvas" width="640" height="360" style="width:100%;display:block;background:#fff;border:1px solid var(--card-border);border-radius:8px;"></canvas>
+      <div class="status-banner"><span class="status-icon">▸</span><span class="status-text" id="trapStatus">Press "Step ▸" to start</span></div>
+      <div class="controls-bar">
+        <button class="btn btn-play" id="trapPlay">▶ Play</button>
+        <button class="btn btn-step" id="trapStep">Step ▸</button>
+        <button class="btn btn-reset" id="trapReset">↺ Reset</button>
+      </div>
+    </div>
+    <div class="side-panel">
+      <div class="info-card">
+        <div class="ic-title">What minimize() returns</div>
+        <table class="var-table">
+          <tr><td class="vname">type(res)</td><td class="vval">OptimizeResult</td></tr>
+          <tr><td class="vname">res.x</td><td class="vval">location of the minimum</td></tr>
+          <tr><td class="vname">res.fun</td><td class="vval">f value at res.x</td></tr>
+          <tr><td class="vname">res.success</td><td class="vval">True / False</td></tr>
+        </table>
+        <p style="font-size:.78rem;margin:.5rem 0 0;">An instance of the <strong>OptimizeResult class</strong> — attribute access, not a dictionary.</p>
+      </div>
+      <div class="info-card">
+        <div class="ic-title">Escaping the trap</div>
+        <p style="font-size:.82rem;margin:0;"><code>minimize(f, x0=1, bounds=((0, 10),))</code> confines the search to an interval; running <strong>several restarts</strong> from different x0 values and keeping the best result is the simplest global strategy.</p>
+      </div>
+    </div>
+  </div>
+
+  <p>Root finding follows the same start-point logic — and note there is <strong>no maximize()</strong>: to find a maximum you minimize <code>−f(x)</code> instead.</p>
+  <div class="pseudo-code">
+<span class="line">f = <span class="kw">lambda</span> x: x**<span class="num">2</span> + <span class="num">10</span>*np.sin(x)</span>
+<span class="line">optimize.minimize(f, x0=<span class="num">0</span>).x    <span class="com"># [-1.306…]  — global minimum</span></span>
+<span class="line">optimize.minimize(f, x0=<span class="num">3</span>).x    <span class="com"># [ 3.837…]  — trapped in the local minimum!</span></span>
+<span class="line">optimize.root(f, x0=<span class="num">1</span>).x        <span class="com"># [ 0.]      — one root…</span></span>
+<span class="line">optimize.root(f, x0=-<span class="num">2</span>).x       <span class="com"># [-2.479…]  — …a different guess finds the other</span></span></div>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="04_SciPy_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="04_SciPy_notebook.html" data-frag="Optimization">📓 Notebook §Optimization</a>
+    <span class="mm-video">🎬 Exercise video: 4.5_Exercise.mp4</span>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <span class="ai-prompt">We covered finding the minima of a function — how can the same machinery find its maxima?</span>
+    <span class="ai-prompt">Delve into the critical role of initial values in optimization. What strategies can we employ to choose them well?</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) Work along with the exercise video <code>4.5_Exercise.mp4</code>.</p>
+    <p style="margin-bottom:0;">(b) SciPy also ships single-variable specialists: explore <code>optimize.minimize_scalar()</code> and <code>optimize.root_scalar()</code>, and use them to determine the global minimum and the roots of <code>f(x) = x² + 10·sin(x)</code>.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s46">
+  <div class="section-number">SUBMODULE 4.6 · STATISTICS</div>
+  <h2>4.6 Statistics with SciPy</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 4.6 · LAST VIDEO OF MODULE 4</div>
+    <div class="vc-file">4.6_Statistics with SciPy.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 07:19</span><a class="vc-lms" data-video="4.6_Statistics with SciPy.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 00:24</td><td>Introduction to the submodule</td></tr>
+        <tr><td class="vb-time">00:24 – 03:14</td><td>Understanding probability density functions with SciPy</td></tr>
+        <tr><td class="vb-time">03:14 – 06:00</td><td>A guide on hypothesis testing using SciPy</td></tr>
+        <tr><td class="vb-time">06:00 – 07:19</td><td>Recap of the module's content</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Use distribution objects like <code>stats.norm</code> (compare a sample histogram against the true pdf) and run a two-sample t-test with <code>ttest_ind()</code>, reading the statistic and the p-value.</p>
+  </div>
+
+  <p><code>scipy.stats</code> packages statistical tools and <strong>probabilistic representations of random variables</strong>. The star is <code>norm</code> — not a matrix norm, but a <strong>normal (Gaussian) continuous random variable object</strong> with methods for its pdf, cdf, random sampling and more:</p>
+  <div class="pseudo-code">
+<span class="line">samples = np.random.normal(size=<span class="num">1000</span>)       <span class="com"># observations of a random variable</span></span>
+<span class="line">bins = np.linspace(-<span class="num">4</span>, <span class="num">4</span>, <span class="num">30</span>)</span>
+<span class="line">bins = <span class="num">0.5</span>*(bins[<span class="num">1</span>:] + bins[:-<span class="num">1</span>])           <span class="com"># bin centers</span></span>
+<span class="line">pdf = stats.norm.pdf(bins)                  <span class="com"># the TRUE density at those points</span></span>
+<span class="line">plt.hist(samples, density=<span class="kw">True</span>); plt.plot(bins, pdf)   <span class="com"># histogram ≈ pdf ✓</span></span></div>
+
+  <h3>Hypothesis testing in one call</h3>
+  <p>Given two sets of observations assumed to come from normally distributed populations, the <strong>t-test</strong> decides whether their means differ significantly:</p>
+  <div class="pseudo-code">
+<span class="line">samples1 = np.random.normal(<span class="num">0</span>, size=<span class="num">50</span>)</span>
+<span class="line">samples2 = np.random.normal(<span class="num">1</span>, size=<span class="num">50</span>)     <span class="com"># shifted mean</span></span>
+<span class="line">stats.ttest_ind(samples1, samples2)         <span class="com"># (statistic=-4.13…, pvalue=7.6e-05)</span></span></div>
+  <table class="cmp-table">
+    <tr><th>Output</th><th>Meaning</th></tr>
+    <tr><td>statistic (t)</td><td class="tl">sign ∝ difference between the two sample means; magnitude ∝ its significance</td></tr>
+    <tr><td>pvalue (p)</td><td class="tl">IF the two means were truly equal, how likely is data at least this extreme? Small p (&lt; 0.05) → the equal-means assumption looks implausible → reject it; large p → the data cannot tell the means apart</td></tr>
+  </table>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="04_SciPy_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="04_SciPy_notebook.html" data-frag="Statistics">📓 Notebook §Statistics</a>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <span class="ai-prompt">Dive into SciPy's functions for distributions and hypothesis testing, then use them to solve a problem from a statistics textbook.</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) The <code>scipy.stats</code> submodule offers a wide range of statistical calculations. Skim the documentation, then create a random matrix and apply several functions to extract relevant statistics.</p>
+    <p style="margin-bottom:0;">(b) The <strong>Central Limit Theorem</strong> says the distribution of the sum (or average) of many independent, identically distributed (i.i.d.) random variables tends towards a normal distribution — whatever the initial distribution. Use SciPy and Matplotlib to illustrate and confirm it (hint: SciPy can generate samples from many distributions).</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="quiz">
+  <div class="section-number">QUIZ · TEST BANK MODULE 4</div>
+  <h2>Self-check quiz: 8 questions</h2>
+  <p>Straight from the course test bank. Click the option you believe is right — every option explains itself, so a wrong click still teaches you something.</p>
+  <div class="quiz-progress" id="quizProgress">Solved 0 / 8</div>
+  <div id="quizContainer"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="cards">
+  <div class="section-number">FLASHCARDS · KEY TERMS</div>
+  <h2>Key-term flashcards: click to flip</h2>
+  <p>All 11 key terms from Module 4. Say the definition out loud <strong>before</strong> flipping!</p>
+  <div class="card-controls">
+    <button class="btn btn-step" id="flipAll">Flip all</button>
+    <button class="btn btn-reset" id="unflipAll">Unflip all</button>
+    <button class="btn btn-play" id="shuffleCards">🔀 Shuffle</button>
+  </div>
+  <div class="flash-grid" id="flashGrid"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="reference">
+  <div class="section-number">REFERENCE · CHEAT SHEET</div>
+  <h2>Module 4 cheat sheet</h2>
+
+  <h3>Sub-module map</h3>
+  <table class="cmp-table">
+    <tr><th>Sub-module</th><th>Key functions</th><th>Use it for</th></tr>
+    <tr><td>scipy.linalg</td><td>solve, inv, det, eig, eigh</td><td class="tl">linear systems, determinants, eigenvalue problems</td></tr>
+    <tr><td>scipy.integrate</td><td>quad, simpson</td><td class="tl">quad — you can call f(x); simpson — you only have sampled points</td></tr>
+    <tr><td>scipy.optimize</td><td>curve_fit, minimize, minimize_scalar, root, root_scalar</td><td class="tl">least-squares fitting, extrema, zeros — all need a starting point (x0 / p0)</td></tr>
+    <tr><td>scipy.stats</td><td>norm, ttest_ind</td><td class="tl">distribution objects (pdf, cdf, rvs) and hypothesis tests</td></tr>
+  </table>
+
+  <h3>The two classic decisions</h3>
+  <table class="cmp-table">
+    <tr><th>Decision</th><th>Reach for</th><th>Why</th></tr>
+    <tr><td>solve() vs inv()</td><td class="best">solve()</td><td class="tl">computing A⁻¹ and multiplying is slower and less numerically stable — invert only when you truly need the inverse itself</td></tr>
+    <tr><td>eig() vs eigh()</td><td class="best">eigh() for real symmetric / Hermitian</td><td class="tl">eig() returns complex128 even when the eigenvalues are mathematically real; eigh() exploits the symmetry and returns real, sorted eigenvalues</td></tr>
+  </table>
+
+  <h3>Optimization survival rules</h3>
+  <table class="cmp-table">
+    <tr><th>Rule</th><th>Detail</th></tr>
+    <tr><td>Results are OptimizeResult objects</td><td class="tl">read res.x, res.fun, res.success as attributes — it is a class instance, not a dictionary</td></tr>
+    <tr><td>One answer per run</td><td class="tl">minimize()/root() follow the slope from x0 — restarts or bounds=((lo, hi),) guard against local traps</td></tr>
+    <tr><td>No maximize()</td><td class="tl">minimize −f(x) instead</td></tr>
+  </table>
+
+  <h3>Further reading</h3>
+  <ul>
+    <li><a href="https://doi.org/10.1038/s41592-019-0686-2" target="_blank" rel="noopener">SciPy 1.0: fundamental algorithms for scientific computing in Python</a> — the Nature Methods paper</li>
+    <li><a href="https://lectures.scientific-python.org" target="_blank" rel="noopener">Scientific Python Lectures</a> — free lecture notes covering the whole ecosystem</li>
+  </ul>
+
+  <div class="bridge-box">
+    <div class="bb-title">🎓 AFTER THIS MODULE, YOU CAN…</div>
+    <ul>
+      <li>Pick the right SciPy sub-module instead of hand-coding a numerical algorithm</li>
+      <li>Solve linear systems with solve() — not inv() — and extract eigenvalues/eigenvectors, using eigh() for symmetric matrices</li>
+      <li>Integrate numerically with quad() and simpson(), and read the (value, error) result</li>
+      <li>Fit curves, find minima and roots — always mindful of the starting point x0</li>
+      <li>Evaluate distribution objects and run a two-sample t-test with scipy.stats</li>
+    </ul>
+    <p class="bb-next">NEXT ▸ Module 5 puts labels on your arrays — data analysis with Pandas.</p>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="03_sympy.html"><div class="nav-dir">◂ PREVIOUS</div><div class="nav-title">Module 3 · Symbolic Mathematics with SymPy</div></a>
+    <a href="05_pandas.html" class="next"><div class="nav-dir">NEXT ▸</div><div class="nav-title">Module 5 · Data Analysis with Pandas</div></a>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Scientific Computing with Python · Module 4: High-level Scientific Computing with SciPy · self-study companion<br>
+  Videos, slides &amp; notebooks on 網路大學 · quiz taken from the course test bank · works with <code>04_SciPy.ipynb</code>
+</footer>
+<script>
+/* ============================================================
+   LMS video links — EDIT HERE.
+   Set LMS_BASE to your course page URL to make every "Watch on
+   網路大學" badge a real link, or map individual videos below.
+   ============================================================ */
+const LMS_BASE = '';                 // e.g. 'https://lms.example.edu/course/scicomp'
+const LMS_VIDEO_URLS = {             // per-video override (optional)
+  // '4.1_Introduction to SciPy.mp4': 'https://…',
+};
+(function applyLmsLinks(){
+  document.querySelectorAll('a.vc-lms[data-video]').forEach(a => {
+    const url = LMS_VIDEO_URLS[a.dataset.video] || LMS_BASE;
+    if (url) { a.href = url; a.target = '_blank'; a.rel = 'noopener'; }
+    else { a.classList.add('placeholder'); a.removeAttribute('href'); a.title = 'Please find this video in the course resources on 網路大學'; }
+  });
+})();
+
+/* ============================================================
+   Slides & notebook links — EDIT HERE.
+   The course materials (slides / notebook HTML) are hosted
+   separately, like the videos. Set DOCS_BASE to their base URL,
+   or map individual files in DOC_URLS. Until then the badges
+   show as inactive placeholders.
+   ============================================================ */
+const DOCS_BASE = '';            // e.g. 'https://your-host/scicomp-materials'
+const DOC_URLS  = {};            // per-file override, e.g. {'01_Basic_NumPy_slides.html': 'https://…'}
+(function applyDocLinks(){
+  document.querySelectorAll('a.mm-doc[data-doc]').forEach(a => {
+    let url = DOC_URLS[a.dataset.doc] || (DOCS_BASE ? DOCS_BASE.replace(/\/+$/,'') + '/' + a.dataset.doc : '');
+    if (url) {
+      if (a.dataset.frag) url += '#' + a.dataset.frag;
+      a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    } else {
+      a.classList.add('placeholder');
+      a.removeAttribute('href');
+      a.title = "Please find the slides / notebooks in the course resources on 網路大學";
+    }
+  });
+})();
+
+
+/* ============================================================
+   Shared engines: StepRunner / Quiz / Flashcards
+   ============================================================ */
+
+/** Step-through engine: steps = [{line, vars, out, note, …}] */
+function StepRunner(prefix, steps, opts) {
+  opts = opts || {};
+  const codeEl  = document.getElementById(prefix + 'Code');
+  const statusEl= document.getElementById(prefix + 'Status');
+  const varsEl  = document.getElementById(prefix + 'Vars');
+  const outEl   = document.getElementById(prefix + 'Out');
+  const playBtn = document.getElementById(prefix + 'Play');
+  const stepBtn = document.getElementById(prefix + 'Step');
+  const resetBtn= document.getElementById(prefix + 'Reset');
+  let idx = -1, timer = null;
+
+  function lines(){ return codeEl ? codeEl.querySelectorAll('.line') : []; }
+
+  function render() {
+    lines().forEach((l,i)=>{
+      l.classList.toggle('active', idx>=0 && steps[idx].line===i);
+    });
+    if (idx < 0) {
+      if (statusEl) statusEl.textContent = 'Press "Step ▸" to start';
+      if (varsEl) varsEl.innerHTML = '<div class="var-empty">not started</div>';
+      if (outEl) outEl.innerHTML = '';
+      if (opts.onReset) opts.onReset();
+      return;
+    }
+    const s = steps[idx];
+    if (statusEl) statusEl.textContent = s.note || '';
+    if (varsEl) {
+      if (s.vars && s.vars.length) {
+        varsEl.innerHTML = '<table class="var-table">' + s.vars.map(v =>
+          `<tr${v[3]?' class="changed"':''}><td class="vname">${v[0]}</td><td class="vval">${v[1]}</td><td class="vtype">${v[2]}</td></tr>`
+        ).join('') + '</table>';
+      } else {
+        varsEl.innerHTML = '<div class="var-empty">(no variables)</div>';
+      }
+    }
+    if (outEl) {
+      outEl.innerHTML = (s.out||[]).map((o,i)=>{
+        const cls = o.startsWith('⌨') ? 'in-line' : (i === (s.out.length-1) && s.newOut ? 'out-line new' : 'out-line');
+        return `<div class="${cls}">${o}</div>`;
+      }).join('');
+      outEl.scrollTop = outEl.scrollHeight;
+    }
+    if (opts.onStep) opts.onStep(s, idx);
+  }
+
+  function step() {
+    if (idx < steps.length - 1) { idx++; render(); }
+    if (idx >= steps.length - 1) stopPlay();
+  }
+  function stopPlay(){
+    if (timer) { clearInterval(timer); timer = null; }
+    if (playBtn){ playBtn.classList.remove('active'); playBtn.textContent = '▶ Play'; }
+  }
+  function play(){
+    if (timer) { stopPlay(); return; }
+    if (idx >= steps.length - 1) { idx = -1; render(); }
+    playBtn.classList.add('active'); playBtn.textContent = '⏸ Pause';
+    timer = setInterval(()=>{
+      if (idx >= steps.length - 1) stopPlay(); else step();
+    }, opts.interval || 1800);
+  }
+  function reset(){ stopPlay(); idx = -1; render(); }
+
+  if (playBtn) playBtn.addEventListener('click', play);
+  if (stepBtn) stepBtn.addEventListener('click', ()=>{ stopPlay(); step(); });
+  if (resetBtn) resetBtn.addEventListener('click', reset);
+  render();
+  return { reset, setSteps(newSteps){ stopPlay(); steps = newSteps; idx = -1; render(); } };
+}
+
+/** Quiz engine: data = [{question, code, multi, answers:[{answer, correct, feedback}]}] */
+function buildQuiz(containerId, progressId, data) {
+  const container = document.getElementById(containerId);
+  const progress  = document.getElementById(progressId);
+  const solved = new Set();
+  const LETTERS = 'ABCDEFGH';
+
+  data.forEach((q, qi) => {
+    const box = document.createElement('div');
+    box.className = 'quiz-box';
+    box.innerHTML =
+      `<div class="quiz-label">Q${qi+1} / ${data.length}${q.multi ? ' <span class="multi-badge">MULTI</span>' : ''}</div>` +
+      `<div class="quiz-q">${q.question}</div>` +
+      (q.code ? `<div class="quiz-code">${q.code.replace(/</g,'&lt;')}</div>` : '') +
+      `<div class="quiz-options">` +
+      q.answers.map((a, ai) =>
+        `<div class="quiz-opt" data-q="${qi}" data-a="${ai}">
+           <div class="opt-head"><span class="opt-letter">${LETTERS[ai]}</span><span>${String(a.answer).replace(/</g,'&lt;')}</span></div>
+           <div class="opt-fb"></div>
+         </div>`
+      ).join('') + `</div>`;
+    container.appendChild(box);
+  });
+
+  container.addEventListener('click', e => {
+    const opt = e.target.closest('.quiz-opt');
+    if (!opt || opt.classList.contains('revealed')) return;
+    const q = data[+opt.dataset.q], a = q.answers[+opt.dataset.a];
+    opt.classList.add('revealed', a.correct ? 'correct' : 'wrong');
+    opt.querySelector('.opt-fb').textContent = (a.correct ? '✔ Correct: ' : '✘ Not quite: ') + a.feedback;
+    if (a.correct) {
+      solved.add(+opt.dataset.q);
+      progress.textContent = `Solved ${solved.size} / ${data.length}`;
+    }
+  });
+}
+
+/** Flashcards: data = [{front, back}] */
+function buildFlashcards(gridId, data) {
+  const grid = document.getElementById(gridId);
+  function render(cards) {
+    grid.innerHTML = cards.map(c =>
+      `<div class="flashcard">
+         <div class="fc-inner">
+           <div class="fc-face fc-front"><div>${c.front}</div><div class="fc-hint">CLICK TO FLIP</div></div>
+           <div class="fc-face fc-back">${c.back}</div>
+         </div>
+       </div>`).join('');
+  }
+  render(data);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.flashcard');
+    if (card) card.classList.toggle('flipped');
+  });
+  document.getElementById('flipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.add('flipped')));
+  document.getElementById('unflipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.remove('flipped')));
+  document.getElementById('shuffleCards').addEventListener('click', ()=>{
+    const shuffled = [...data].sort(()=>Math.random()-.5);
+    render(shuffled);
+  });
+}
+
+/* ============================================================
+   4.4 Riemann-sum integration visualizer — f(x) = x² + 1 on [0, 2]
+   ============================================================ */
+(function initRiemann(){
+  const canvas = document.getElementById('riemannCanvas');
+  const ctx = canvas.getContext('2d');
+  const slider = document.getElementById('riemannN');
+  const nVal = document.getElementById('riemannNVal');
+  const readout = document.getElementById('riemannReadout');
+  const f = x => x*x + 1;
+  const X0 = 0, X1 = 2, EXACT = 14/3;
+  const W = canvas.width, H = canvas.height;
+  const pad = {l:52, r:20, t:18, b:36};
+  const YMAX = 5.5;
+  const sx = x => pad.l + (x - X0)/(X1 - X0) * (W - pad.l - pad.r);
+  const sy = y => H - pad.b - (y/YMAX) * (H - pad.t - pad.b);
+
+  function draw(n){
+    ctx.clearRect(0, 0, W, H);
+    // rectangles (left endpoint) first, so the curve draws on top
+    const dx = (X1 - X0)/n;
+    let sum = 0;
+    for (let i = 0; i < n; i++){
+      const x = X0 + i*dx, h = f(x);
+      sum += h*dx;
+      ctx.fillStyle = 'rgba(41,128,185,.22)';
+      ctx.fillRect(sx(x), sy(h), sx(x+dx)-sx(x), sy(0)-sy(h));
+      ctx.strokeStyle = 'rgba(44,62,122,.55)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(sx(x), sy(h), sx(x+dx)-sx(x), sy(0)-sy(h));
+    }
+    // axes
+    ctx.strokeStyle = '#8a8578'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(pad.l, sy(0)); ctx.lineTo(W-pad.r, sy(0)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad.l, sy(0)); ctx.lineTo(pad.l, pad.t); ctx.stroke();
+    // ticks + labels
+    ctx.fillStyle = '#8a8578'; ctx.font = '12px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    for (let x = 0; x <= 2; x += 0.5){
+      ctx.beginPath(); ctx.moveTo(sx(x), sy(0)); ctx.lineTo(sx(x), sy(0)+4); ctx.stroke();
+      ctx.fillText(String(x), sx(x), sy(0)+18);
+    }
+    ctx.textAlign = 'right';
+    for (let y = 1; y <= 5; y++){
+      ctx.beginPath(); ctx.moveTo(pad.l-4, sy(y)); ctx.lineTo(pad.l, sy(y)); ctx.stroke();
+      ctx.fillText(String(y), pad.l-8, sy(y)+4);
+    }
+    // curve
+    ctx.strokeStyle = '#c0392b'; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let i = 0; i <= 200; i++){
+      const x = X0 + (X1 - X0)*i/200;
+      i === 0 ? ctx.moveTo(sx(x), sy(f(x))) : ctx.lineTo(sx(x), sy(f(x)));
+    }
+    ctx.stroke();
+    ctx.fillStyle = '#c0392b'; ctx.font = 'bold 13px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('f(x) = x² + 1', pad.l + 12, pad.t + 14);
+    // readout
+    const err = Math.abs(EXACT - sum);
+    nVal.textContent = 'n = ' + n;
+    readout.innerHTML =
+      `<span>n = ${n}</span>` +
+      `<span class="ok">Σ f(xᵢ)Δx = ${sum.toFixed(5)}</span>` +
+      `<span>exact 14/3 ≈ 4.66667</span>` +
+      `<span class="${err < 0.05 ? 'ok' : 'bad'}">|error| = ${err.toFixed(5)}</span>`;
+  }
+  slider.addEventListener('input', () => draw(+slider.value));
+  draw(+slider.value);
+})();
+
+/* ============================================================
+   4.5 Local-minimum trap stepper — f(x) = x² + 10·sin(x)
+   Marker positions precomputed by gradient descent (lr = 0.06).
+   ============================================================ */
+(function initTrap(){
+  const canvas = document.getElementById('trapCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const f = x => x*x + 10*Math.sin(x);
+  const XMIN = -10, XMAX = 10, YMIN = -12, YMAX = 42;
+  const pad = {l:46, r:14, t:12, b:30};
+  const sx = x => pad.l + (x - XMIN)/(XMAX - XMIN) * (W - pad.l - pad.r);
+  const sy = y => pad.t + (YMAX - y)/(YMAX - YMIN) * (H - pad.t - pad.b);
+
+  const GLOBAL = {x:-1.3064, fx:-7.9458};
+  const LOCAL  = {x: 3.8375, fx: 8.3156};
+  const PATH1 = [-5, -4.57, -3.937, -3.044, -2.082, -1.373, -1.3064];  // x0 = -5 → global min
+  const PATH2 = [4, 3.912, 3.873, 3.846, 3.8375];                     // x0 = 4  → local min
+
+  function drawBase(){
+    ctx.clearRect(0, 0, W, H);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(pad.l, pad.t, W - pad.l - pad.r, H - pad.t - pad.b);
+    ctx.clip();
+    // x-axis (y = 0) and curve, clipped to the plot area
+    ctx.strokeStyle = '#d5cfc2'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(sx(XMIN), sy(0)); ctx.lineTo(sx(XMAX), sy(0)); ctx.stroke();
+    ctx.strokeStyle = '#2980b9'; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let i = 0; i <= 400; i++){
+      const x = XMIN + (XMAX - XMIN)*i/400;
+      i === 0 ? ctx.moveTo(sx(x), sy(f(x))) : ctx.lineTo(sx(x), sy(f(x)));
+    }
+    ctx.stroke();
+    ctx.restore();
+    // frame axes + ticks
+    ctx.strokeStyle = '#8a8578'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(pad.l, H - pad.b); ctx.lineTo(W - pad.r, H - pad.b); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad.l, H - pad.b); ctx.lineTo(pad.l, pad.t); ctx.stroke();
+    ctx.fillStyle = '#8a8578'; ctx.font = '11px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    [-10, -5, 0, 5, 10].forEach(x => ctx.fillText(String(x), sx(x), H - pad.b + 16));
+    ctx.textAlign = 'right';
+    [-10, 0, 20, 40].forEach(y => ctx.fillText(String(y), pad.l - 6, sy(y) + 4));
+    // the two minima, always visible
+    ctx.fillStyle = '#1a6b4a';
+    ctx.beginPath(); ctx.arc(sx(GLOBAL.x), sy(GLOBAL.fx), 4, 0, 2*Math.PI); ctx.fill();
+    ctx.font = '11px "JetBrains Mono", monospace'; ctx.textAlign = 'center';
+    ctx.fillText('global min', sx(GLOBAL.x), sy(GLOBAL.fx) + 18);
+    ctx.fillStyle = '#d68910';
+    ctx.beginPath(); ctx.arc(sx(LOCAL.x), sy(LOCAL.fx), 4, 0, 2*Math.PI); ctx.fill();
+    ctx.fillText('local min', sx(LOCAL.x), sy(LOCAL.fx) + 18);
+    // curve label
+    ctx.fillStyle = '#2980b9'; ctx.font = 'bold 12px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('f(x) = x² + 10·sin(x)', pad.l + 10, pad.t + 14);
+  }
+
+  function drawMarker(x, color, trail){
+    (trail || []).forEach(t => {
+      ctx.fillStyle = color + '55';
+      ctx.beginPath(); ctx.arc(sx(t), sy(f(t)), 4, 0, 2*Math.PI); ctx.fill();
+    });
+    // drop line from the marker to the x-axis
+    ctx.strokeStyle = color; ctx.lineWidth = 1;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath(); ctx.moveTo(sx(x), sy(f(x))); ctx.lineTo(sx(x), H - pad.b); ctx.stroke();
+    ctx.setLineDash([]);
+    // the ball
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(sx(x), sy(f(x)), 8, 0, 2*Math.PI); ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(sx(x), sy(f(x)), 8, 0, 2*Math.PI); ctx.stroke();
+    ctx.fillStyle = color; ctx.font = 'bold 12px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('x = ' + x.toFixed(2), sx(x), H - pad.b - 6 - Math.max(0, sy(f(x)) - (H - pad.b - 20)));
+  }
+
+  const C1 = '#2c3e7a', C2 = '#c0392b';
+  const steps = [];
+  steps.push({x:PATH1[0], color:C1, trail:[], note:'RUN 1 — minimize(f, x0=-5): drop the marker at the starting point x0 = -5.'});
+  for (let i = 1; i < PATH1.length - 1; i++){
+    steps.push({x:PATH1[i], color:C1, trail:PATH1.slice(0, i),
+      note:`Gradient step ${i}: the slope at the marker points downhill → roll to x ≈ ${PATH1[i].toFixed(2)}.`});
+  }
+  steps.push({x:GLOBAL.x, color:C1, trail:PATH1.slice(0, -1),
+    note:'✔ Run 1 converged: res.x ≈ [-1.306], res.fun ≈ -7.95 — the GLOBAL minimum.'});
+  steps.push({x:PATH2[0], color:C2, trail:[], note:'RUN 2 — minimize(f, x0=4): same function, new starting point on the other side of the hill.'});
+  for (let i = 1; i < PATH2.length - 1; i++){
+    steps.push({x:PATH2[i], color:C2, trail:PATH2.slice(0, i),
+      note:`Gradient step ${i}: downhill again → roll to x ≈ ${PATH2[i].toFixed(2)}.`});
+  }
+  steps.push({x:LOCAL.x, color:C2, trail:PATH2.slice(0, -1),
+    note:'✔ Run 2 converged: res.x ≈ [3.837], res.fun ≈ 8.32 — only a LOCAL minimum!'});
+  steps.push({summary:true,
+    note:'✔ Summary: minimize() follows the slope from x0 — the answer depends on the starting point; bounds or several restarts help.'});
+
+  function drawStep(s){
+    drawBase();
+    if (!s) return;
+    if (s.summary){
+      drawMarker(GLOBAL.x, C1, PATH1.slice(0, -1));
+      drawMarker(LOCAL.x, C2, PATH2.slice(0, -1));
+    } else {
+      drawMarker(s.x, s.color, s.trail);
+    }
+  }
+
+  StepRunner('trap', steps, {
+    interval: 1500,
+    onStep: s => drawStep(s),
+    onReset: () => drawBase()
+  });
+  drawBase();
+})();
+
+/* ============================================================
+   QUIZ — Module 4 test bank (answer key verified with SciPy 1.x)
+   ============================================================ */
+const QUIZ_DATA = [
+  { question:'If we want to solve a system of linear equations, which function from scipy.linalg can we use?', answers:[
+    { answer:'det()', correct:false, feedback:'det() computes the determinant — a single number. It can tell you whether a unique solution exists (det ≠ 0), but it does not find x.' },
+    { answer:'solve()', correct:true, feedback:'linalg.solve(A, b) is the tool: pass the coefficient matrix and the right-hand side, get x back — faster and more stable than inverting A.' },
+    { answer:'norm()', correct:false, feedback:'norm() measures the size (length) of a vector or matrix; it does not solve anything.' },
+    { answer:'eig()', correct:false, feedback:'eig() extracts eigenvalues and eigenvectors — a different problem (video 4.3).' } ] },
+  { question:'Which of the following statements is False?', answers:[
+    { answer:'SciPy stands for Scientific Python and builds on top of the NumPy library.', correct:false, feedback:'This is true — SciPy works directly on NumPy arrays and layers higher-level algorithms on top.' },
+    { answer:'numpy.linalg is preferred over scipy.linalg since it always calls routines that execute numerical operations optimally and contain more advanced functions.', correct:true, feedback:'It is exactly REVERSED: scipy.linalg is preferred — it always includes compiled BLAS/LAPACK support (optional in NumPy builds) and is a superset with more advanced routines.' },
+    { answer:'SciPy is an open-source library.', correct:false, feedback:'This is true — free, open source, and maintained by a large community.' },
+    { answer:'SciPy provides modules for optimization, integration, interpolation, eigenvalue problems, and more.', correct:false, feedback:'This is true — this course visits linalg, integrate, optimize and stats; there are many more sub-modules.' } ] },
+  { question:'Which of the following statements is False?', answers:[
+    { answer:'The primary SciPy namespace includes functions that belong to NumPy and are exposed for historical reasons, and usually, there\'s no need to use import scipy in our code.', correct:false, feedback:'This is true — you import the sub-modules (from scipy import linalg), never scipy itself.' },
+    { answer:'Performing matrix inverse is usually faster than using solve() function when solving linear equations for large datasets.', correct:true, feedback:'False — computing A⁻¹ and multiplying is SLOWER and less numerically stable than calling solve() directly; the course\'s Example 1 benchmarks exactly this.' },
+    { answer:'The linalg.eig() function returns a tuple, where the first item is a 1D NumPy array containing numbers representing the eigenvalues and the second item is a 2D NumPy array with the corresponding eigenvectors arranged in the columns.', correct:false, feedback:'This is true — unpack it as eigvals, eigvecs = linalg.eig(A) and read the i-th eigenvector as eigvecs[:, i].' },
+    { answer:'The minimize() function in SciPy can be used to solve optimization problems involving single or multiple variables.', correct:false, feedback:'This is true — minimize() handles multivariate input too; minimize_scalar() is the one-variable specialist.' } ] },
+  { question:'Which of the following statements is True?', answers:[
+    { answer:'The minimize() function in SciPy can return all the solutions in one time.', correct:false, feedback:'No — it follows the slope from your x0 and reports ONE result per run; different starting points can land in different minima.' },
+    { answer:'We need to provide an initial guess for the root() function to increase the chance of finding the roots of a function.', correct:true, feedback:'Correct — root(f, x0=…) requires a starting point, and which root you get depends strongly on it: for f(x) = x² + 10·sin(x), x0=1 finds 0.0 while x0=-2 finds -2.479.' },
+    { answer:'The minimize() and the root() functions will return a dictionary that gathers various relevant details from the optimizer\'s run.', correct:false, feedback:'Close, but no — they return an instance of the OptimizeResult CLASS: you read attributes like res.x, res.fun and res.success, not dictionary keys.' },
+    { answer:'When we want to find the maxima of a function, we can call the maximize() function under the scipy.optimize submodule.', correct:false, feedback:'There is no maximize() — to find a maximum you minimize -f(x) instead.' } ] },
+  { question:'Which of the following statements is False?', answers:[
+    { answer:'The eig() function will directly return the real eigenvalues if the input is a real symmetric matrix.', correct:true, feedback:'False — eig() ALWAYS returns complex numbers (dtype complex128), even when the input is real symmetric and the eigenvalues are mathematically real. Take .real yourself, or better, use eigh() for symmetric/Hermitian matrices.' },
+    { answer:'The quad() function will return a tuple where the first item is the integrated value while the second item is the error.', correct:false, feedback:'This is true — e.g. quad(cos, 0, π/2) → (0.9999999999999999, 1.11e-14).' },
+    { answer:'The ttest_ind() function will return a tuple where the first item is the value of the test statistic while the second item is the p-value associated with it.', correct:false, feedback:'This is true — (statistic, pvalue), e.g. (-4.13, 7.6e-05) for the course\'s two shifted samples.' },
+    { answer:'The curve_fit() function will use the least squares curve fitting to find the parameters of the model.', correct:false, feedback:'This is true — it minimizes the sum of squared residuals between your data and the model.' } ] },
+  { question:'The norm() function in scipy.stats refers to:', answers:[
+    { answer:'Normalizing a matrix.', correct:false, feedback:'No — despite the name, stats.norm has nothing to do with normalizing data.' },
+    { answer:'Computing the L2 norm.', correct:false, feedback:'That is scipy.linalg.norm() — same word, different sub-module, different meaning. Namespaces keep them apart!' },
+    { answer:'A normal (Gaussian) continuous random variable.', correct:true, feedback:'Right — stats.norm is a distribution object: norm.pdf(x), norm.cdf(x), norm.rvs(size=…) and more.' },
+    { answer:'Calculating the area under a curve.', correct:false, feedback:'Integration lives in scipy.integrate (quad, simpson). stats.norm is a distribution object.' } ] },
+  { question:'When comparing NumPy and SciPy, which statement is True?', answers:[
+    { answer:'NumPy is built on top of SciPy.', correct:false, feedback:'Reversed — the array foundation comes first, the algorithms sit on top.' },
+    { answer:'SciPy is built on top of NumPy.', correct:true, feedback:'Correct — SciPy consumes and returns NumPy arrays and layers higher-level scientific algorithms on top of them.' },
+    { answer:'Both NumPy and SciPy are independent with no shared functions.', correct:false, feedback:'No — SciPy depends on NumPy, and the primary scipy namespace even re-exports NumPy functions for historical reasons.' },
+    { answer:'SymPy serves as the foundation for both NumPy and SciPy.', correct:false, feedback:'SymPy is symbolic mathematics (Module 3) — a separate world; the numeric stack rests on NumPy.' } ] },
+  { question:'If you\'re looking to find the root of a function (i.e., where it equals zero), which function from scipy.optimize would be best suited for this purpose?', answers:[
+    { answer:'minimize()', correct:false, feedback:'minimize() finds where f is SMALLEST, not where it crosses zero.' },
+    { answer:'curve_fit()', correct:false, feedback:'curve_fit() fits model parameters to data points — a least-squares job.' },
+    { answer:'root()', correct:true, feedback:'root(f, x0) searches from your initial guess for a point where f(x) = 0; root_scalar() is the one-variable version.' },
+    { answer:'linprog()', correct:false, feedback:'linprog() minimizes a linear objective under linear constraints — a different optimization task.' } ] },
+];
+buildQuiz('quizContainer', 'quizProgress', QUIZ_DATA);
+
+/* ============================================================
+   FLASHCARDS — Key terms from Module 4
+   ============================================================ */
+const CARD_DATA = [
+  {front:'Namespace', back:'A container holding a set of identifiers (variable and function names) so different parts of a program can reuse a name without collisions — scipy.stats.norm vs scipy.linalg.norm.'},
+  {front:'Sub-modules', back:'Individual task-specific components inside a larger module — scipy.linalg, integrate, optimize, stats. They keep code manageable, maintainable and reusable; you import each one separately.'},
+  {front:'BLAS (Basic Linear Algebra Subprograms)', back:'A standard interface for basic linear-algebra operations (vector addition, scalar multiplication, dot products…) with optimized implementations; scipy.linalg always includes its support.'},
+  {front:'LAPACK (Linear Algebra PACKage)', back:'A library for solving linear equations, eigenvalue problems and singular value decomposition — built on BLAS and designed to be efficient across computer architectures.'},
+  {front:'Singular', back:'A point where a mathematical object is not well-behaved — a singular matrix has no inverse (det = 0). Eigenvalues are exactly the λ that make A − λI singular.'},
+  {front:'Non-trivial Solutions', back:'Solutions that are not the obvious one: in the homogeneous system Ax = 0 the trivial solution is x = 0; non-trivial solutions (x ≠ 0) exist only when A is singular.'},
+  {front:'Numerical Integration', back:'Approximating a definite integral with numerical techniques (finite sums of areas) instead of an antiderivative — used when an analytical solution is difficult or impossible. quad() and simpson() do this.'},
+  {front:'Numerical Differentiation', back:'Approximating derivatives of a function from numerical values rather than symbolic rules — employed, like numerical integration, when an analytical solution is unattainable.'},
+  {front:'Optimization', back:'Finding the best solution from a set of possible ones — maximizing or minimizing a value such as profit or cost, possibly subject to constraints. scipy.optimize covers fitting, extrema and roots.'},
+  {front:'Least Squares Curve Fitting', back:'Finding the best-fitting curve for data points by minimizing the sum of squared differences between the observed values and the curve\'s predictions — what curve_fit() does under the hood.'},
+  {front:'Hypothesis Testing', back:'Making inferences about a population from sample data: assume a null hypothesis, then use statistics (like ttest_ind\'s p-value) to decide whether the data supports or contradicts it.'},
+];
+buildFlashcards('flashGrid', CARD_DATA);
+/* ============================================================
+   Floating nav active highlight
+   ============================================================ */
+(function initFloatNav(){
+  const links = document.querySelectorAll('.float-nav a[data-target]');
+  const sections = [...links].map(a => document.getElementById(a.dataset.target)).filter(Boolean);
+  function update(){
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= window.innerHeight * 0.35) active = s.id;
+    }
+    links.forEach(a => a.classList.toggle('active', a.dataset.target === active));
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>

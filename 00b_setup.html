@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>00B · Home Environment Setup — Self-Study Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:17px;}
+
+/* Hero */
+.hero{min-height:56vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2.5rem 2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:880px;}
+.hero .chapter-tag{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#f39c12;letter-spacing:.3em;margin-bottom:.8rem;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(1.9rem,4.6vw,3rem);font-weight:900;color:#fff;letter-spacing:.02em;line-height:1.25;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.15rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{font-family:'JetBrains Mono',monospace;color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.0rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+ul,ol{margin:0 0 1rem 1.4rem;}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:40px;}
+.toc-grid a .toc-dur{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent3);margin-left:auto;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box p:last-child,.info-box ul:last-child,.info-box ol:last-child{margin-bottom:0;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+.cmp-table td.tl{font-family:'Noto Sans TC',sans-serif;text-align:left;font-size:.85rem;}
+
+/* Viz layout */
+.viz-layout{display:grid;grid-template-columns:1fr 320px;gap:1.3rem;margin:1.2rem 0;align-items:start;}
+@media(max-width:900px){.viz-layout{grid-template-columns:1fr;}}
+.viz-panel{background:linear-gradient(160deg,#fffdf7 0%,#f4efe3 100%);border:1px solid var(--card-border);border-radius:12px;padding:1rem;box-shadow:0 4px 18px rgba(0,0,0,.06);position:relative;}
+.side-panel{display:flex;flex-direction:column;gap:.85rem;}
+.info-card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.info-card .ic-title{font-size:.72rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem;border-bottom:1px solid var(--card-border);padding-bottom:.3rem;display:flex;align-items:center;justify-content:space-between;}
+.info-card .ic-title .ic-badge{font-size:.7rem;color:#fff;background:var(--accent3);padding:1px 7px;border-radius:3px;letter-spacing:.05em;font-weight:700;}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.65;overflow-x:auto;margin:.8rem 0;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .line.active{background:rgba(243,156,18,.3);color:#fff;border-left:3px solid #f39c12;padding-left:6px;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .str{color:#f1fa8c;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+
+/* Status banner */
+.status-banner{margin-top:.8rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;min-height:42px;display:flex;align-items:center;gap:.6rem;}
+.status-banner .status-icon{color:#2ecc71;font-weight:700;}
+.status-banner .status-text{flex:1;}
+
+/* Controls */
+.controls-bar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--card-border);}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-play.active{background:var(--accent);}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-step:disabled{background:#ccc;cursor:not-allowed;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+
+/* Preset buttons */
+.preset-row{display:flex;gap:.4rem;flex-wrap:wrap;margin:.6rem 0 1rem;}
+.preset-btn{font-family:'JetBrains Mono',monospace;font-size:.78rem;padding:.4rem .85rem;border-radius:6px;border:2px solid var(--card-border);background:var(--card);cursor:pointer;transition:all .2s;color:var(--ink);}
+.preset-btn:hover{border-color:var(--accent2);}
+.preset-btn.active{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+
+/* Variable state table */
+.var-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+.var-table td{padding:.25rem .4rem;border-bottom:1px dashed var(--card-border);}
+.var-table td.vname{color:var(--accent2);font-weight:600;}
+.var-table td.vval{color:var(--ink);}
+.var-table td.vtype{color:var(--muted);font-size:.72rem;text-align:right;}
+.var-table tr.changed td{background:var(--highlight);}
+.var-empty{color:var(--muted);font-size:.8rem;font-style:italic;}
+
+/* Console */
+.console{background:#111;border-radius:8px;padding:.6rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#d4d4d4;min-height:70px;max-height:220px;overflow-y:auto;line-height:1.6;}
+.console .out-line{white-space:pre-wrap;}
+.console .out-line.new{color:#2ecc71;}
+.console .in-line{color:#f39c12;}
+.console .err-line{color:#e74c3c;}
+
+/* Sandbox */
+.sandbox{background:var(--card);border:2px solid var(--accent3);border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.sandbox .sandbox-label{position:absolute;top:-11px;left:14px;background:var(--accent3);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.input-row{display:flex;gap:.5rem;align-items:center;margin:.5rem 0;flex-wrap:wrap;}
+.input-row label{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent2);font-weight:600;}
+.input-row input[type="text"]{font-family:'JetBrains Mono',monospace;font-size:.9rem;padding:.45rem .7rem;border:1px solid var(--card-border);border-radius:6px;background:#fff;flex:1;min-width:120px;}
+.sandbox-result{margin-top:.6rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.9rem;min-height:46px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+.sandbox-result .ok{color:#2ecc71;font-weight:700;}
+.sandbox-result .bad{color:#e67e22;font-weight:700;}
+.sandbox-result .type-badge{background:#50fa7b;color:#1a1a2e;font-weight:700;padding:1px 10px;border-radius:4px;font-size:.82rem;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.quiz-box .quiz-label .multi-badge{background:#8e44ad;color:#fff;font-size:.68rem;padding:1px 8px;border-radius:3px;}
+.quiz-box .quiz-q{font-weight:600;margin-bottom:.6rem;}
+.quiz-box .quiz-code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:.6rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.84rem;margin-bottom:.8rem;white-space:pre-wrap;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0 0;}
+.quiz-opt{display:flex;flex-direction:column;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.9rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-head{display:flex;align-items:baseline;gap:.6rem;}
+.quiz-opt .opt-letter{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt .opt-fb{display:none;font-size:.82rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--card-border);color:#555;}
+.quiz-opt.revealed .opt-fb{display:block;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.correct .opt-fb{color:#14532d;}
+.quiz-opt.wrong{background:#fef5e7;border-color:#d68910;}
+.quiz-opt.wrong .opt-letter{color:#d68910;}
+.quiz-progress{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;margin:.8rem 0;}
+
+/* Flashcards */
+.card-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.flashcard{perspective:900px;height:160px;cursor:pointer;}
+.flashcard .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+.flashcard .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.flashcard .fc-front{background:linear-gradient(150deg,#2c3e7a,#1a1a2e);color:#fff;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.flashcard .fc-front .fc-hint{font-size:.66rem;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.flashcard .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:34px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+/* Chapter nav */
+.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin:2rem 0 0;flex-wrap:wrap;}
+.chapter-nav a{flex:1;min-width:220px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.3rem;text-decoration:none;color:var(--ink);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.chapter-nav a:hover{border-color:var(--accent2);transform:translateY(-2px);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+footer a{color:var(--accent2);}
+
+/* 🤖 Ask-AI / discussion box */
+.ai-box{background:var(--card);border:2px dashed #8e44ad;border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.ai-box .ai-label{position:absolute;top:-11px;left:14px;background:#8e44ad;color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.ai-box p:last-child{margin-bottom:0;}
+.ai-box .ai-prompt{font-family:'JetBrains Mono',monospace;font-size:.85rem;background:rgba(142,68,173,.08);border-radius:6px;padding:.4rem .8rem;display:block;margin:.4rem 0;color:#6c3485;}
+
+/* 🎓 Chapter-end bridge */
+.bridge-box{background:#eafaf1;border:2px solid var(--accent3);border-radius:12px;padding:1.3rem 1.5rem;margin:2rem 0 0;}
+.bridge-box .bb-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent3);font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.bridge-box ul{margin:.3rem 0 .8rem 1.3rem;font-size:.92rem;}
+.bridge-box .bb-next{font-size:.9rem;color:var(--accent2);border-top:1px dashed var(--accent3);padding-top:.6rem;margin-bottom:0;}
+
+/* ===== Course-companion components ===== */
+
+/* 📺 Video card */
+.video-card{background:linear-gradient(150deg,#1a1a2e 0%,#232345 100%);border-radius:14px;padding:1.3rem 1.6rem;margin:1.2rem 0;color:#fff;position:relative;overflow:hidden;}
+.video-card::before{content:'📺';position:absolute;top:-12px;right:8px;font-size:4.8rem;opacity:.09;}
+.video-card .vc-tag{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#f39c12;letter-spacing:.2em;margin-bottom:.45rem;}
+.video-card .vc-file{font-family:'JetBrains Mono',monospace;font-size:.95rem;color:#8be9fd;word-break:break-all;}
+.video-card .vc-meta{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.6rem 0 .1rem;}
+.vc-dur{font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.14);color:#f1fa8c;font-size:.78rem;font-weight:600;padding:2px 10px;border-radius:4px;}
+.vc-lms{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;background:var(--accent3);color:#fff;text-decoration:none;transition:background .2s;}
+.vc-lms:hover{background:#22845c;}
+.vc-lms.placeholder{background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);cursor:default;}
+.video-card details{margin-top:.7rem;}
+.video-card details summary{cursor:pointer;color:#5dade2;font-size:.85rem;font-family:'JetBrains Mono',monospace;}
+.vb-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:.6rem;}
+.vb-table td{padding:.32rem .5rem;border-bottom:1px dashed rgba(255,255,255,.12);color:rgba(255,255,255,.85);}
+.vb-table tr:last-child td{border-bottom:none;}
+.vb-table td.vb-time{font-family:'JetBrains Mono',monospace;color:#2ecc71;white-space:nowrap;font-size:.76rem;}
+
+/* Materials map */
+.mat-map{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.9rem 0;padding:.7rem 1rem;background:var(--card);border:1px solid var(--card-border);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.mat-map .mm-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.12em;margin-right:.3rem;}
+.mat-map a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;text-decoration:none;border:2px solid var(--card-border);color:var(--accent2);transition:all .2s;background:var(--paper);}
+.mat-map a:hover{border-color:var(--accent2);}
+.mat-map span.mm-video{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);padding:3px 6px;}
+
+/* Array grid visualization */
+.ag-stage{background:#fafafa;border:1px solid #ececec;border-radius:8px;padding:1.1rem;display:flex;gap:1.8rem;align-items:center;justify-content:center;flex-wrap:wrap;min-height:170px;margin-bottom:.6rem;}
+.ag-block{display:flex;flex-direction:column;align-items:center;gap:.45rem;}
+.ag-name{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent2);font-weight:700;}
+.array-grid{display:grid;gap:4px;}
+.ag-cell{width:52px;height:38px;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--card-border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.82rem;transition:all .25s;position:relative;}
+.ag-cell.sel{background:var(--highlight);border-color:#f39c12;color:#b9770e;font-weight:700;transform:scale(1.07);z-index:1;}
+.ag-cell.dim{opacity:.32;}
+.ag-cell.res{background:#eafaf1;border-color:var(--accent3);color:var(--accent3);font-weight:700;}
+.ag-cell.ghost{background:repeating-linear-gradient(45deg,#f6f2ea,#f6f2ea 5px,#efe9dd 5px,#efe9dd 10px);border-style:dashed;color:var(--muted);}
+.ag-axis{font-family:'JetBrains Mono',monospace;font-size:.64rem;color:var(--muted);}
+@media(max-width:600px){.ag-cell{width:42px;height:32px;font-size:.72rem;}}
+
+/* Materials links become placeholders until DOCS_BASE is configured */
+a.mm-doc.placeholder{opacity:.55;cursor:default;pointer-events:none;border-style:dashed !important;color:var(--muted) !important;text-decoration:none;}
+
+/* Setup checklist */
+.check-list{display:flex;flex-direction:column;gap:.45rem;margin:.6rem 0;}
+.check-item{padding:.55rem .9rem .55rem 2.4rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.92rem;position:relative;}
+.check-item::before{content:'○';position:absolute;left:.9rem;color:var(--muted);font-weight:700;}
+.check-item:hover{border-color:var(--accent2);}
+.check-item.done{background:#eafaf1;border-color:var(--accent3);color:#14532d;}
+.check-item.done::before{content:'✔';color:var(--accent3);}
+</style>
+</head>
+<body>
+
+<!-- Floating navigation sidebar -->
+<nav class="float-nav" id="floatNav" aria-label="Chapter navigation">
+  <div class="fn-title">CHAPTER 00B</div>
+  <a href="#why" data-target="why"><span class="fn-num">P00</span><span class="fn-name">Why prepare an environment</span></a>
+  <a href="#colab" data-target="colab"><span class="fn-num">P01</span><span class="fn-name">Option 1 · Google Colab</span></a>
+  <a href="#anaconda" data-target="anaconda"><span class="fn-num">P02</span><span class="fn-name">Option 2 · Anaconda</span></a>
+  <a href="#vscode" data-target="vscode"><span class="fn-num">P03</span><span class="fn-name">Option 3 · VS Code / pip</span></a>
+  <a href="#learnmode" data-target="learnmode"><span class="fn-num">P04</span><span class="fn-name">Colab Learn Mode</span></a>
+  <a href="#checklist" data-target="checklist"><span class="fn-num">P05</span><span class="fn-name">Checklist &amp; FAQ</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">Resources</span></a>
+  <a href="#top" class="fn-top" title="Back to top"><span class="fn-num">↑ TOP</span></a>
+</nav>
+
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="chapter-tag">CHAPTER 00B · BEFORE MODULE 1</div>
+    <h1>Set up your <span class="green">home</span> study environment</h1>
+    <div class="subtitle">This is a self-study course — your "computer lab" is wherever you are. Run Python in the browser with zero installs, or set up your own machine for the long run.</div>
+    <div class="big-formula">Google Colab｜Anaconda + Jupyter｜VS Code / pip</div>
+    <div class="scroll-hint">Scroll down to get set up<span>↓</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">CONTENTS</div>
+  <div class="toc-grid">
+    <a href="#why"><span class="toc-num">P00</span>Why prepare an environment?</a>
+    <a href="#colab"><span class="toc-num">P01</span>Option 1 · Google Colab (recommended)</a>
+    <a href="#anaconda"><span class="toc-num">P02</span>Option 2 · Anaconda (local install)</a>
+    <a href="#vscode"><span class="toc-num">P03</span>Option 3 · VS Code / pip</a>
+    <a href="#learnmode"><span class="toc-num">P04</span>Colab Gemini "Learn Mode"</a>
+    <a href="#checklist"><span class="toc-num">P05</span>Setup checklist &amp; FAQ</a>
+    <a href="#reference"><span class="toc-num">REF</span>Resources</a>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section id="why">
+  <div class="section-number">PROLOGUE · WHY BOTHER?</div>
+  <h2>Why prepare an environment first?</h2>
+  <p>Writing Python needs two things: an <strong>interpreter</strong> that executes your code, and a place to <strong>write</strong> it and see the results. All materials in this course are <code>.ipynb</code> <strong>Jupyter notebooks</strong> — documents that mix explanations, runnable code, and outputs, perfect for studying alongside these companion pages. Since you study at home, pick whichever of the three options below fits you — <strong>one is enough</strong>:</p>
+
+  <table class="cmp-table">
+    <tr><th>Option</th><th>Install anything?</th><th>Account needed?</th><th>Best for</th></tr>
+    <tr><td>Google Colab</td><td class="best">No — just a browser</td><td>Gmail</td><td class="tl">Starting right now; switching computers; built-in AI tutor</td></tr>
+    <tr><td>Anaconda + Jupyter</td><td>Yes (local)</td><td class="best">None</td><td class="tl">Long-term use on your own machine; works offline</td></tr>
+    <tr><td>VS Code / pip + venv</td><td>Yes (lighter)</td><td class="best">None</td><td class="tl">You already have Python and like an editor/IDE</td></tr>
+  </table>
+
+  <div class="info-box green">
+    <div class="info-label">💡 NO IDEA? PICK THIS</div>
+    <p style="margin-bottom:0;">If you just want to start today, jump to <a href="#colab">Option 1 · Google Colab</a> — nothing to install, and section <a href="#learnmode">P04</a> shows a built-in AI feature that is genuinely great for self-study.</p>
+  </div>
+
+  <p>Before or after setting up, watch the two orientation videos:</p>
+  <div class="video-card">
+    <div class="vc-tag">ORIENTATION VIDEOS</div>
+    <div class="vc-file">1.0_Overview.mp4 · 0.1_Introduction to Colab.mp4</div>
+    <div class="vc-meta"><a class="vc-lms" data-video="1.0_Overview.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details>
+      <summary>▸ What they cover</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">1.0 Overview</td><td>A tour of the whole course — what each module does and how they fit together (companion slides: 01_Introduction.pptx).</td></tr>
+        <tr><td class="vb-time">0.1 Colab</td><td>Google Colab basics: cells, magic &amp; shell commands, the left sidebar, mounting Google Drive.</td></tr>
+      </table>
+    </details>
+  </div>
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="Colab_notebook.html">📓 Colab intro notebook</a>
+    <span class="mm-video">🎞 01_Introduction.pptx (overview slides)</span>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="colab">
+  <div class="section-number">OPTION 1 · ZERO INSTALL · RECOMMENDED</div>
+  <h2>Google Colab — Python in your browser</h2>
+  <p><a href="https://colab.research.google.com/" target="_blank" rel="noopener">Google Colab</a> is a free online Jupyter Notebook service: open the browser, sign in with a Gmail account, and write Python — nothing to install, and your work follows you to any computer.</p>
+  <h3>Steps</h3>
+  <ol>
+    <li>Get a Gmail account, then open <a href="https://colab.research.google.com/" target="_blank" rel="noopener">Google Colab</a> and sign in.</li>
+    <li>Download the course notebooks (<code>.ipynb</code> files) from 網路大學, then upload them to your <strong>Google Drive</strong>.</li>
+    <li>In Google Drive, right-click a notebook → <strong>Open with → Google Colaboratory</strong> — start reading and running cells.</li>
+  </ol>
+  <div class="info-box green">
+    <div class="info-label">✔ EVERY COURSE LIBRARY IS PRE-INSTALLED</div>
+    <p style="margin-bottom:0;">Colab already ships with <strong>all five libraries this course uses</strong> — NumPy, Matplotlib, SymPy, SciPy, and Pandas — so every notebook from Module 1 to Module 5 runs out of the box. (Each course notebook also starts with a package-check cell that installs anything missing.)</p>
+  </div>
+  <div class="info-box warm">
+    <div class="info-label">⚠ GOOD TO KNOW</div>
+    <p style="margin-bottom:0;">Notebooks opened from Drive are auto-saved back to Drive, like Google Docs. The free tier is plenty for this course — no GPU needed. If a session sits idle it disconnects; just reconnect and re-run the cells (Runtime → Run all).</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="anaconda">
+  <div class="section-number">OPTION 2 · LOCAL INSTALL</div>
+  <h2>Anaconda + Jupyter — your own machine, works offline</h2>
+  <p><a href="https://www.anaconda.com/download/success" target="_blank" rel="noopener">Anaconda</a> is a one-shot installer that sets up the Python interpreter, Jupyter Notebook, <strong>and the entire scientific stack of this course</strong> (NumPy, Matplotlib, SymPy, SciPy, Pandas — all included). Install once and you can study offline, forever.</p>
+  <h3>Steps</h3>
+  <ol>
+    <li>Download <a href="https://www.anaconda.com/download/success" target="_blank" rel="noopener">Anaconda</a> for your OS (Windows / macOS) and install it.</li>
+    <li>Download the course notebooks from 網路大學 and unzip them into a folder you can find again.</li>
+    <li>Launch <strong>Jupyter Notebook</strong> (from Anaconda Navigator or by running <code>jupyter notebook</code> in a terminal), browse to the course folder, and open a notebook such as <code>01_Basic_NumPy.ipynb</code>.</li>
+  </ol>
+  <div class="info-box warm">
+    <div class="info-label">⚠ COMMON HICCUPS</div>
+    <p style="margin-bottom:0;">The installer is large (500&nbsp;MB+): allow 10–20 minutes and ~5&nbsp;GB of disk. If the download stalls, antivirus software or a restrictive network is the usual culprit — try another network. On Windows, prefer "Just Me" installation if you hit permission errors.</p>
+  </div>
+  <div class="info-box">
+    <div class="info-label">🎞 OPTIONAL · SLIDE MODE</div>
+    <p style="margin-bottom:0;">The course notebooks are also designed for <strong>RISE</strong> (a Jupyter extension that turns notebooks into presentation slides). Installing RISE is optional — the static slide HTML files on 網路大學 show the same content without any setup.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="vscode">
+  <div class="section-number">OPTION 3 · LIGHTWEIGHT</div>
+  <h2>VS Code or pip — for those who already have Python</h2>
+  <p>Already comfortable with a terminal and an editor? Two lighter paths:</p>
+  <h3>A. VS Code + Jupyter extension</h3>
+  <ol>
+    <li>Install <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">VS Code</a>, then add the <strong>Python</strong> and <strong>Jupyter</strong> extensions.</li>
+    <li>Open any course <code>.ipynb</code> file directly — VS Code runs it cell by cell just like Jupyter.</li>
+  </ol>
+  <h3>B. Plain pip in a virtual environment</h3>
+  <div class="pseudo-code">
+<span class="line">python -m venv scicomp          <span class="com"># create an isolated environment</span></span>
+<span class="line">source scicomp/bin/activate     <span class="com"># Windows: scicomp\Scripts\activate</span></span>
+<span class="line">pip install numpy matplotlib sympy scipy pandas jupyter</span>
+<span class="line">jupyter notebook                <span class="com"># then open the course notebooks</span></span></div>
+  <p>Whichever option you chose, verify it with this two-liner in a notebook cell — every version should print without an error:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">import</span> numpy, matplotlib, sympy, scipy, pandas</span>
+<span class="line"><span class="fn">print</span>(numpy.__version__, matplotlib.__version__, sympy.__version__, scipy.__version__, pandas.__version__)</span></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="learnmode">
+  <div class="section-number">PART 04 · YOUR AI TUTOR</div>
+  <h2>Colab's Gemini "Learn Mode" — an AI that teaches instead of ghostwriting</h2>
+  <p>If you picked Google Colab, one feature deserves special attention. Every Colab notebook has a built-in <strong>Gemini chat</strong>, and Google added two companion features aimed squarely at self-learners: <strong>Custom Instructions</strong> and <strong>Learn Mode</strong>.</p>
+
+  <table class="cmp-table">
+    <tr><th>Feature</th><th>What it does</th></tr>
+    <tr><td>Custom Instructions</td><td class="tl">Store your preferences — your style rules, which module you're on, "answer using only methods we've covered" — <em>at the notebook level</em>. The instructions travel with the notebook, so a study group can share one pre-configured assistant.</td></tr>
+    <tr><td>Learn Mode</td><td class="tl">Powered by Custom Instructions. When on, Gemini <strong>stops handing you finished code to copy-paste</strong>. Instead it answers with step-by-step guidance that breaks down the concept — like a tutor beside you, not a ghostwriter. Toggle it in the Gemini chat window.</td></tr>
+  </table>
+
+  <div class="info-box green">
+    <div class="info-label">✦ WHY THIS COURSE RECOMMENDS IT</div>
+    <p style="margin-bottom:0;">Learn Mode is built for exactly the situation you are in — self-studying without a teacher in the room. When you hit code you don't understand, asking <em>"why is it written this way?"</em> in Learn Mode feels like being guided step by step — a perfect match for this course's <strong>predict → run → verify</strong> habit, and for everything <a href="00a_why_code.html">Chapter 00A</a> said about protecting your learning loop.</p>
+  </div>
+
+  <p>Google provides official example notebooks with Learn Mode pre-configured — open one and feel how it guides rather than answers:</p>
+  <ul>
+    <li>→ <a href="https://colab.research.google.com/drive/1Tes-C6WNL99HKx4Ghg9ckGYSWRLxn-CA" target="_blank" rel="noopener">List practice (official example)</a></li>
+    <li>→ <a href="https://colab.research.google.com/drive/1Y39sN0zqWvFDY3o6EPu1J0BcTiqPUhp4" target="_blank" rel="noopener">String practice (official example)</a></li>
+  </ul>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 PROMPTS THAT WORK WELL IN LEARN MODE</div>
+    <span class="ai-prompt">Why does this cell output this result? Walk me through it — don't give me the final answer yet.</span>
+    <span class="ai-prompt">How does this relate to the views-vs-copies idea from Module 1.3? (give the AI your course context)</span>
+    <span class="ai-prompt">Don't write the code for me — guide me step by step and let me type each part myself.</span>
+  </div>
+
+  <p style="font-size:.9rem;color:var(--muted);">If your Colab UI looks different, Google may still be rolling the feature out to your account — study normally and check again later. Source: <a href="https://blog.google/innovation-and-ai/technology/developers-tools/colab-updates/" target="_blank" rel="noopener">Google's official blog: Introducing Learn Mode in Google Colab</a>.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="checklist">
+  <div class="section-number">PART 05 · READY?</div>
+  <h2>Setup checklist &amp; FAQ</h2>
+  <p>Whichever option you picked, click each item off before starting Module 1:</p>
+
+  <div class="sandbox">
+    <div class="sandbox-label">✅ CHECKLIST</div>
+    <div class="check-list" id="checkList">
+      <div class="check-item">I picked ONE of the three options (Colab / Anaconda / VS Code-pip)</div>
+      <div class="check-item">I downloaded the course notebooks from 網路大學 (and, for Colab, uploaded them to Google Drive)</div>
+      <div class="check-item">I can open at least one course notebook (e.g. 01_Basic_NumPy.ipynb)</div>
+      <div class="check-item">I ran the first code cell and saw its output</div>
+      <div class="check-item">The five-library import check prints all versions without errors</div>
+      <div class="check-item">(Colab only, optional) I found the Gemini chat window and tried Learn Mode</div>
+    </div>
+    <div class="sandbox-result" id="checkResult"></div>
+  </div>
+
+  <h3>FAQ</h3>
+  <div class="info-box warm">
+    <div class="info-label">⚠ Q &amp; A</div>
+    <p style="margin-bottom:.4rem;"><strong>Q: Can I use both Colab and a local install?</strong><br>Yes — they don't interfere. Many students use Anaconda at home and Colab everywhere else.</p>
+    <p style="margin-bottom:.4rem;"><strong>Q: Will my edits in Colab be lost?</strong><br>No. Notebooks opened from Google Drive are saved back to Drive automatically, like Google Docs.</p>
+    <p style="margin-bottom:.4rem;"><strong>Q: I can't find the Gemini chat window.</strong><br>It normally sits at the top-right or in the side panel of a Colab notebook. If it's absent, the feature may not have reached your account yet — everything else in the course works without it.</p>
+    <p style="margin-bottom:0;"><strong>Q: Do I need a GPU or Colab Pro?</strong><br>No. Every notebook in Modules 1–5 runs comfortably on the free CPU tier.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="reference">
+  <div class="section-number">REFERENCE · LINKS</div>
+  <h2>Resources</h2>
+  <table class="cmp-table">
+    <tr><th>Resource</th><th>What it is</th></tr>
+    <tr><td><a href="https://colab.research.google.com/" target="_blank" rel="noopener">Google Colab</a></td><td class="tl">Free browser-based Jupyter environment (Option 1)</td></tr>
+    <tr><td><a href="https://www.anaconda.com/download/success" target="_blank" rel="noopener">Anaconda download</a></td><td class="tl">One-shot local installer with the full scientific stack (Option 2)</td></tr>
+    <tr><td><a href="https://code.visualstudio.com/" target="_blank" rel="noopener">VS Code</a></td><td class="tl">Editor that runs .ipynb via the Python + Jupyter extensions (Option 3)</td></tr>
+    <tr><td><a href="https://blog.google/innovation-and-ai/technology/developers-tools/colab-updates/" target="_blank" rel="noopener">Colab updates (Google blog)</a></td><td class="tl">Official announcement of Learn Mode &amp; Custom Instructions</td></tr>
+    <tr><td>網路大學 course site</td><td class="tl">All course videos, notebooks, and slides live here</td></tr>
+  </table>
+
+  <div class="bridge-box">
+    <div class="bb-title">🎓 ENVIRONMENT READY?</div>
+    <ul>
+      <li>You can open and run a course notebook, and the five-library import check passes.</li>
+      <li>You know where the videos, notebooks, and slides live (網路大學).</li>
+      <li>Bonus: your Colab Gemini is switched into tutor mode, not ghostwriter mode.</li>
+    </ul>
+    <p class="bb-next">NEXT ▸ Module 1 begins: stop writing loops, start thinking in arrays.</p>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="00a_why_code.html"><div class="nav-dir">◂ PREV</div><div class="nav-title">00A · Why still learn scientific computing?</div></a>
+    <a href="01_numpy.html" class="next"><div class="nav-dir">NEXT ▸</div><div class="nav-title">Module 1 · Array-Oriented Programming with NumPy</div></a>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Scientific Computing with Python · Chapter 00B: Home environment setup<br>
+  Learn Mode section adapted from Google's official Colab announcement · videos, notebooks &amp; slides on 網路大學
+</footer>
+
+<script>
+/* ============================================================
+   Video / materials links — EDIT HERE (same mechanism as the
+   module pages). Set the base URLs of the 網路大學 course site.
+   ============================================================ */
+const LMS_BASE = '';
+const LMS_VIDEO_URLS = {};
+(function applyLmsLinks(){
+  document.querySelectorAll('a.vc-lms[data-video]').forEach(a => {
+    const url = LMS_VIDEO_URLS[a.dataset.video] || LMS_BASE;
+    if (url) { a.href = url; a.target = '_blank'; a.rel = 'noopener'; }
+    else { a.classList.add('placeholder'); a.removeAttribute('href'); a.title = 'Please find this video in the course resources on 網路大學'; }
+  });
+})();
+const DOCS_BASE = '';
+const DOC_URLS  = {};
+(function applyDocLinks(){
+  document.querySelectorAll('a.mm-doc[data-doc]').forEach(a => {
+    let url = DOC_URLS[a.dataset.doc] || (DOCS_BASE ? DOCS_BASE.replace(/\/+$/,'') + '/' + a.dataset.doc : '');
+    if (url) {
+      if (a.dataset.frag) url += '#' + a.dataset.frag;
+      a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    } else {
+      a.classList.add('placeholder');
+      a.removeAttribute('href');
+      a.title = "Please find the slides / notebooks in the course resources on 網路大學";
+    }
+  });
+})();
+
+/* ============================================================
+   Setup checklist
+   ============================================================ */
+(function initChecklist(){
+  const list = document.getElementById('checkList');
+  const result = document.getElementById('checkResult');
+  const items = list.querySelectorAll('.check-item');
+  function update(){
+    const done = list.querySelectorAll('.check-item.done').length;
+    if (done === 0) result.innerHTML = '<span class="bad">0 / ' + items.length + '</span> click each item as you complete it';
+    else if (done < items.length) result.innerHTML = '<span class="ok">' + done + ' / ' + items.length + '</span> keep going…';
+    else result.innerHTML = '<span class="ok">✔ ' + done + ' / ' + items.length + '</span> environment ready — see you in Module 1! 🎉';
+  }
+  list.addEventListener('click', e => {
+    const item = e.target.closest('.check-item');
+    if (item) { item.classList.toggle('done'); update(); }
+  });
+  update();
+})();
+
+/* Floating nav active highlight */
+(function initFloatNav(){
+  const links = document.querySelectorAll('.float-nav a[data-target]');
+  const sections = [...links].map(a => document.getElementById(a.dataset.target)).filter(Boolean);
+  function update(){
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= window.innerHeight * 0.35) active = s.id;
+    }
+    links.forEach(a => a.classList.toggle('active', a.dataset.target === active));
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 3 · Symbolic Mathematics with SymPy — Self-Study Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:17px;}
+
+/* Hero */
+.hero{min-height:56vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2.5rem 2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:880px;}
+.hero .chapter-tag{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#f39c12;letter-spacing:.3em;margin-bottom:.8rem;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(1.9rem,4.6vw,3rem);font-weight:900;color:#fff;letter-spacing:.02em;line-height:1.25;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.15rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{font-family:'JetBrains Mono',monospace;color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.0rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+ul,ol{margin:0 0 1rem 1.4rem;}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:40px;}
+.toc-grid a .toc-dur{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent3);margin-left:auto;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box p:last-child,.info-box ul:last-child,.info-box ol:last-child{margin-bottom:0;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+.cmp-table td.tl{font-family:'Noto Sans TC',sans-serif;text-align:left;font-size:.85rem;}
+
+/* Viz layout */
+.viz-layout{display:grid;grid-template-columns:1fr 320px;gap:1.3rem;margin:1.2rem 0;align-items:start;}
+@media(max-width:900px){.viz-layout{grid-template-columns:1fr;}}
+.viz-panel{background:linear-gradient(160deg,#fffdf7 0%,#f4efe3 100%);border:1px solid var(--card-border);border-radius:12px;padding:1rem;box-shadow:0 4px 18px rgba(0,0,0,.06);position:relative;}
+.side-panel{display:flex;flex-direction:column;gap:.85rem;}
+.info-card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.info-card .ic-title{font-size:.72rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem;border-bottom:1px solid var(--card-border);padding-bottom:.3rem;display:flex;align-items:center;justify-content:space-between;}
+.info-card .ic-title .ic-badge{font-size:.7rem;color:#fff;background:var(--accent3);padding:1px 7px;border-radius:3px;letter-spacing:.05em;font-weight:700;}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.65;overflow-x:auto;margin:.8rem 0;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .line.active{background:rgba(243,156,18,.3);color:#fff;border-left:3px solid #f39c12;padding-left:6px;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .str{color:#f1fa8c;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+
+/* Status banner */
+.status-banner{margin-top:.8rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;min-height:42px;display:flex;align-items:center;gap:.6rem;}
+.status-banner .status-icon{color:#2ecc71;font-weight:700;}
+.status-banner .status-text{flex:1;}
+
+/* Controls */
+.controls-bar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--card-border);}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-play.active{background:var(--accent);}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-step:disabled{background:#ccc;cursor:not-allowed;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+
+/* Preset buttons */
+.preset-row{display:flex;gap:.4rem;flex-wrap:wrap;margin:.6rem 0 1rem;}
+.preset-btn{font-family:'JetBrains Mono',monospace;font-size:.78rem;padding:.4rem .85rem;border-radius:6px;border:2px solid var(--card-border);background:var(--card);cursor:pointer;transition:all .2s;color:var(--ink);}
+.preset-btn:hover{border-color:var(--accent2);}
+.preset-btn.active{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+
+/* Variable state table */
+.var-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+.var-table td{padding:.25rem .4rem;border-bottom:1px dashed var(--card-border);}
+.var-table td.vname{color:var(--accent2);font-weight:600;}
+.var-table td.vval{color:var(--ink);}
+.var-table td.vtype{color:var(--muted);font-size:.72rem;text-align:right;}
+.var-table tr.changed td{background:var(--highlight);}
+.var-empty{color:var(--muted);font-size:.8rem;font-style:italic;}
+
+/* Console */
+.console{background:#111;border-radius:8px;padding:.6rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#d4d4d4;min-height:70px;max-height:220px;overflow-y:auto;line-height:1.6;}
+.console .out-line{white-space:pre-wrap;}
+.console .out-line.new{color:#2ecc71;}
+.console .in-line{color:#f39c12;}
+.console .err-line{color:#e74c3c;}
+
+/* Sandbox */
+.sandbox{background:var(--card);border:2px solid var(--accent3);border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.sandbox .sandbox-label{position:absolute;top:-11px;left:14px;background:var(--accent3);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.input-row{display:flex;gap:.5rem;align-items:center;margin:.5rem 0;flex-wrap:wrap;}
+.input-row label{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent2);font-weight:600;}
+.input-row input[type="text"]{font-family:'JetBrains Mono',monospace;font-size:.9rem;padding:.45rem .7rem;border:1px solid var(--card-border);border-radius:6px;background:#fff;flex:1;min-width:120px;}
+.sandbox-result{margin-top:.6rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.9rem;min-height:46px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+.sandbox-result .ok{color:#2ecc71;font-weight:700;}
+.sandbox-result .bad{color:#e67e22;font-weight:700;}
+.sandbox-result .type-badge{background:#50fa7b;color:#1a1a2e;font-weight:700;padding:1px 10px;border-radius:4px;font-size:.82rem;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.quiz-box .quiz-label .multi-badge{background:#8e44ad;color:#fff;font-size:.68rem;padding:1px 8px;border-radius:3px;}
+.quiz-box .quiz-q{font-weight:600;margin-bottom:.6rem;}
+.quiz-box .quiz-code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:.6rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.84rem;margin-bottom:.8rem;white-space:pre-wrap;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0 0;}
+.quiz-opt{display:flex;flex-direction:column;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.9rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-head{display:flex;align-items:baseline;gap:.6rem;}
+.quiz-opt .opt-letter{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt .opt-fb{display:none;font-size:.82rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--card-border);color:#555;}
+.quiz-opt.revealed .opt-fb{display:block;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.correct .opt-fb{color:#14532d;}
+.quiz-opt.wrong{background:#fef5e7;border-color:#d68910;}
+.quiz-opt.wrong .opt-letter{color:#d68910;}
+.quiz-progress{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;margin:.8rem 0;}
+
+/* Flashcards */
+.card-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.flashcard{perspective:900px;height:160px;cursor:pointer;}
+.flashcard .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+.flashcard .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.flashcard .fc-front{background:linear-gradient(150deg,#2c3e7a,#1a1a2e);color:#fff;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.flashcard .fc-front .fc-hint{font-size:.66rem;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.flashcard .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:34px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+/* Chapter nav */
+.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin:2rem 0 0;flex-wrap:wrap;}
+.chapter-nav a{flex:1;min-width:220px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.3rem;text-decoration:none;color:var(--ink);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.chapter-nav a:hover{border-color:var(--accent2);transform:translateY(-2px);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+footer a{color:var(--accent2);}
+
+/* 🤖 Ask-AI / discussion box */
+.ai-box{background:var(--card);border:2px dashed #8e44ad;border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.ai-box .ai-label{position:absolute;top:-11px;left:14px;background:#8e44ad;color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.ai-box p:last-child{margin-bottom:0;}
+.ai-box .ai-prompt{font-family:'JetBrains Mono',monospace;font-size:.85rem;background:rgba(142,68,173,.08);border-radius:6px;padding:.4rem .8rem;display:block;margin:.4rem 0;color:#6c3485;}
+
+/* 🎓 Chapter-end bridge */
+.bridge-box{background:#eafaf1;border:2px solid var(--accent3);border-radius:12px;padding:1.3rem 1.5rem;margin:2rem 0 0;}
+.bridge-box .bb-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent3);font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.bridge-box ul{margin:.3rem 0 .8rem 1.3rem;font-size:.92rem;}
+.bridge-box .bb-next{font-size:.9rem;color:var(--accent2);border-top:1px dashed var(--accent3);padding-top:.6rem;margin-bottom:0;}
+
+/* ===== Course-companion components ===== */
+
+/* 📺 Video card */
+.video-card{background:linear-gradient(150deg,#1a1a2e 0%,#232345 100%);border-radius:14px;padding:1.3rem 1.6rem;margin:1.2rem 0;color:#fff;position:relative;overflow:hidden;}
+.video-card::before{content:'📺';position:absolute;top:-12px;right:8px;font-size:4.8rem;opacity:.09;}
+.video-card .vc-tag{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#f39c12;letter-spacing:.2em;margin-bottom:.45rem;}
+.video-card .vc-file{font-family:'JetBrains Mono',monospace;font-size:.95rem;color:#8be9fd;word-break:break-all;}
+.video-card .vc-meta{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.6rem 0 .1rem;}
+.vc-dur{font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.14);color:#f1fa8c;font-size:.78rem;font-weight:600;padding:2px 10px;border-radius:4px;}
+.vc-lms{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;background:var(--accent3);color:#fff;text-decoration:none;transition:background .2s;}
+.vc-lms:hover{background:#22845c;}
+.vc-lms.placeholder{background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);cursor:default;}
+.video-card details{margin-top:.7rem;}
+.video-card details summary{cursor:pointer;color:#5dade2;font-size:.85rem;font-family:'JetBrains Mono',monospace;}
+.vb-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:.6rem;}
+.vb-table td{padding:.32rem .5rem;border-bottom:1px dashed rgba(255,255,255,.12);color:rgba(255,255,255,.85);}
+.vb-table tr:last-child td{border-bottom:none;}
+.vb-table td.vb-time{font-family:'JetBrains Mono',monospace;color:#2ecc71;white-space:nowrap;font-size:.76rem;}
+
+/* Materials map */
+.mat-map{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.9rem 0;padding:.7rem 1rem;background:var(--card);border:1px solid var(--card-border);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.mat-map .mm-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.12em;margin-right:.3rem;}
+.mat-map a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;text-decoration:none;border:2px solid var(--card-border);color:var(--accent2);transition:all .2s;background:var(--paper);}
+.mat-map a:hover{border-color:var(--accent2);}
+.mat-map span.mm-video{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);padding:3px 6px;}
+
+/* Array grid visualization */
+.ag-stage{background:#fafafa;border:1px solid #ececec;border-radius:8px;padding:1.1rem;display:flex;gap:1.8rem;align-items:center;justify-content:center;flex-wrap:wrap;min-height:170px;margin-bottom:.6rem;}
+.ag-block{display:flex;flex-direction:column;align-items:center;gap:.45rem;}
+.ag-name{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent2);font-weight:700;}
+.array-grid{display:grid;gap:4px;}
+.ag-cell{width:52px;height:38px;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--card-border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.82rem;transition:all .25s;position:relative;}
+.ag-cell.sel{background:var(--highlight);border-color:#f39c12;color:#b9770e;font-weight:700;transform:scale(1.07);z-index:1;}
+.ag-cell.dim{opacity:.32;}
+.ag-cell.res{background:#eafaf1;border-color:var(--accent3);color:var(--accent3);font-weight:700;}
+.ag-cell.ghost{background:repeating-linear-gradient(45deg,#f6f2ea,#f6f2ea 5px,#efe9dd 5px,#efe9dd 10px);border-style:dashed;color:var(--muted);}
+.ag-axis{font-family:'JetBrains Mono',monospace;font-size:.64rem;color:var(--muted);}
+@media(max-width:600px){.ag-cell{width:42px;height:32px;font-size:.72rem;}}
+
+/* Materials links become placeholders until DOCS_BASE is configured */
+a.mm-doc.placeholder{opacity:.55;cursor:default;pointer-events:none;border-style:dashed !important;color:var(--muted) !important;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<!-- Floating navigation sidebar -->
+<nav class="float-nav" id="floatNav" aria-label="Module navigation">
+  <div class="fn-title">MODULE 3</div>
+  <a href="#s31" data-target="s31"><span class="fn-num">3.1</span><span class="fn-name">Introduction to SymPy</span></a>
+  <a href="#s32" data-target="s32"><span class="fn-num">3.2</span><span class="fn-name">Symbols &amp; operations</span></a>
+  <a href="#s33" data-target="s33"><span class="fn-num">3.3</span><span class="fn-name">Solving equations</span></a>
+  <a href="#s34" data-target="s34"><span class="fn-num">3.4</span><span class="fn-name">Calculus I: limits &amp; derivatives</span></a>
+  <a href="#s35" data-target="s35"><span class="fn-num">3.5</span><span class="fn-name">Calculus II: integrals &amp; series</span></a>
+  <a href="#s36" data-target="s36"><span class="fn-num">3.6</span><span class="fn-name">Linear algebra</span></a>
+  <a href="#quiz" data-target="quiz"><span class="fn-num">QUIZ</span><span class="fn-name">Self-check quiz</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">Key-term flashcards</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">Cheat sheet</span></a>
+  <a href="#top" class="fn-top" title="Back to top"><span class="fn-num">↑ TOP</span></a>
+</nav>
+
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="chapter-tag">MODULE 03 · 6 VIDEOS · ≈ 61 MIN</div>
+    <h1>Symbolic Mathematics with <span class="green">SymPy</span></h1>
+    <div class="subtitle">Compute with exact symbols instead of rounded floats — algebra, calculus and linear algebra done the way you would write them on paper.</div>
+    <div class="big-formula">symbols｜expand &amp; factor｜solve &amp; nsolve｜limits｜derivatives｜integrals｜Matrix</div>
+    <div class="scroll-hint">Scroll down and study along with the videos<span>↓</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · WATCH THE VIDEO, THEN WORK THROUGH EACH SECTION</div>
+  <div class="toc-grid">
+    <a href="#s31"><span class="toc-num">3.1</span>Introduction to SymPy<span class="toc-dur">13:37</span></a>
+    <a href="#s32"><span class="toc-num">3.2</span>Symbols &amp; symbolic operations<span class="toc-dur">10:06</span></a>
+    <a href="#s33"><span class="toc-num">3.3</span>Solving equations<span class="toc-dur">11:46</span></a>
+    <a href="#s34"><span class="toc-num">3.4</span>Calculus with SymPy - 1<span class="toc-dur">09:17</span></a>
+    <a href="#s35"><span class="toc-num">3.5</span>Calculus with SymPy - 2<span class="toc-dur">10:10</span></a>
+    <a href="#s36"><span class="toc-num">3.6</span>Linear algebra with SymPy<span class="toc-dur">06:13</span></a>
+    <a href="#quiz"><span class="toc-num">QUIZ</span>Self-check quiz (8 questions)</a>
+    <a href="#cards"><span class="toc-num">CARD</span>Key-term flashcards (13 cards)</a>
+    <a href="#reference"><span class="toc-num">REF</span>SymPy cheat sheet</a>
+  </div>
+</div>
+
+<div class="info-box green">
+  <div class="info-label">📖 HOW TO USE THIS PAGE</div>
+  <p style="margin-bottom:.4rem;">Each numbered section below matches one course video. A suggested study loop:</p>
+  <p style="margin-bottom:0;">① <strong>Watch</strong> the video on 網路大學 (the breakdown table tells you what happens when) → ② <strong>Read</strong> the digest and run the code yourself in the notebook → ③ <strong>Play</strong> with the interactive widgets to test your intuition → ④ <strong>Discuss</strong> the think-about-it questions (an AI assistant is a great sparring partner) → ⑤ Finish the module with the <a href="#quiz">quiz</a> and <a href="#cards">flashcards</a>.</p>
+</div>
+
+<!-- ============================================================ -->
+<section id="s31">
+  <div class="section-number">SUBMODULE 3.1 · INTRODUCTION</div>
+  <h2>3.1 Introduction to SymPy</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 3.1</div>
+    <div class="vc-file">3.1_Introduction to SymPy.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 13:37</span><a class="vc-lms" data-video="3.1_Introduction to SymPy.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details open>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 02:32</td><td>Module overview</td></tr>
+        <tr><td class="vb-time">02:32 – 05:19</td><td>Installation and configuration for SymPy</td></tr>
+        <tr><td class="vb-time">05:19 – 09:55</td><td>Utilizing SymPy as a calculator</td></tr>
+        <tr><td class="vb-time">09:55 – 13:37</td><td>Introduction to SymPy's constant objects</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Explain how <strong>symbolic</strong> computation differs from <strong>numerical</strong> computation, install and configure SymPy, and use it as an exact, arbitrary-precision calculator with constants like <code>sp.pi</code>, <code>sp.E</code> and <code>sp.oo</code>.</p>
+  </div>
+
+  <p><strong>Symbolic mathematics</strong> (also called <em>computer algebra</em>) manipulates equations as symbols — the way you do on paper. Ask ordinary Python for <code>1/3</code> and you get <code>0.3333333333333333</code>, a rounded 64-bit float. Ask SymPy and you get the exact rational <code>1/3</code>, which stays exact through every later step:</p>
+  <table class="cmp-table">
+    <tr><th></th><th>Numerical (float / NumPy)</th><th>Symbolic (SymPy)</th></tr>
+    <tr><td>1/3</td><td class="worst">0.3333333333333333 — rounded</td><td class="best">Rational(1, 3) — exactly ⅓</td></tr>
+    <tr><td>√2</td><td>1.4142135623730951 (≈16 digits, fixed)</td><td class="best">sqrt(2) — exact; evalf(100) → 100 digits</td></tr>
+    <tr><td>π, e, ∞</td><td class="tl">finite float approximations only</td><td class="best">exact objects: sp.pi, sp.E, sp.oo</td></tr>
+    <tr><td>Result of 0.1 + 0.2 − 0.3</td><td class="tl worst">5.55e-17 — a round-off residue</td><td class="best">exactly 0</td></tr>
+    <tr><td>Strength</td><td class="tl">speed on large arrays</td><td class="tl">exactness &amp; algebraic manipulation</td></tr>
+  </table>
+  <p>The working principle of the whole module: SymPy keeps everything <strong>exact until <em>you</em> ask for digits</strong> — and then <code>evalf()</code> can produce as many digits as your memory allows (<strong>arbitrary-precision arithmetic</strong>).</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">import</span> sympy <span class="kw">as</span> sp              <span class="com"># the conventional alias</span></span>
+<span class="line">sp.Rational(<span class="num">1</span>, <span class="num">3</span>) * <span class="num">6</span>          <span class="com"># 2 — exact rational arithmetic, no rounding</span></span>
+<span class="line">sp.Float(<span class="num">3.53</span>) + sp.Float(<span class="num">3</span>)   <span class="com"># 6.53 — Float has ARBITRARY precision (memory-limited)</span></span>
+<span class="line">(sp.pi + sp.exp(<span class="num">1</span>)).evalf()    <span class="com"># 5.85987448204884 — exact until YOU ask for digits</span></span>
+<span class="line">sp.sqrt(<span class="num">2</span>).evalf(<span class="num">100</span>)          <span class="com"># 1.414213562373095048801688724209… (100 sig. digits)</span></span>
+<span class="line">sp.oo &gt; <span class="num">999999</span>                 <span class="com"># True — even infinity is a first-class object</span></span></div>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="03_SymPy_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="03_SymPy_notebook.html" data-frag="Introduction">📓 Notebook §Introduction</a>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <p>Predict your answer first, then check it against the video — or debate it with ChatGPT / Gemini / Claude:</p>
+    <span class="ai-prompt">How do numerical arithmetic and symbolic arithmetic differ? What are their respective advantages and disadvantages, and why?</span>
+    <span class="ai-prompt">Why can SymPy give exact results when doing arithmetic, while regular Python floats cannot?</span>
+    <span class="ai-prompt">How does SymPy compare to other computer-algebra systems (Mathematica, Maple…) in terms of pros and cons? The official documentation has a comparison page.</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) Read up on binary floating point (e.g. the "Floating Point Arithmetic: Issues and Limitations" chapter of the Python docs) and explain why basic arithmetic like <code>0.1 + 0.2</code> in Python — or any language — may not yield precise results.</p>
+    <p style="margin-bottom:0;">(b) Evaluate the expression <strong>log 3 + e</strong> with a precision of <strong>20 significant digits</strong> using SymPy.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s32">
+  <div class="section-number">SUBMODULE 3.2 · SYMBOLS &amp; OPERATIONS</div>
+  <h2>3.2 Defining symbols and symbolic operations</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 3.2</div>
+    <div class="vc-file">3.2_Symbols.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 10:06</span><a class="vc-lms" data-video="3.2_Symbols.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 00:12</td><td>Introduction to the submodule</td></tr>
+        <tr><td class="vb-time">00:12 – 03:46</td><td>Defining symbols in SymPy</td></tr>
+        <tr><td class="vb-time">03:46 – 05:07</td><td>Application of expand and factor functions in SymPy</td></tr>
+        <tr><td class="vb-time">05:07 – 06:17</td><td>Modifying the SymPy printing environment</td></tr>
+        <tr><td class="vb-time">06:17 – 10:06</td><td>Usage of substitute and simplification functions in SymPy</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Create symbols with <code>sp.Symbol()</code> / <code>sp.symbols()</code>, build expressions from them, and transform those expressions with <code>expand()</code>, <code>factor()</code>, <code>subs()</code> and <code>simplify()</code> — plus control the order in which terms are printed.</p>
+  </div>
+
+  <p>A <strong>symbol</strong> is a placeholder that never evaluates to a number until you substitute one. Combine symbols with operators and you get an <strong>expression</strong> — SymPy stores it as-is and <em>never</em> simplifies or expands unless explicitly asked:</p>
+  <div class="pseudo-code">
+<span class="line">x = sp.Symbol(<span class="str">'x'</span>)              <span class="com"># the name is given as a string</span></span>
+<span class="line">x, y = sp.symbols(<span class="str">'x y'</span>)        <span class="com"># several at once (sympy.abc is a third way)</span></span>
+<span class="line">p = (x + y) ** <span class="num">2</span>                <span class="com"># stays (x + y)**2 — nothing happens automatically</span></span>
+<span class="line">p2 = sp.expand(p)               <span class="com"># x**2 + 2*x*y + y**2</span></span>
+<span class="line">sp.factor(p2)                   <span class="com"># (x + y)**2 — back again</span></span>
+<span class="line">p2.subs({x: <span class="num">1</span>, y: <span class="num">2</span>})           <span class="com"># 9 — a dict maps each symbol to its value</span></span>
+<span class="line">sp.simplify(p2.subs({x: <span class="num">1</span> - y})) <span class="com"># 1 — substitute an EXPRESSION, then simplify</span></span></div>
+
+  <h3>The four manipulation verbs</h3>
+  <table class="cmp-table">
+    <tr><th>Function</th><th>What it does</th><th>Example</th></tr>
+    <tr><td>expand()</td><td class="tl">multiply everything out into a sum of terms (<code>trig=True</code> unlocks trig identities)</td><td>(x + y)² → x² + 2xy + y²</td></tr>
+    <tr><td>factor()</td><td class="tl">the opposite — rewrite as a product of factors</td><td>x² − 1 → (x − 1)(x + 1)</td></tr>
+    <tr><td>simplify()</td><td class="tl">general "make it simpler" heuristic — tries many strategies</td><td>sin²x + cos²x → 1</td></tr>
+    <tr><td>subs()</td><td class="tl">replace a symbol by a value <em>or another expression</em>; returns a NEW expression</td><td>(x² + 3x + 1).subs(x, 2) → 11</td></tr>
+  </table>
+
+  <h3>🎬 Interactive: what does each manipulation actually do?</h3>
+  <p>Pick a SymPy call and step through the transformation chain — try to <strong>predict the next form before you click</strong>:</p>
+
+  <div class="preset-row" id="symPresets"></div>
+  <div class="viz-layout">
+    <div class="viz-panel">
+      <div class="ag-stage" id="symStage"></div>
+      <div class="status-banner"><span class="status-icon">▸</span><span class="status-text" id="symStatus">Pick an expression above, then press "Step ▸"</span></div>
+      <div class="controls-bar">
+        <button class="btn btn-play" id="symPlay">▶ Play</button>
+        <button class="btn btn-step" id="symStep">Step ▸</button>
+        <button class="btn btn-reset" id="symReset">↺ Reset</button>
+      </div>
+    </div>
+    <div class="side-panel">
+      <div class="info-card">
+        <div class="ic-title">The toolbox at a glance</div>
+        <table class="var-table">
+          <tr><td class="vname">expand()</td><td class="vval">multiply out</td></tr>
+          <tr><td class="vname">factor()</td><td class="vval">write as product</td></tr>
+          <tr><td class="vname">simplify()</td><td class="vval">shortest form</td></tr>
+          <tr><td class="vname">subs()</td><td class="vval">replace symbol</td></tr>
+        </table>
+      </div>
+      <div class="info-card">
+        <div class="ic-title">Expressions are immutable</div>
+        <p style="font-size:.82rem;margin:0;">Every manipulation returns a <strong>new</strong> expression — the original is never modified. That is why you write <code>p2 = sp.expand(p)</code> and keep both.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <div class="info-label">🖨 PRINTING ORDER — LEX VS REV-LEX</div>
+    <p style="margin-bottom:0;">By default SymPy prints a polynomial's terms in <strong>lexicographical order</strong> (<code>order='lex'</code>): descending powers of <code>x</code>, highest first. Call <code>sp.init_printing(order='rev-lex')</code> to reverse it — ascending powers, constant first: <code>1 + y + 2x² + x²y</code>. This only changes the <em>display</em>, never the mathematics. (The quiz loves this one.)</p>
+  </div>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="03_SymPy_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="03_SymPy_notebook.html" data-frag="Defining-symbols-and-symbolic-operations">📓 Notebook §Symbols</a>
+    <span class="mm-video">🎬 Exercise video: 3.2_Exercise.mp4</span>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <span class="ai-prompt">Explore the module sympy.abc and the function var(). In which scenarios are these more convenient than sp.Symbol() for creating symbols?</span>
+    <span class="ai-prompt">Browse SymPy's list of elementary functions in the documentation. What particularly useful functions did you uncover beyond expand/factor/simplify?</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) Work along with the exercise video <code>3.2_Exercise.mp4</code>.</p>
+    <p style="margin-bottom:0;">(b) Simplify <strong>tan(x) × cos(3x) × sin(x)</strong> so that the final result contains only <code>sin(x)</code> and its power terms (sin(x)ⁿ). <em>Hint:</em> combine <code>simplify()</code> and <code>expand()</code> — the <code>trig=True</code> option of <code>expand()</code> is useful.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s33">
+  <div class="section-number">SUBMODULE 3.3 · EQUATIONS</div>
+  <h2>3.3 Solving equations</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 3.3</div>
+    <div class="vc-file">3.3_Solving_Equation.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 11:46</span><a class="vc-lms" data-video="3.3_Solving_Equation.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 00:08</td><td>Introduction to the submodule</td></tr>
+        <tr><td class="vb-time">00:08 – 05:53</td><td>Introduction to the solve() function</td></tr>
+        <tr><td class="vb-time">05:53 – 07:52</td><td>Unveiling the nsolve() function</td></tr>
+        <tr><td class="vb-time">07:52 – 10:22</td><td>Guide on solving a system of equations</td></tr>
+        <tr><td class="vb-time">10:22 – 11:46</td><td>Examination of the nroots() function</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Solve single equations and systems of equations either <strong>symbolically</strong> with <code>solve()</code> or <strong>numerically</strong> with <code>nsolve()</code> / <code>nroots()</code> — and pick the right solver for each job.</p>
+  </div>
+
+  <p>SymPy assumes every expression you pass to a solver equals <strong>zero</strong>, so <code>x² + 2x − 8 = 0</code> is solved as <code>sp.solve(x**2 + 2*x - 8)</code>. The symbolic solver returns <em>exact</em> roots in a list; when no <strong>closed form</strong> (an exact-formula answer) exists, the numerical fallbacks take over:</p>
+  <div class="pseudo-code">
+<span class="line">x = sp.Symbol(<span class="str">'x'</span>)</span>
+<span class="line">sp.solve(x**<span class="num">2</span> - <span class="num">2</span>)                    <span class="com"># [-sqrt(2), sqrt(2)] — EXACT roots, in a list</span></span>
+<span class="line">y = sp.Symbol(<span class="str">'y'</span>)</span>
+<span class="line">sp.solve((x + y - <span class="num">6</span>, x - y - <span class="num">2</span>), dict=<span class="kw">True</span>)   <span class="com"># a system → [{x: 4, y: 2}] (dict=True labels each root)</span></span>
+<span class="line">sp.nsolve(sp.cos(x) - x, x, <span class="num">1</span>)       <span class="com"># 0.739085… — NUMERICAL, needs a starting point (here 1)</span></span>
+<span class="line">sp.nroots(x**<span class="num">3</span> + <span class="num">2</span>*x**<span class="num">2</span> - <span class="num">1</span>)         <span class="com"># ALL numerical roots — polynomials only</span></span></div>
+
+  <h3>Three solvers, three trade-offs</h3>
+  <table class="cmp-table">
+    <tr><th></th><th>solve()</th><th>nsolve()</th><th>nroots()</th></tr>
+    <tr><td>Kind</td><td class="best">symbolic — exact</td><td>numerical</td><td>numerical</td></tr>
+    <tr><td>Works on</td><td class="tl">equations &amp; systems with a closed form</td><td class="tl">almost any equation</td><td class="tl">polynomials only</td></tr>
+    <tr><td>Needs a starting point?</td><td>no</td><td class="worst">yes — result depends on it</td><td>no</td></tr>
+    <tr><td>Returns</td><td class="tl">list of exact expressions</td><td class="tl">one root near the guess</td><td class="tl">all roots as floats (incl. complex)</td></tr>
+    <tr><td>Fails when</td><td class="worst">no closed-form solution exists</td><td class="tl">bad starting guess</td><td class="tl">expression is not a polynomial</td></tr>
+  </table>
+
+  <div class="info-box">
+    <div class="info-label">📈 PLOT FIRST, THEN SOLVE</div>
+    <p style="margin-bottom:0;">The notebook has a short plotting detour right after this section (<code>sp.plot()</code>, <code>sp.plot_implicit()</code>). Sketching the function first tells you <em>how many</em> roots to expect and gives you good starting points for <code>nsolve()</code> — exactly the workflow the test bank asks for.</p>
+  </div>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="03_SymPy_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="03_SymPy_notebook.html" data-frag="Solving-equations">📓 Notebook §Solving equations</a>
+    <a class="mm-doc" data-doc="03_SymPy_notebook.html" data-frag="Plotting-using-SymPy">📓 Notebook §Plotting</a>
+    <span class="mm-video">🎬 Exercise video: 3.3_Exercise.mp4</span>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <span class="ai-prompt">Discuss the advantages and disadvantages of nroots(), solve() and nsolve(). Why is the symbolic solver typically slower than its numerical counterparts?</span>
+    <span class="ai-prompt">Experiment with different initial values for nsolve() — how does the starting point change which root you get, and can it fail to converge?</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) Work along with the exercise video <code>3.3_Exercise.mp4</code>.</p>
+    <p style="margin-bottom:0;">(b) Consider the system <strong>x + y + z = 6</strong>, <strong>2x + 3y + z = 12</strong>, <strong>3x − 2y + z = 2</strong>. Find the values (x, y, z) that satisfy all three equations using SymPy, then <code>subs()</code> the solution back into the original equations to verify it.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s34">
+  <div class="section-number">SUBMODULE 3.4 · CALCULUS I</div>
+  <h2>3.4 Calculus with SymPy - 1</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 3.4</div>
+    <div class="vc-file">3.4_Calculus with SymPy-1.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 09:17</span><a class="vc-lms" data-video="3.4_Calculus with SymPy-1.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 00:18</td><td>Introduction to the submodule</td></tr>
+        <tr><td class="vb-time">00:18 – 04:59</td><td>Tutorial on determining the limit of functions</td></tr>
+        <tr><td class="vb-time">04:59 – 08:26</td><td>Guide on computing the derivative of functions</td></tr>
+        <tr><td class="vb-time">08:26 – 09:17</td><td>Examination of higher order derivatives with SymPy</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Compute limits and derivatives (including higher-order ones), and explain the split personality of SymPy's calculus API: lowercase <code>limit()</code> / <code>diff()</code> evaluate <em>immediately</em>, Capitalized <code>Limit</code> / <code>Derivative</code> build an <strong>unevaluated object</strong> that waits for <code>.doit()</code>.</p>
+  </div>
+
+  <h3>🎬 Interactive: evaluated now — or stored for later?</h3>
+  <p>Step through nine calculus calls and watch which ones answer immediately and which hand you back an <strong>unevaluated object</strong>. This is exactly the distinction the quiz tests:</p>
+
+  <div class="viz-layout">
+    <div class="viz-panel">
+      <div class="pseudo-code" id="calcCode">
+<span class="line">sp.limit(sp.sin(x)/x, x, <span class="num">0</span>)</span>
+<span class="line">l = sp.Limit(sp.sin(x)/x, x, <span class="num">0</span>)</span>
+<span class="line">l.doit()</span>
+<span class="line">sp.diff(x**<span class="num">3</span>, x)</span>
+<span class="line">d = sp.Derivative(x**<span class="num">3</span>, x)</span>
+<span class="line">d.doit()</span>
+<span class="line">sp.integrate(x**<span class="num">2</span>, x)</span>
+<span class="line">sp.Integral(x**<span class="num">2</span>, (x, <span class="num">0</span>, <span class="num">1</span>)).doit()</span>
+<span class="line">_.evalf()      <span class="com"># _ means "the previous output" in a notebook</span></span></div>
+      <div class="console" id="calcOut"></div>
+      <div class="status-banner"><span class="status-icon">▸</span><span class="status-text" id="calcStatus">Press "Step ▸" to start</span></div>
+      <div class="controls-bar">
+        <button class="btn btn-play" id="calcPlay">▶ Play</button>
+        <button class="btn btn-step" id="calcStep">Step ▸</button>
+        <button class="btn btn-reset" id="calcReset">↺ Reset</button>
+      </div>
+    </div>
+    <div class="side-panel">
+      <div class="info-card">
+        <div class="ic-title">Result of each call <span class="ic-badge">LIVE</span></div>
+        <div id="calcVars"><div class="var-empty">not started</div></div>
+      </div>
+      <div class="info-card">
+        <div class="ic-title">The naming rule</div>
+        <p style="font-size:.82rem;margin:0;"><strong>lowercase</strong> <code>limit / diff / integrate</code> → evaluate <em>now</em>.<br><strong>Capitalized</strong> <code>Limit / Derivative / Integral</code> → build an unevaluated object; evaluate later with <code>.doit()</code>.<br><code>evalf()</code> → turn an exact result into a float.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pseudo-code">
+<span class="line">sp.limit(sp.sin(x)/x, x, <span class="num">0</span>)        <span class="com"># 1 — the classic indeterminate form, resolved exactly</span></span>
+<span class="line">sp.limit((<span class="num">1</span> + <span class="num">1</span>/x)**x, x, sp.oo)   <span class="com"># E — limits at infinity work too</span></span>
+<span class="line">sp.Limit(<span class="num">1</span>/x, x, <span class="num">0</span>, dir=<span class="str">'-'</span>).doit() <span class="com"># -oo — approach 0 from the LEFT</span></span>
+<span class="line">t = sp.Symbol(<span class="str">'t'</span>); St = <span class="num">5</span>*t**<span class="num">2</span>       <span class="com"># position of a falling object over time</span></span>
+<span class="line">sp.diff(St, t)                     <span class="com"># 10*t — first derivative of St w.r.t. t</span></span>
+<span class="line">sp.diff(St, t, <span class="num">2</span>)                  <span class="com"># higher order: the 3rd argument is the order</span></span></div>
+
+  <div class="info-box warm">
+    <div class="info-label">⚠ DEFAULT DIRECTION IS '+'</div>
+    <p style="margin-bottom:0;">Unless the limit point is ±∞, <code>sp.limit()</code> approaches the point from the <strong>positive side</strong> (<code>dir='+'</code>) by default. For a left-hand limit you must pass <code>dir='-'</code> explicitly — <code>sp.Limit(1/x, x, 0, dir='-')</code> gives −∞ while the default gives +∞. A favorite trap in the test bank.</p>
+  </div>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="03_SymPy_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="03_SymPy_notebook.html" data-frag="Calculus-with-SymPy---1">📓 Notebook §Calculus 1</a>
+    <span class="mm-video">🎬 Example video: 3.4_Example.mp4</span>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <span class="ai-prompt">Pick a set of functions (trigonometric, logarithmic, polynomial…) and find their derivatives with SymPy. Do the results match the derivative rules you learned in calculus?</span>
+    <span class="ai-prompt">Evaluate limits at specific points and at infinity, including indeterminate forms like sin(x)/x at 0 or (1 + 1/x)^x at infinity. How does SymPy resolve forms that look like 0/0?</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) Work along with the example video <code>3.4_Example.mp4</code>.</p>
+    <p style="margin-bottom:0;">(b) Extrema can occur at critical points (where f′ = 0 or is undefined) or at the boundaries. Find the maximum and minimum of <strong>f(x) = 3x⁴ − 4x³</strong> on <strong>[−1, 2]</strong> two ways: ① substitute 1000 evenly spaced numbers (NumPy: <code>linspace</code>, <code>max/min</code>, <code>argmax/argmin</code>); ② with SymPy, compute f′, find its roots, then evaluate f at the roots and at the boundaries −1 and 2. Do the two methods agree on where the extrema occur?</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s35">
+  <div class="section-number">SUBMODULE 3.5 · CALCULUS II</div>
+  <h2>3.5 Calculus with SymPy - 2</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 3.5</div>
+    <div class="vc-file">3.5_Calculus with SymPy-2.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 10:10</span><a class="vc-lms" data-video="3.5_Calculus with SymPy-2.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 00:19</td><td>Introduction to the submodule</td></tr>
+        <tr><td class="vb-time">00:19 – 03:02</td><td>Exploration of finding the indefinite integral of functions</td></tr>
+        <tr><td class="vb-time">03:02 – 04:50</td><td>How to find the definite and improper integrals of functions</td></tr>
+        <tr><td class="vb-time">04:50 – 07:18</td><td>How to perform a series expansion using SymPy</td></tr>
+        <tr><td class="vb-time">07:18 – 10:10</td><td>Introduction to the lambdify() function</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Compute indefinite, definite and improper integrals, expand a function into a Taylor series (and strip the <code>O(…)</code> term with <code>removeO()</code>), and convert any expression into a fast numerical function with <code>lambdify()</code>.</p>
+  </div>
+
+  <div class="pseudo-code">
+<span class="line">sp.integrate(x**<span class="num">2</span>, x)                    <span class="com"># x**3/3 — indefinite: note, NO "+ C"!</span></span>
+<span class="line">sp.Integral(sp.sin(x), (x, <span class="num">0</span>, sp.pi/<span class="num">2</span>)).doit()  <span class="com"># 1 — definite: pass (x, a, b)</span></span>
+<span class="line">sp.integrate(sp.exp(-x), (x, <span class="num">0</span>, sp.oo))  <span class="com"># 1 — improper: infinity is a legal bound</span></span>
+<span class="line">s = sp.series(sp.cos(x), x, <span class="num">0</span>, <span class="num">10</span>)      <span class="com"># 1 - x²/2 + x⁴/24 - … + O(x**10)</span></span>
+<span class="line">s.removeO()                              <span class="com"># drop O(x**10) so the polynomial can be evaluated</span></span>
+<span class="line">f = sp.lambdify(x, s.removeO(), <span class="str">'numpy'</span>) <span class="com"># symbolic → fast NumPy function</span></span>
+<span class="line">f(np.linspace(<span class="num">0</span>, <span class="num">1</span>, <span class="num">100</span>))               <span class="com"># evaluate 100 points at once — no loop needed</span></span></div>
+
+  <div class="info-box warm">
+    <div class="info-label">⚠ WHERE IS "+ C"?</div>
+    <p style="margin-bottom:0;"><code>integrate()</code> returns <strong>one</strong> antiderivative, not the whole family — the constant of integration is omitted because <em>any</em> constant works. If your problem needs it (e.g. an initial-value problem), add your own <code>C = sp.Symbol('C')</code>.</p>
+  </div>
+
+  <h3>Three ways from symbols to numbers</h3>
+  <table class="cmp-table">
+    <tr><th>Tool</th><th>Input → output</th><th>Use it when…</th></tr>
+    <tr><td>subs()</td><td>symbol ↦ value → new (exact) expression</td><td class="tl">one-off substitution, staying symbolic</td></tr>
+    <tr><td>evalf(n)</td><td>exact expression → Float with n digits</td><td class="tl">you want digits for one result</td></tr>
+    <tr><td class="best">lambdify()</td><td>expression → real Python/NumPy function</td><td class="tl">evaluating MANY points fast (plots, tables)</td></tr>
+  </table>
+  <p><code>lambdify()</code> is the bridge back to Module 1: do the mathematics symbolically, then hand the final formula to NumPy for fast array evaluation — no loop or list comprehension required.</p>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="03_SymPy_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="03_SymPy_notebook.html" data-frag="Calculus-with-SymPy---2">📓 Notebook §Calculus 2</a>
+    <span class="mm-video">🎬 Example video: 3.5_Example.mp4</span>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <span class="ai-prompt">Why does the indefinite integral computed by SymPy not include the constant of integration? When would leaving it out actually matter?</span>
+    <span class="ai-prompt">Plot a function and its Taylor-series approximation on the same graph (SymPy for the series, Matplotlib for the plot). Where does the approximation break down, and how does the number of terms change that?</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) Work along with the example video <code>3.5_Example.mp4</code>.</p>
+    <p style="margin-bottom:0;">(b) Compare two ways of approximating <strong>arctan(1) = π/4</strong> with an infinite series: ① compute Σ (−1)ⁿ x^(2n+1)/(2n+1) at x = 1 with NumPy; ② Taylor-expand <code>sp.atan(x)</code> at x = 0 with SymPy and evaluate it at 1. Set both to 100 terms and verify they agree. <em>Hint:</em> <code>lambdify()</code> converts the symbolic series into an efficiently evaluable function.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s36">
+  <div class="section-number">SUBMODULE 3.6 · LINEAR ALGEBRA</div>
+  <h2>3.6 Linear algebra with SymPy</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 3.6 · LAST VIDEO OF MODULE 3</div>
+    <div class="vc-file">3.6_Linear algebra with SymPy.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 06:13</span><a class="vc-lms" data-video="3.6_Linear algebra with SymPy.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 00:11</td><td>Introduction to the submodule</td></tr>
+        <tr><td class="vb-time">00:11 – 02:14</td><td>Techniques for constructing a matrix using various methods</td></tr>
+        <tr><td class="vb-time">02:14 – 04:54</td><td>Overview of basic operations on matrices using SymPy</td></tr>
+        <tr><td class="vb-time">04:54 – 06:13</td><td>Summary of the Module</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Construct <code>sp.Matrix</code> objects (from a list of rows, or with <code>eye</code> / <code>zeros</code> / <code>diag</code>) and perform <strong>exact</strong> matrix algebra — products, inverse, determinant, eigenvalues — even with symbols as elements.</p>
+  </div>
+
+  <div class="pseudo-code">
+<span class="line">a, b, c, x, y, z = sp.symbols(<span class="str">'a b c x y z'</span>)</span>
+<span class="line">m1 = sp.Matrix([[a, b, c], [x, y, z], [a, b, c]])  <span class="com"># list of ROWS — just like NumPy</span></span>
+<span class="line">m2 = sp.diag(a, b, c)              <span class="com"># diagonal matrix; sp.eye / sp.zeros also exist</span></span>
+<span class="line">m1 * m2.T                          <span class="com"># TRUE matrix product (element-wise needs multiply_elementwise())</span></span>
+<span class="line"><span class="num">3</span>*m1 + m2                          <span class="com"># scalar multiple and sum — element-wise</span></span>
+<span class="line">m1 + <span class="num">2</span>                             <span class="com"># ✘ Error! SymPy matrices do NOT broadcast</span></span>
+<span class="line">m2.inv(), m2.det(), m2.eigenvals() <span class="com"># exact inverse, determinant, eigenvalues</span></span></div>
+
+  <h3>sp.Matrix vs np.array — know which world you are in</h3>
+  <table class="cmp-table">
+    <tr><th></th><th>sp.Matrix</th><th>np.array</th></tr>
+    <tr><td>Elements</td><td class="best">exact numbers and symbols</td><td>fixed-size floats / ints</td></tr>
+    <tr><td>The * operator</td><td class="best">matrix multiplication</td><td>element-wise multiply</td></tr>
+    <tr><td>Element-wise multiply</td><td>multiply_elementwise()</td><td>* (or np.multiply)</td></tr>
+    <tr><td>Broadcasting</td><td class="worst">not supported (m + 2 is an error)</td><td class="best">fully supported</td></tr>
+    <tr><td>Speed</td><td class="worst">slower — but exact</td><td class="best">fast — but approximate</td></tr>
+  </table>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="03_SymPy_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="03_SymPy_notebook.html" data-frag="Linear-algebra-with-SymPy">📓 Notebook §Linear algebra</a>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <span class="ai-prompt">SymPy does not support broadcasting for matrix operations. How would you implement an element-wise operation between two matrices of different shapes anyway?</span>
+    <span class="ai-prompt">SymPy Gamma (gamma.sympy.org) is an open-source alternative to Wolfram Alpha. Use it to solve a problem from your linear-algebra textbook and compare the experience with writing the SymPy code yourself.</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) Experiment with the Matrix class: ① build a 3×1 column vector and a 3×3 matrix and report their <code>shape</code>; ② retrieve the first row and the second column; ③ replace the element at (0, 0) with 5, then delete the second and third columns so the matrix becomes a column vector; ④ multiply the two column vectors element-wise.</p>
+    <p style="margin-bottom:0;">(b) Choose a problem from your linear-algebra textbook and solve it with SymPy.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="quiz">
+  <div class="section-number">QUIZ · TEST BANK MODULE 3</div>
+  <h2>Self-check quiz: 8 questions</h2>
+  <p>Straight from the course test bank. Click the option you believe is right — every option explains itself, so a wrong click still teaches you something.</p>
+  <div class="quiz-progress" id="quizProgress">Solved 0 / 8</div>
+  <div id="quizContainer"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="cards">
+  <div class="section-number">FLASHCARDS · KEY TERMS</div>
+  <h2>Key-term flashcards: click to flip</h2>
+  <p>All 13 key terms from Module 3. Say the definition out loud <strong>before</strong> flipping!</p>
+  <div class="card-controls">
+    <button class="btn btn-step" id="flipAll">Flip all</button>
+    <button class="btn btn-reset" id="unflipAll">Unflip all</button>
+    <button class="btn btn-play" id="shuffleCards">🔀 Shuffle</button>
+  </div>
+  <div class="flash-grid" id="flashGrid"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="reference">
+  <div class="section-number">REFERENCE · CHEAT SHEET</div>
+  <h2>Module 3 cheat sheet</h2>
+
+  <h3>The SymPy toolbox in one table</h3>
+  <table class="cmp-table">
+    <tr><th>Task</th><th>Tool</th><th>Notes</th></tr>
+    <tr><td>Define symbols</td><td>sp.Symbol('x') · sp.symbols('x y') · sympy.abc</td><td class="tl">names given as strings; abc pre-defines single letters</td></tr>
+    <tr><td>Manipulate</td><td>expand() · factor() · simplify() · subs()</td><td class="tl">nothing simplifies automatically; expand(trig=True) for identities</td></tr>
+    <tr><td>Solve</td><td>solve() · nsolve(expr, x, x0) · nroots()</td><td class="tl">nsolve NEEDS a starting point x0; nroots is polynomials-only</td></tr>
+    <tr><td>Limits</td><td>sp.limit(f, x, a) / sp.Limit(…).doit()</td><td class="tl">default direction dir='+' (from above)</td></tr>
+    <tr><td>Derivatives</td><td>sp.diff(f, x, n) / sp.Derivative(…).doit()</td><td class="tl">third argument n = order of the derivative</td></tr>
+    <tr><td>Integrals</td><td>sp.integrate(f, x) or (f, (x, a, b)) / sp.Integral(…).doit()</td><td class="tl">no "+ C"; bounds may be sp.oo (improper)</td></tr>
+    <tr><td>Series</td><td>sp.series(f, x, 0, n) → .removeO()</td><td class="tl">strip O(xⁿ) before numerical use</td></tr>
+    <tr><td>Go numeric</td><td>evalf(n) · sp.lambdify(x, expr, 'numpy')</td><td class="tl">n significant digits · fast vectorized function</td></tr>
+    <tr><td>Linear algebra</td><td>sp.Matrix([rows]) · .inv() · .det() · .eigenvals()</td><td class="tl">* is MATRIX multiply; no broadcasting</td></tr>
+  </table>
+
+  <h3>solve() vs nsolve() vs nroots()</h3>
+  <table class="cmp-table">
+    <tr><th></th><th>solve()</th><th>nsolve()</th><th>nroots()</th></tr>
+    <tr><td>Answer type</td><td class="best">symbolic / exact</td><td>numerical (Float)</td><td>numerical (Floats)</td></tr>
+    <tr><td>Scope</td><td class="tl">equations &amp; systems with closed forms</td><td class="tl">nearly any single equation</td><td class="tl">polynomials only</td></tr>
+    <tr><td>Starting guess</td><td>—</td><td class="worst">required</td><td>—</td></tr>
+    <tr><td>Roots returned</td><td class="tl">all (that have a closed form)</td><td class="tl">one, near the guess</td><td class="best">all, incl. complex</td></tr>
+  </table>
+
+  <h3>Evaluated vs unevaluated — the one-line summary</h3>
+  <table class="cmp-table">
+    <tr><th>lowercase — evaluates now</th><th>Capitalized — stores the operation</th></tr>
+    <tr><td>sp.limit · sp.diff · sp.integrate</td><td>sp.Limit · sp.Derivative · sp.Integral → .doit()</td></tr>
+  </table>
+
+  <h3>Further reading</h3>
+  <ul>
+    <li><a href="https://gamma.sympy.org/" target="_blank" rel="noopener">SymPy Gamma</a> — the open-source Wolfram-Alpha-style front end to SymPy</li>
+    <li><a href="https://docs.sympy.org/latest/tutorials/intro-tutorial/index.html" target="_blank" rel="noopener">The official SymPy tutorial</a> — the natural next step after this module</li>
+    <li><a href="https://peerj.com/articles/cs-103/" target="_blank" rel="noopener">SymPy: symbolic computing in Python</a> — the PeerJ CS paper by the SymPy developers</li>
+  </ul>
+
+  <div class="bridge-box">
+    <div class="bb-title">🎓 AFTER THIS MODULE, YOU CAN…</div>
+    <ul>
+      <li>Compute with exact rationals, constants and arbitrary-precision floats instead of rounded doubles</li>
+      <li>Build expressions from symbols and reshape them with expand / factor / simplify / subs</li>
+      <li>Solve equations and systems symbolically — and fall back to nsolve() / nroots() when no closed form exists</li>
+      <li>Take limits, derivatives, integrals and series expansions, controlling evaluation with Capitalized classes, .doit() and evalf()</li>
+      <li>Do exact linear algebra with sp.Matrix and hand any result to NumPy via lambdify()</li>
+    </ul>
+    <p class="bb-next">NEXT ▸ Module 4 goes numerical — SciPy solves the problems symbols can't.</p>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="02_matplotlib.html"><div class="nav-dir">◂ PREVIOUS</div><div class="nav-title">Module 2 · Visualization with Matplotlib</div></a>
+    <a href="04_scipy.html" class="next"><div class="nav-dir">NEXT ▸</div><div class="nav-title">Module 4 · High-level Scientific Computing with SciPy</div></a>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Scientific Computing with Python · Module 3: Symbolic Mathematics with SymPy · self-study companion<br>
+  Videos, slides &amp; notebooks on 網路大學 · quiz taken from the course test bank · works with <code>03_SymPy.ipynb</code>
+</footer>
+<script>
+/* ============================================================
+   LMS video links — EDIT HERE.
+   Set LMS_BASE to your course page URL to make every "Watch on
+   網路大學" badge a real link, or map individual videos below.
+   ============================================================ */
+const LMS_BASE = '';                 // e.g. 'https://lms.example.edu/course/scicomp'
+const LMS_VIDEO_URLS = {             // per-video override (optional)
+  // '3.1_Introduction to SymPy.mp4': 'https://…',
+};
+(function applyLmsLinks(){
+  document.querySelectorAll('a.vc-lms[data-video]').forEach(a => {
+    const url = LMS_VIDEO_URLS[a.dataset.video] || LMS_BASE;
+    if (url) { a.href = url; a.target = '_blank'; a.rel = 'noopener'; }
+    else { a.classList.add('placeholder'); a.removeAttribute('href'); a.title = 'Please find this video in the course resources on 網路大學'; }
+  });
+})();
+
+/* ============================================================
+   Slides & notebook links — EDIT HERE.
+   The course materials (slides / notebook HTML) are hosted
+   separately, like the videos. Set DOCS_BASE to their base URL,
+   or map individual files in DOC_URLS. Until then the badges
+   show as inactive placeholders.
+   ============================================================ */
+const DOCS_BASE = '';            // e.g. 'https://your-host/scicomp-materials'
+const DOC_URLS  = {};            // per-file override, e.g. {'01_Basic_NumPy_slides.html': 'https://…'}
+(function applyDocLinks(){
+  document.querySelectorAll('a.mm-doc[data-doc]').forEach(a => {
+    let url = DOC_URLS[a.dataset.doc] || (DOCS_BASE ? DOCS_BASE.replace(/\/+$/,'') + '/' + a.dataset.doc : '');
+    if (url) {
+      if (a.dataset.frag) url += '#' + a.dataset.frag;
+      a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    } else {
+      a.classList.add('placeholder');
+      a.removeAttribute('href');
+      a.title = "Please find the slides / notebooks in the course resources on 網路大學";
+    }
+  });
+})();
+
+
+/* ============================================================
+   Shared engines: StepRunner / Quiz / Flashcards
+   ============================================================ */
+
+/** Step-through engine: steps = [{line, vars, out, note, …}] */
+function StepRunner(prefix, steps, opts) {
+  opts = opts || {};
+  const codeEl  = document.getElementById(prefix + 'Code');
+  const statusEl= document.getElementById(prefix + 'Status');
+  const varsEl  = document.getElementById(prefix + 'Vars');
+  const outEl   = document.getElementById(prefix + 'Out');
+  const playBtn = document.getElementById(prefix + 'Play');
+  const stepBtn = document.getElementById(prefix + 'Step');
+  const resetBtn= document.getElementById(prefix + 'Reset');
+  let idx = -1, timer = null;
+
+  function lines(){ return codeEl ? codeEl.querySelectorAll('.line') : []; }
+
+  function render() {
+    lines().forEach((l,i)=>{
+      l.classList.toggle('active', idx>=0 && steps[idx].line===i);
+    });
+    if (idx < 0) {
+      if (statusEl) statusEl.textContent = 'Press "Step ▸" to start';
+      if (varsEl) varsEl.innerHTML = '<div class="var-empty">not started</div>';
+      if (outEl) outEl.innerHTML = '';
+      if (opts.onReset) opts.onReset();
+      return;
+    }
+    const s = steps[idx];
+    if (statusEl) statusEl.textContent = s.note || '';
+    if (varsEl) {
+      if (s.vars && s.vars.length) {
+        varsEl.innerHTML = '<table class="var-table">' + s.vars.map(v =>
+          `<tr${v[3]?' class="changed"':''}><td class="vname">${v[0]}</td><td class="vval">${v[1]}</td><td class="vtype">${v[2]}</td></tr>`
+        ).join('') + '</table>';
+      } else {
+        varsEl.innerHTML = '<div class="var-empty">(no variables)</div>';
+      }
+    }
+    if (outEl) {
+      outEl.innerHTML = (s.out||[]).map((o,i)=>{
+        const cls = o.startsWith('⌨') ? 'in-line' : (i === (s.out.length-1) && s.newOut ? 'out-line new' : 'out-line');
+        return `<div class="${cls}">${o}</div>`;
+      }).join('');
+      outEl.scrollTop = outEl.scrollHeight;
+    }
+    if (opts.onStep) opts.onStep(s, idx);
+  }
+
+  function step() {
+    if (idx < steps.length - 1) { idx++; render(); }
+    if (idx >= steps.length - 1) stopPlay();
+  }
+  function stopPlay(){
+    if (timer) { clearInterval(timer); timer = null; }
+    if (playBtn){ playBtn.classList.remove('active'); playBtn.textContent = '▶ Play'; }
+  }
+  function play(){
+    if (timer) { stopPlay(); return; }
+    if (idx >= steps.length - 1) { idx = -1; render(); }
+    playBtn.classList.add('active'); playBtn.textContent = '⏸ Pause';
+    timer = setInterval(()=>{
+      if (idx >= steps.length - 1) stopPlay(); else step();
+    }, opts.interval || 1800);
+  }
+  function reset(){ stopPlay(); idx = -1; render(); }
+
+  if (playBtn) playBtn.addEventListener('click', play);
+  if (stepBtn) stepBtn.addEventListener('click', ()=>{ stopPlay(); step(); });
+  if (resetBtn) resetBtn.addEventListener('click', reset);
+  render();
+  return { reset, setSteps(newSteps){ stopPlay(); steps = newSteps; idx = -1; render(); } };
+}
+
+/** Quiz engine: data = [{question, code, multi, answers:[{answer, correct, feedback}]}] */
+function buildQuiz(containerId, progressId, data) {
+  const container = document.getElementById(containerId);
+  const progress  = document.getElementById(progressId);
+  const solved = new Set();
+  const LETTERS = 'ABCDEFGH';
+
+  data.forEach((q, qi) => {
+    const box = document.createElement('div');
+    box.className = 'quiz-box';
+    box.innerHTML =
+      `<div class="quiz-label">Q${qi+1} / ${data.length}${q.multi ? ' <span class="multi-badge">MULTI</span>' : ''}</div>` +
+      `<div class="quiz-q">${q.question}</div>` +
+      (q.code ? `<div class="quiz-code">${q.code.replace(/</g,'&lt;')}</div>` : '') +
+      `<div class="quiz-options">` +
+      q.answers.map((a, ai) =>
+        `<div class="quiz-opt" data-q="${qi}" data-a="${ai}">
+           <div class="opt-head"><span class="opt-letter">${LETTERS[ai]}</span><span>${String(a.answer).replace(/</g,'&lt;')}</span></div>
+           <div class="opt-fb"></div>
+         </div>`
+      ).join('') + `</div>`;
+    container.appendChild(box);
+  });
+
+  container.addEventListener('click', e => {
+    const opt = e.target.closest('.quiz-opt');
+    if (!opt || opt.classList.contains('revealed')) return;
+    const q = data[+opt.dataset.q], a = q.answers[+opt.dataset.a];
+    opt.classList.add('revealed', a.correct ? 'correct' : 'wrong');
+    opt.querySelector('.opt-fb').textContent = (a.correct ? '✔ Correct: ' : '✘ Not quite: ') + a.feedback;
+    if (a.correct) {
+      solved.add(+opt.dataset.q);
+      progress.textContent = `Solved ${solved.size} / ${data.length}`;
+    }
+  });
+}
+
+/** Flashcards: data = [{front, back}] */
+function buildFlashcards(gridId, data) {
+  const grid = document.getElementById(gridId);
+  function render(cards) {
+    grid.innerHTML = cards.map(c =>
+      `<div class="flashcard">
+         <div class="fc-inner">
+           <div class="fc-face fc-front"><div>${c.front}</div><div class="fc-hint">CLICK TO FLIP</div></div>
+           <div class="fc-face fc-back">${c.back}</div>
+         </div>
+       </div>`).join('');
+  }
+  render(data);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.flashcard');
+    if (card) card.classList.toggle('flipped');
+  });
+  document.getElementById('flipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.add('flipped')));
+  document.getElementById('unflipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.remove('flipped')));
+  document.getElementById('shuffleCards').addEventListener('click', ()=>{
+    const shuffled = [...data].sort(()=>Math.random()-.5);
+    render(shuffled);
+  });
+}
+
+/* ============================================================
+   3.2 Symbolic manipulation stepper — transformation chains
+   ============================================================ */
+const SYM_PRESETS = [
+  { label:'expand((x + y)**2)', call:'sp.expand((x + y)**2)',
+    original:'(x + y)<sup>2</sup>',
+    steps:[
+      { expr:'(x + y)(x + y)', note:'expand() sees a power of a sum and rewrites it as a repeated product.' },
+      { expr:'x<sup>2</sup> + xy + yx + y<sup>2</sup>', note:'Distributive law: every term of the first factor multiplies every term of the second.' },
+      { expr:'x<sup>2</sup> + 2xy + y<sup>2</sup>', note:'✔ Like terms xy and yx are collected — this is the polynomial sp.expand() returns.' },
+    ]},
+  { label:'factor(x**3 - x**2 + x - 1)', call:'sp.factor(x**3 - x**2 + x - 1)',
+    original:'x<sup>3</sup> − x<sup>2</sup> + x − 1',
+    steps:[
+      { expr:'(x<sup>3</sup> − x<sup>2</sup>) + (x − 1)', note:'factor() hunts for structure — these four terms can be grouped in pairs.' },
+      { expr:'x<sup>2</sup>(x − 1) + 1·(x − 1)', note:'x² comes out of the first group — now both groups share the factor (x − 1).' },
+      { expr:'(x − 1)(x<sup>2</sup> + 1)', note:'✔ The common factor is pulled out. x² + 1 has no real roots, so factoring stops here.' },
+    ]},
+  { label:'simplify(sin(x)**2 + cos(x)**2)', call:'sp.simplify(sin(x)**2 + cos(x)**2)',
+    original:'sin<sup>2</sup>(x) + cos<sup>2</sup>(x)',
+    steps:[
+      { expr:'sin<sup>2</sup>(x) + cos<sup>2</sup>(x)', note:'simplify() tries a whole toolbox of rewrites — its trig routines recognize the Pythagorean identity here.' },
+      { expr:'1', note:'✔ The EXACT Integer 1 — a numerical check could only ever confirm this for a handful of x values.' },
+    ]},
+  { label:'(x**2 + 3*x + 1).subs(x, 2)', call:'(x**2 + 3*x + 1).subs(x, 2)',
+    original:'x<sup>2</sup> + 3x + 1',
+    steps:[
+      { expr:'2<sup>2</sup> + 3·2 + 1', note:'subs() replaces every occurrence of the symbol x with the exact Integer 2.' },
+      { expr:'4 + 6 + 1', note:'Powers and products of exact Integers evaluate exactly — no floating point involved.' },
+      { expr:'11', note:'✔ subs() returns a NEW expression — the original x² + 3x + 1 is unchanged (expressions are immutable).' },
+    ]},
+];
+
+(function initSymStepper(){
+  const stage = document.getElementById('symStage');
+  const status = document.getElementById('symStatus');
+  const presetRow = document.getElementById('symPresets');
+  const playBtn = document.getElementById('symPlay');
+  let current = 0, idx = -1, timer = null;
+
+  SYM_PRESETS.forEach((p,i)=>{
+    const b = document.createElement('button');
+    b.className = 'preset-btn' + (i===0?' active':'');
+    b.textContent = p.label;
+    b.addEventListener('click', ()=>{
+      presetRow.querySelectorAll('.preset-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      current = i; reset();
+    });
+    presetRow.appendChild(b);
+  });
+
+  function stageHtml(call, exprHtml, sub, done){
+    const border = done ? 'var(--accent3)' : 'var(--card-border)';
+    const color  = done ? 'color:var(--accent3);font-weight:700;' : '';
+    return `<div class="ag-block" style="max-width:100%;">
+      <div class="ag-name">${call}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:1.5rem;padding:1.1rem 1.8rem;background:#fff;border:2px solid ${border};border-radius:10px;text-align:center;line-height:1.5;${color}">${exprHtml}</div>
+      <div class="ag-axis" style="margin-top:.45rem;">${sub}</div>
+    </div>`;
+  }
+
+  function render(){
+    const p = SYM_PRESETS[current];
+    if (idx < 0) {
+      stage.innerHTML = stageHtml(p.call, p.original, 'original expression — nothing happens until you ask', false);
+      status.textContent = `Predict the result of ${p.call}, then press "Step ▸"`;
+    } else {
+      const s = p.steps[idx];
+      const done = idx === p.steps.length - 1;
+      stage.innerHTML = stageHtml(p.call, s.expr, done ? '✔ final result' : `step ${idx+1} of ${p.steps.length}`, done);
+      status.textContent = s.note;
+    }
+  }
+  function stopPlay(){ if(timer){clearInterval(timer);timer=null;} playBtn.classList.remove('active'); playBtn.textContent='▶ Play'; }
+  function step(){ const n = SYM_PRESETS[current].steps.length; if (idx < n-1){ idx++; render(); } if (idx >= n-1) stopPlay(); }
+  function reset(){ stopPlay(); idx = -1; render(); }
+  playBtn.addEventListener('click', ()=>{
+    if (timer) { stopPlay(); return; }
+    if (idx >= SYM_PRESETS[current].steps.length-1) { idx=-1; render(); }
+    playBtn.classList.add('active'); playBtn.textContent='⏸ Pause';
+    timer = setInterval(step, 2200);
+  });
+  document.getElementById('symStep').addEventListener('click', ()=>{ stopPlay(); step(); });
+  document.getElementById('symReset').addEventListener('click', reset);
+  render();
+})();
+
+/* ============================================================
+   3.4 Calculus results stepper — evaluated vs unevaluated
+   (results verified with SymPy 1.x)
+   ============================================================ */
+const CALC_ROWS = [
+  { line:0, call:'sp.limit(sp.sin(x)/x, x, 0)', res:'1',
+    name:'limit()', shortRes:'1', status:'evaluated ✓',
+    note:'lowercase limit() evaluates IMMEDIATELY — the classic 0/0 form resolves to the exact Integer 1.' },
+  { line:1, call:'l = sp.Limit(sp.sin(x)/x, x, 0)', res:"Limit(sin(x)/x, x, 0, dir='+')",
+    name:'Limit()', shortRes:'Limit(…)', status:'unevaluated ⏸',
+    note:'Capitalized Limit builds an UNEVALUATED object — the operation is stored, not computed. Note the default dir=\'+\'.' },
+  { line:2, call:'l.doit()', res:'1',
+    name:'l.doit()', shortRes:'1', status:'evaluated ✓',
+    note:'.doit() tells the stored object to evaluate itself → 1, the same answer as before.' },
+  { line:3, call:'sp.diff(x**3, x)', res:'3*x**2',
+    name:'diff()', shortRes:'3*x**2', status:'evaluated ✓',
+    note:'lowercase diff() differentiates immediately → 3x².' },
+  { line:4, call:'d = sp.Derivative(x**3, x)', res:'Derivative(x**3, x)',
+    name:'Derivative()', shortRes:'Derivative(…)', status:'unevaluated ⏸',
+    note:'Capitalized Derivative merely REPRESENTS d/dx x³ — handy for pretty-printing a formula before computing it.' },
+  { line:5, call:'d.doit()', res:'3*x**2',
+    name:'d.doit()', shortRes:'3*x**2', status:'evaluated ✓',
+    note:'.doit() evaluates the stored derivative → 3x², identical to sp.diff().' },
+  { line:6, call:'sp.integrate(x**2, x)', res:'x**3/3',
+    name:'integrate()', shortRes:'x**3/3', status:'evaluated ✓',
+    note:'Indefinite integral — and NO "+ C"! SymPy returns one antiderivative; you add the constant yourself.' },
+  { line:7, call:'sp.Integral(x**2, (x, 0, 1)).doit()', res:'1/3',
+    name:'Integral().doit()', shortRes:'1/3', status:'exact ✓',
+    note:'The unevaluated Integral chained with .doit() → the EXACT Rational 1/3, not 0.333…' },
+  { line:8, call:'_.evalf()', res:'0.333333333333333',
+    name:'evalf()', shortRes:'0.3333…', status:'float ✓',
+    note:'evalf() converts exact → floating point. Exact until YOU ask for digits — that is the SymPy philosophy.' },
+];
+const CALC_STEPS = CALC_ROWS.map((r, i) => ({
+  line: r.line,
+  note: r.note,
+  newOut: true,
+  out: CALC_ROWS.slice(0, i+1).flatMap(q => ['⌨ ' + q.call, q.res]),
+  vars: CALC_ROWS.slice(0, i+1).map((q, j) => [q.name, q.shortRes, q.status, j === i]),
+}));
+StepRunner('calc', CALC_STEPS, { interval: 2600 });
+
+/* ============================================================
+   QUIZ — Module 3 test bank (answers verified with SymPy 1.x)
+   ============================================================ */
+const QUIZ_DATA = [
+  { question:'Which of the following statements is False?', answers:[
+    { answer:'We can evaluate the values of special constants, like e, π and ∞, using SymPy.', correct:false, feedback:'This is true — sp.E, sp.pi and sp.oo are first-class objects: (sp.pi + sp.E).evalf() works, and sp.oo > 999999 is True.' },
+    { answer:'You can express one symbol in terms of another and perform substitutions accordingly, using the subs() method. For instance, you can substitute cos(x) with sin(x + π/2) by calling subs({sp.cos(x): sp.sin(x + sp.pi/2)}).', correct:false, feedback:'This is true — subs() accepts whole expressions as keys, not just plain symbols.' },
+    { answer:'nsolve() is a numerical version of the solve() function. Therefore, if solve() fails to find a solution, nsolve() will also fail to find a solution.', correct:true, feedback:'nsolve() is a NUMERICAL solver — it can often find a root precisely when the symbolic solve() gives up because no closed form (exact-formula answer) exists. The two fail independently, so the claim is false.' },
+    { answer:'The lambdify() function in SymPy converts SymPy expressions into equivalent Python functions, enabling them to be computed numerically.', correct:false, feedback:'This is true — lambdify() is the bridge from symbolic expressions to fast numerical evaluation.' } ] },
+  { question:'Which of the following functions can be used to display an expression in reverse order, so that the terms are arranged according to the powers of x, in ascending order?', answers:[
+    { answer:'init_printing()', correct:true, feedback:'init_printing(order=\'rev-lex\') switches the printer to reverse lexicographical order — ascending powers of x. It changes only the display, never the mathematics.' },
+    { answer:'evalf()', correct:false, feedback:'evalf() evaluates an expression to a floating-point number — it has nothing to do with term ordering.' },
+    { answer:'simplify()', correct:false, feedback:'simplify() rewrites the expression mathematically; it does not control how terms are printed.' },
+    { answer:'lambdify()', correct:false, feedback:'lambdify() converts an expression into a numerical Python function — no printing involved.' } ] },
+  { question:'Which of the following statements is False?', answers:[
+    { answer:'By default, the direction from which the limit is computed is negative in SymPy, unless the point of computation is positive or negative infinity.', correct:true, feedback:'It is the opposite: the DEFAULT direction is POSITIVE (dir=\'+\') — the point is approached from above. You must pass dir=\'-\' explicitly for a left-hand limit.' },
+    { answer:'When constructing a matrix in SymPy, the approach is quite similar to that of NumPy: you provide a list of lists, where each inner list is a row of the matrix.', correct:false, feedback:'This is true — sp.Matrix([[1, 2], [3, 4]]) builds a 2×2 matrix row by row.' },
+    { answer:'By default, the solve() function will return the solutions in a list.', correct:false, feedback:'This is true — e.g. sp.solve(x**2 - 2) returns [-sqrt(2), sqrt(2)].' },
+    { answer:'In SymPy, you can expand a trigonometric expression by setting trig=True in the expand() function.', correct:false, feedback:'This is true — expand(expr, trig=True) applies trigonometric identities.' } ] },
+  { question:'Which of the following operations will return the evaluated result rather than an unevaluated object?', answers:[
+    { answer:'sp.Limit(1/x, x, -sp.oo)', correct:false, feedback:'Capitalized Limit constructs an unevaluated object — it waits for .doit().' },
+    { answer:'sp.Derivative(1/x, x)', correct:false, feedback:'Capitalized Derivative just represents the derivative; call .doit() to actually compute it.' },
+    { answer:'sp.diff(x**2, x)', correct:true, feedback:'lowercase diff() evaluates immediately → 2x. The Capitalized cousins (Limit, Derivative, Integral) all build unevaluated objects instead.' },
+    { answer:'sp.Integral(x**2)', correct:false, feedback:'Capitalized Integral stores the integration operation unevaluated until .doit() is invoked.' } ] },
+  { question:'Which of the following functions can be used to evaluate an expression to a floating-point number?', answers:[
+    { answer:'doit()', correct:false, feedback:'doit() evaluates UNEVALUATED objects symbolically — the result can still be exact (1/3, not 0.333…).' },
+    { answer:'simplify()', correct:false, feedback:'simplify() rewrites an expression into a simpler symbolic form — it never produces floats.' },
+    { answer:'lambdify()', correct:false, feedback:'lambdify() builds a reusable numerical FUNCTION — great for many evaluations, but it is not itself the float-evaluation call.' },
+    { answer:'evalf()', correct:true, feedback:'evalf(n) evaluates an exact expression to a floating-point number with any number of significant digits you ask for.' } ] },
+  { question:'What will be printed out when we execute the following code snippet?', code:'import sympy as sp\nsp.init_printing(order=\'rev-lex\')\nx = sp.Symbol(\'x\')\ny = sp.Symbol(\'y\')\np = 2*x*x + x**2*y + y + 1\np', answers:[
+    { answer:'x²y + 2x² + y + 1', correct:false, feedback:'That is the DEFAULT order=\'lex\' — descending powers of x, highest first.' },
+    { answer:'1 + y + 2x² + x²y', correct:true, feedback:'rev-lex prints ascending powers of x: the constant first, then y, then the x² terms. Note that 2*x*x is automatically collected into 2x² as the expression is built — run the snippet yourself to confirm.' },
+    { answer:'1 + y + x²(2 + y)', correct:false, feedback:'SymPy never groups or factors on its own — you would need collect() or factor() for this form.' },
+    { answer:'2x² + x²y + y + 1', correct:false, feedback:'That is the order the terms were typed in — SymPy reorders terms according to the printing order, not entry order.' } ] },
+  { question:'Which of the following statements is False?', answers:[
+    { answer:'In SymPy, the terms of an expression are arranged according to the powers of x, in descending order, starting from the highest power to the lowest.', correct:false, feedback:'This is true — the default printing order is lexicographical (order=\'lex\'), highest power first.' },
+    { answer:'SymPy will not perform any simplification or expansion of an expression unless explicitly requested to do so.', correct:false, feedback:'This is true — (x + y)**2 stays exactly as written until you call expand() or simplify().' },
+    { answer:'Both solve() and nroots() can be used to find the roots of an equation, but the former will return the roots as numerical values while the latter will return the roots as symbolic expressions.', correct:true, feedback:'It is exactly reversed: solve() returns SYMBOLIC / exact roots, while nroots() returns NUMERICAL approximations (and only works on polynomials).' },
+    { answer:'The high-order term O(xⁿ) after a series expansion can be eliminated by using the removeO() method.', correct:false, feedback:'This is true — sp.series(sp.cos(x), x, 0, 10).removeO() leaves a plain polynomial you can evaluate.' } ] },
+  { question:'Which of the following statements is False?', answers:[
+    { answer:'The Float class in SymPy can be used to represent a floating-point number, but the precision of the results is limited.', correct:true, feedback:'False — SymPy\'s Float supports ARBITRARY precision, limited only by available memory: sp.sqrt(2).evalf(100) happily prints 100 significant digits.' },
+    { answer:'Using the evalf() method in SymPy makes it possible to evaluate an expression and obtain the result as a floating-point number.', correct:false, feedback:'This is true — evalf() is exactly the exact-to-float bridge.' },
+    { answer:'SymPy is distinct from numerical libraries because it is created to perform algebraic manipulations symbolically, which allows us to obtain exact solutions to mathematical problems.', correct:false, feedback:'This is true — exactness is SymPy\'s whole reason for existing.' },
+    { answer:'In SymPy, certain operations are not executed instantaneously. Instead, they generate an unevaluated object, which can be later evaluated by invoking the doit() method.', correct:false, feedback:'This is true — Limit, Derivative and Integral are exactly such classes.' } ] },
+];
+buildQuiz('quizContainer', 'quizProgress', QUIZ_DATA);
+
+/* ============================================================
+   FLASHCARDS — Key terms from Module 3
+   ============================================================ */
+const CARD_DATA = [
+  {front:'Symbolic Mathematics', back:'Also called computer algebra: computing and manipulating equations in symbolic form. Unlike numerical computing, which yields approximate numbers, it returns exact results in which symbols stand for exact, unspecified values.'},
+  {front:'Symbolic Operations', back:'Mathematical operations performed on symbolic representations of equations or expressions. Instead of producing numeric values, they manipulate the expressions and return them in symbolic form — expand, factor, subs and simplify are examples.'},
+  {front:'Numerical Operations', back:'Operations performed with numerical values to yield specific numeric results — arithmetic, roots, logarithms, trigonometry. The aim is always a concrete number, usually an approximation limited by floating-point precision.'},
+  {front:'Arbitrary-Precision Arithmetic', back:'Also called multiprecision arithmetic: performing mathematical operations on numbers with any desired level of precision, limited only by the machine\'s available memory — e.g. sp.sqrt(2).evalf(100) gives 100 digits.'},
+  {front:'Symbols', back:'SymPy\'s placeholders for generic or specific values, like variables in algebra. Expressions built from them are not evaluated — symbols stay in symbolic form until a value is explicitly substituted.'},
+  {front:'Symbolic form', back:'Representing mathematical expressions or computations with symbols — variables, operations, equations and more. Symbolic form keeps the mathematics abstract, so constructs can be manipulated without plugging in specific numerical values.'},
+  {front:'Expression', back:'A combination of symbols and mathematical operations — addition, multiplication, powers, trigonometric functions and more. Expressions may represent equations, formulas or other constructs, and are the objects SymPy\'s functions transform.'},
+  {front:'Lexicographical Order', back:'Dictionary-style ordering extended to sequences of symbols or terms. With the default order=\'lex\', SymPy arranges a polynomial\'s terms by descending powers, from the highest power of x down to the lowest.'},
+  {front:'Reverse Lexicographical Order', back:'The opposite of lexicographical order: terms arranged by ascending powers — x, x², x³. Switch it on with init_printing(order=\'rev-lex\') when you want the low-order terms printed first.'},
+  {front:'Numerical Solver', back:'A function that solves equations numerically rather than exactly. nsolve() needs a starting point and returns a floating-point approximation — often succeeding where the symbolic solve() finds no closed form.'},
+  {front:'Unevaluated Object', back:'SymPy stores operations it is not asked to perform: Capitalized classes like Limit, Derivative and Integral hold the operation itself. The result is computed only when you call .doit().'},
+  {front:'Lambdify', back:'lambdify() converts a SymPy expression into an ordinary Python/NumPy function that evaluates much faster — essentially compiling symbolic mathematics into a function you can call on many numerical values at once.'},
+  {front:'Matrix', back:'SymPy\'s two-dimensional array class, built from a list of rows. It supports exact matrix operations — addition, multiplication, determinant, inverse — plus advanced ones like eigenvalue computation and diagonalization.'},
+];
+buildFlashcards('flashGrid', CARD_DATA);
+/* ============================================================
+   Floating nav active highlight
+   ============================================================ */
+(function initFloatNav(){
+  const links = document.querySelectorAll('.float-nav a[data-target]');
+  const sections = [...links].map(a => document.getElementById(a.dataset.target)).filter(Boolean);
+  function update(){
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= window.innerHeight * 0.35) active = s.id;
+    }
+    links.forEach(a => a.classList.toggle('active', a.dataset.target === active));
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>

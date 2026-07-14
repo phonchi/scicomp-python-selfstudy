@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 5 · Data Analysis with Pandas — Self-Study Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:17px;}
+
+/* Hero */
+.hero{min-height:56vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2.5rem 2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:880px;}
+.hero .chapter-tag{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#f39c12;letter-spacing:.3em;margin-bottom:.8rem;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(1.9rem,4.6vw,3rem);font-weight:900;color:#fff;letter-spacing:.02em;line-height:1.25;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.15rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{font-family:'JetBrains Mono',monospace;color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.0rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+ul,ol{margin:0 0 1rem 1.4rem;}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:40px;}
+.toc-grid a .toc-dur{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent3);margin-left:auto;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box p:last-child,.info-box ul:last-child,.info-box ol:last-child{margin-bottom:0;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+.cmp-table td.tl{font-family:'Noto Sans TC',sans-serif;text-align:left;font-size:.85rem;}
+
+/* Viz layout */
+.viz-layout{display:grid;grid-template-columns:1fr 320px;gap:1.3rem;margin:1.2rem 0;align-items:start;}
+@media(max-width:900px){.viz-layout{grid-template-columns:1fr;}}
+.viz-panel{background:linear-gradient(160deg,#fffdf7 0%,#f4efe3 100%);border:1px solid var(--card-border);border-radius:12px;padding:1rem;box-shadow:0 4px 18px rgba(0,0,0,.06);position:relative;}
+.side-panel{display:flex;flex-direction:column;gap:.85rem;}
+.info-card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.info-card .ic-title{font-size:.72rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem;border-bottom:1px solid var(--card-border);padding-bottom:.3rem;display:flex;align-items:center;justify-content:space-between;}
+.info-card .ic-title .ic-badge{font-size:.7rem;color:#fff;background:var(--accent3);padding:1px 7px;border-radius:3px;letter-spacing:.05em;font-weight:700;}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.65;overflow-x:auto;margin:.8rem 0;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .line.active{background:rgba(243,156,18,.3);color:#fff;border-left:3px solid #f39c12;padding-left:6px;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .str{color:#f1fa8c;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+
+/* Status banner */
+.status-banner{margin-top:.8rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;min-height:42px;display:flex;align-items:center;gap:.6rem;}
+.status-banner .status-icon{color:#2ecc71;font-weight:700;}
+.status-banner .status-text{flex:1;}
+
+/* Controls */
+.controls-bar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--card-border);}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-play.active{background:var(--accent);}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-step:disabled{background:#ccc;cursor:not-allowed;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+
+/* Preset buttons */
+.preset-row{display:flex;gap:.4rem;flex-wrap:wrap;margin:.6rem 0 1rem;}
+.preset-btn{font-family:'JetBrains Mono',monospace;font-size:.78rem;padding:.4rem .85rem;border-radius:6px;border:2px solid var(--card-border);background:var(--card);cursor:pointer;transition:all .2s;color:var(--ink);}
+.preset-btn:hover{border-color:var(--accent2);}
+.preset-btn.active{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+
+/* Variable state table */
+.var-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+.var-table td{padding:.25rem .4rem;border-bottom:1px dashed var(--card-border);}
+.var-table td.vname{color:var(--accent2);font-weight:600;}
+.var-table td.vval{color:var(--ink);}
+.var-table td.vtype{color:var(--muted);font-size:.72rem;text-align:right;}
+.var-table tr.changed td{background:var(--highlight);}
+.var-empty{color:var(--muted);font-size:.8rem;font-style:italic;}
+
+/* Console */
+.console{background:#111;border-radius:8px;padding:.6rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#d4d4d4;min-height:70px;max-height:220px;overflow-y:auto;line-height:1.6;}
+.console .out-line{white-space:pre-wrap;}
+.console .out-line.new{color:#2ecc71;}
+.console .in-line{color:#f39c12;}
+.console .err-line{color:#e74c3c;}
+
+/* Sandbox */
+.sandbox{background:var(--card);border:2px solid var(--accent3);border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.sandbox .sandbox-label{position:absolute;top:-11px;left:14px;background:var(--accent3);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.input-row{display:flex;gap:.5rem;align-items:center;margin:.5rem 0;flex-wrap:wrap;}
+.input-row label{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent2);font-weight:600;}
+.input-row input[type="text"]{font-family:'JetBrains Mono',monospace;font-size:.9rem;padding:.45rem .7rem;border:1px solid var(--card-border);border-radius:6px;background:#fff;flex:1;min-width:120px;}
+.sandbox-result{margin-top:.6rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.9rem;min-height:46px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+.sandbox-result .ok{color:#2ecc71;font-weight:700;}
+.sandbox-result .bad{color:#e67e22;font-weight:700;}
+.sandbox-result .type-badge{background:#50fa7b;color:#1a1a2e;font-weight:700;padding:1px 10px;border-radius:4px;font-size:.82rem;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.quiz-box .quiz-label .multi-badge{background:#8e44ad;color:#fff;font-size:.68rem;padding:1px 8px;border-radius:3px;}
+.quiz-box .quiz-q{font-weight:600;margin-bottom:.6rem;}
+.quiz-box .quiz-code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:.6rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.84rem;margin-bottom:.8rem;white-space:pre-wrap;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0 0;}
+.quiz-opt{display:flex;flex-direction:column;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.9rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-head{display:flex;align-items:baseline;gap:.6rem;}
+.quiz-opt .opt-letter{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt .opt-fb{display:none;font-size:.82rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--card-border);color:#555;}
+.quiz-opt.revealed .opt-fb{display:block;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.correct .opt-fb{color:#14532d;}
+.quiz-opt.wrong{background:#fef5e7;border-color:#d68910;}
+.quiz-opt.wrong .opt-letter{color:#d68910;}
+.quiz-progress{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;margin:.8rem 0;}
+
+/* Flashcards */
+.card-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.flashcard{perspective:900px;height:160px;cursor:pointer;}
+.flashcard .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+.flashcard .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.flashcard .fc-front{background:linear-gradient(150deg,#2c3e7a,#1a1a2e);color:#fff;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.flashcard .fc-front .fc-hint{font-size:.66rem;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.flashcard .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:34px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+/* Chapter nav */
+.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin:2rem 0 0;flex-wrap:wrap;}
+.chapter-nav a{flex:1;min-width:220px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.3rem;text-decoration:none;color:var(--ink);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.chapter-nav a:hover{border-color:var(--accent2);transform:translateY(-2px);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+footer a{color:var(--accent2);}
+
+/* 🤖 Ask-AI / discussion box */
+.ai-box{background:var(--card);border:2px dashed #8e44ad;border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.ai-box .ai-label{position:absolute;top:-11px;left:14px;background:#8e44ad;color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.ai-box p:last-child{margin-bottom:0;}
+.ai-box .ai-prompt{font-family:'JetBrains Mono',monospace;font-size:.85rem;background:rgba(142,68,173,.08);border-radius:6px;padding:.4rem .8rem;display:block;margin:.4rem 0;color:#6c3485;}
+
+/* 🎓 Chapter-end bridge */
+.bridge-box{background:#eafaf1;border:2px solid var(--accent3);border-radius:12px;padding:1.3rem 1.5rem;margin:2rem 0 0;}
+.bridge-box .bb-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent3);font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.bridge-box ul{margin:.3rem 0 .8rem 1.3rem;font-size:.92rem;}
+.bridge-box .bb-next{font-size:.9rem;color:var(--accent2);border-top:1px dashed var(--accent3);padding-top:.6rem;margin-bottom:0;}
+
+/* ===== Course-companion components ===== */
+
+/* 📺 Video card */
+.video-card{background:linear-gradient(150deg,#1a1a2e 0%,#232345 100%);border-radius:14px;padding:1.3rem 1.6rem;margin:1.2rem 0;color:#fff;position:relative;overflow:hidden;}
+.video-card::before{content:'📺';position:absolute;top:-12px;right:8px;font-size:4.8rem;opacity:.09;}
+.video-card .vc-tag{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#f39c12;letter-spacing:.2em;margin-bottom:.45rem;}
+.video-card .vc-file{font-family:'JetBrains Mono',monospace;font-size:.95rem;color:#8be9fd;word-break:break-all;}
+.video-card .vc-meta{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.6rem 0 .1rem;}
+.vc-dur{font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.14);color:#f1fa8c;font-size:.78rem;font-weight:600;padding:2px 10px;border-radius:4px;}
+.vc-lms{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;background:var(--accent3);color:#fff;text-decoration:none;transition:background .2s;}
+.vc-lms:hover{background:#22845c;}
+.vc-lms.placeholder{background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);cursor:default;}
+.video-card details{margin-top:.7rem;}
+.video-card details summary{cursor:pointer;color:#5dade2;font-size:.85rem;font-family:'JetBrains Mono',monospace;}
+.vb-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:.6rem;}
+.vb-table td{padding:.32rem .5rem;border-bottom:1px dashed rgba(255,255,255,.12);color:rgba(255,255,255,.85);}
+.vb-table tr:last-child td{border-bottom:none;}
+.vb-table td.vb-time{font-family:'JetBrains Mono',monospace;color:#2ecc71;white-space:nowrap;font-size:.76rem;}
+
+/* Materials map */
+.mat-map{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.9rem 0;padding:.7rem 1rem;background:var(--card);border:1px solid var(--card-border);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.mat-map .mm-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.12em;margin-right:.3rem;}
+.mat-map a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;text-decoration:none;border:2px solid var(--card-border);color:var(--accent2);transition:all .2s;background:var(--paper);}
+.mat-map a:hover{border-color:var(--accent2);}
+.mat-map span.mm-video{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);padding:3px 6px;}
+
+/* Array grid visualization */
+.ag-stage{background:#fafafa;border:1px solid #ececec;border-radius:8px;padding:1.1rem;display:flex;gap:1.8rem;align-items:center;justify-content:center;flex-wrap:wrap;min-height:170px;margin-bottom:.6rem;}
+.ag-block{display:flex;flex-direction:column;align-items:center;gap:.45rem;}
+.ag-name{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent2);font-weight:700;}
+.array-grid{display:grid;gap:4px;}
+.ag-cell{width:52px;height:38px;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--card-border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.82rem;transition:all .25s;position:relative;}
+.ag-cell.sel{background:var(--highlight);border-color:#f39c12;color:#b9770e;font-weight:700;transform:scale(1.07);z-index:1;}
+.ag-cell.dim{opacity:.32;}
+.ag-cell.res{background:#eafaf1;border-color:var(--accent3);color:var(--accent3);font-weight:700;}
+.ag-cell.ghost{background:repeating-linear-gradient(45deg,#f6f2ea,#f6f2ea 5px,#efe9dd 5px,#efe9dd 10px);border-style:dashed;color:var(--muted);}
+.ag-axis{font-family:'JetBrains Mono',monospace;font-size:.64rem;color:var(--muted);}
+@media(max-width:600px){.ag-cell{width:42px;height:32px;font-size:.72rem;}}
+
+/* Materials links become placeholders until DOCS_BASE is configured */
+a.mm-doc.placeholder{opacity:.55;cursor:default;pointer-events:none;border-style:dashed !important;color:var(--muted) !important;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<!-- Floating navigation sidebar -->
+<nav class="float-nav" id="floatNav" aria-label="Module navigation">
+  <div class="fn-title">MODULE 5</div>
+  <a href="#s51" data-target="s51"><span class="fn-num">5.1</span><span class="fn-name">Introduction to Pandas</span></a>
+  <a href="#s52" data-target="s52"><span class="fn-num">5.2</span><span class="fn-name">The Series object</span></a>
+  <a href="#s53" data-target="s53"><span class="fn-num">5.3</span><span class="fn-name">The DataFrame object</span></a>
+  <a href="#s54" data-target="s54"><span class="fn-num">5.4</span><span class="fn-name">Data selection</span></a>
+  <a href="#s55" data-target="s55"><span class="fn-num">5.5</span><span class="fn-name">Operations &amp; alignment</span></a>
+  <a href="#quiz" data-target="quiz"><span class="fn-num">QUIZ</span><span class="fn-name">Self-check quiz</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">Key-term flashcards</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">Cheat sheet</span></a>
+  <a href="#top" class="fn-top" title="Back to top"><span class="fn-num">↑ TOP</span></a>
+</nav>
+
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="chapter-tag">MODULE 05 · 5 VIDEOS · ≈ 52 MIN · FINAL MODULE</div>
+    <h1>Data Analysis with <span class="orange">Pandas</span></h1>
+    <div class="subtitle">Real data comes with names, gaps and mixed types. Meet the DataFrame — NumPy's speed with labels attached, built for the messy tables of the real world.</div>
+    <div class="big-formula">Series｜DataFrame｜loc &amp; iloc｜masking｜query()｜index alignment</div>
+    <div class="scroll-hint">Scroll down and study along with the videos<span>↓</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · WATCH THE VIDEO, THEN WORK THROUGH EACH SECTION</div>
+  <div class="toc-grid">
+    <a href="#s51"><span class="toc-num">5.1</span>Introduction to Pandas<span class="toc-dur">04:47</span></a>
+    <a href="#s52"><span class="toc-num">5.2</span>The Pandas Series object<span class="toc-dur">12:35</span></a>
+    <a href="#s53"><span class="toc-num">5.3</span>The Pandas DataFrame object<span class="toc-dur">07:42</span></a>
+    <a href="#s54"><span class="toc-num">5.4</span>Data selection in DataFrame<span class="toc-dur">13:54</span></a>
+    <a href="#s55"><span class="toc-num">5.5</span>Operations on DataFrame<span class="toc-dur">13:05</span></a>
+    <a href="#quiz"><span class="toc-num">QUIZ</span>Self-check quiz (7 questions)</a>
+    <a href="#cards"><span class="toc-num">CARD</span>Key-term flashcards (11 cards)</a>
+    <a href="#reference"><span class="toc-num">REF</span>Pandas cheat sheet</a>
+  </div>
+</div>
+
+<div class="info-box green">
+  <div class="info-label">📖 HOW TO USE THIS PAGE</div>
+  <p style="margin-bottom:.4rem;">Each numbered section below matches one course video. A suggested study loop:</p>
+  <p style="margin-bottom:0;">① <strong>Watch</strong> the video on 網路大學 (the breakdown table tells you what happens when) → ② <strong>Read</strong> the digest and run the code yourself in the notebook → ③ <strong>Play</strong> with the interactive widgets to test your intuition → ④ <strong>Discuss</strong> the think-about-it questions (an AI assistant is a great sparring partner) → ⑤ Finish the module with the <a href="#quiz">quiz</a> and <a href="#cards">flashcards</a>.</p>
+</div>
+
+<!-- ============================================================ -->
+<section id="s51">
+  <div class="section-number">SUBMODULE 5.1 · INTRODUCTION</div>
+  <h2>5.1 Introduction to Pandas</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 5.1</div>
+    <div class="vc-file">5.1_Introduction to Pandas.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 04:47</span><a class="vc-lms" data-video="5.1_Introduction to Pandas.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details open>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 01:58</td><td>Overview of the module</td></tr>
+        <tr><td class="vb-time">02:00 – 03:55</td><td>Basic introduction to Pandas and its data structures</td></tr>
+        <tr><td class="vb-time">03:56 – 04:47</td><td>How to install and start using Pandas</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Explain when Pandas' <strong>labeled</strong> data structures beat plain NumPy arrays — and when they don't — and install / import Pandas in your own environment.</p>
+  </div>
+
+  <p>NumPy arrays are perfect for clean, homogeneous grids of numbers. But most real data looks like a <strong>spreadsheet</strong> or a <strong>database</strong> table: rows have <em>names</em>, columns hold <em>different types</em>, and values are sometimes simply <strong>missing</strong>. Pandas — built on top of NumPy — adds exactly those three things, which is why it is the standard tool for <strong>data munging</strong> (cleaning and reshaping raw data until it is ready for analysis).</p>
+  <table class="cmp-table">
+    <tr><th></th><th>NumPy ndarray</th><th>Pandas Series / DataFrame</th></tr>
+    <tr><td>Row / column labels</td><td class="worst">Implicit integers only</td><td class="best">Explicit Index — strings, dates, anything</td></tr>
+    <tr><td>Missing data</td><td class="worst">Not built in</td><td class="best">NaN handled everywhere</td></tr>
+    <tr><td>Mixed types per table</td><td class="worst">No — one dtype for all</td><td class="best">One dtype per column</td></tr>
+    <tr><td>Best at</td><td class="tl">Homogeneous numerical arrays</td><td class="tl">Labeled, heterogeneous, real-world tables</td></tr>
+  </table>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">import</span> pandas <span class="kw">as</span> pd   <span class="com"># the universal convention — everyone writes pd</span></span>
+<span class="line">pd.__version__        <span class="com"># check the installation (conda/pip install pandas)</span></span></div>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="05_Pandas_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="05_Pandas_notebook.html" data-frag="Introduction">📓 Notebook §Introduction</a>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <p>Predict your answer first, then check it against the video — or debate it with ChatGPT / Gemini / Claude:</p>
+    <span class="ai-prompt">How does Pandas compare to other data tools like R, SQL, SAS, or spreadsheets? What are its advantages and drawbacks?</span>
+    <span class="ai-prompt">Look into Pandas' design principles on the official website — which of them can you already spot in the Series and DataFrame API?</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:0;">(a) Pandas offers a helpful <a href="https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf" target="_blank" rel="noopener">cheat sheet</a> for quickly finding important functions. Explore it and list some functions you find interesting.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s52">
+  <div class="section-number">SUBMODULE 5.2 · SERIES</div>
+  <h2>5.2 The Pandas Series Object</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 5.2 · NOTE THE FILENAME — A SPACE, NO UNDERSCORE</div>
+    <div class="vc-file">5.2 Pandas Series Object.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 12:35</span><a class="vc-lms" data-video="5.2 Pandas Series Object.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 00:13</td><td>Overview of the submodule</td></tr>
+        <tr><td class="vb-time">00:14 – 00:49</td><td>Getting to know Pandas data structures</td></tr>
+        <tr><td class="vb-time">00:51 – 06:37</td><td>How to create Series using lists or arrays</td></tr>
+        <tr><td class="vb-time">06:37 – 09:03</td><td>Building Series using dictionaries</td></tr>
+        <tr><td class="vb-time">09:05 – 12:35</td><td>Introduction to the indexers: loc and iloc</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Create a <code>Series</code> from a list, an array, or a dictionary — and explain why <code>loc</code> / <code>iloc</code> beat plain square-bracket indexing.</p>
+  </div>
+
+  <p>A <strong>Series</strong> is a one-dimensional labeled array — one column of data. Two mental models, both useful:</p>
+  <ul>
+    <li><strong>A generalized NumPy array</strong> — the index is <em>explicit</em> and can be any type (strings, dates…), not just positions 0, 1, 2….</li>
+    <li><strong>A specialized dictionary</strong> — keys map to values, but the values are typed and stored contiguously, so vectorized operations still fly.</li>
+  </ul>
+  <div class="pseudo-code">
+<span class="line">population_dict = {<span class="str">'New Taipei City'</span>: <span class="num">4_013_659</span>, <span class="str">'Taichung City'</span>: <span class="num">2_826_230</span>,</span>
+<span class="line">                   <span class="str">'Kaohsiung City'</span>: <span class="num">2_733_964</span>, <span class="str">'Taipei City'</span>: <span class="num">2_465_610</span>, …}</span>
+<span class="line">population = pd.Series(population_dict)          <span class="com"># index = the dict keys</span></span>
+<span class="line">population[<span class="str">'New Taipei City'</span>]                   <span class="com"># 4013659 — dictionary-style access</span></span>
+<span class="line">population[<span class="str">'New Taipei City'</span>:<span class="str">'Kaohsiung City'</span>] <span class="com"># label slice — endpoint INCLUDED!</span></span></div>
+
+  <div class="info-box warm">
+    <div class="info-label">⚠ THE INTEGER-INDEX TRAP</div>
+    <p style="margin-bottom:.4rem;">When the explicit index itself contains integers, plain brackets become ambiguous: <code>data[1]</code> uses the <strong>explicit label</strong> 1, but <code>data[1:3]</code> slices by <strong>implicit position</strong>! "Explicit is better than implicit" — so Pandas gives you two indexer attributes that never guess:</p>
+    <p style="margin-bottom:0;"><code>data.loc[…]</code> <strong>always</strong> uses the explicit labels · <code>data.iloc[…]</code> <strong>always</strong> uses the implicit positions.</p>
+  </div>
+  <table class="cmp-table">
+    <tr><th>Expression</th><th>Which index?</th><th>data = Series(['a','b','c'], index=[1,3,5])</th></tr>
+    <tr><td>data[1]</td><td>explicit label</td><td>'a'</td></tr>
+    <tr><td>data[1:3]</td><td class="worst">implicit position ⚠</td><td>'b', 'c'</td></tr>
+    <tr><td>data.loc[1]</td><td class="best">always explicit</td><td>'a'</td></tr>
+    <tr><td>data.iloc[1]</td><td class="best">always implicit</td><td>'b'</td></tr>
+  </table>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="05_Pandas_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="05_Pandas_notebook.html" data-frag="Introducing--Pandas-Series-Object">📓 Notebook §Series</a>
+    <span class="mm-video">🎬 Example video: 5.2_Example.mp4 (population Series)</span>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <span class="ai-prompt">Compare the Series values attribute with the to_numpy() method. What are their differences?</span>
+    <span class="ai-prompt">Pandas comes with its own plotting tools. What are their strengths and weaknesses compared with calling Matplotlib directly?</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) Work along with the example video <code>5.2_Example.mp4</code>.</p>
+    <p style="margin-bottom:0;">(b) Pandas excels at handling <strong>string data</strong> with vectorized operations. Dive into the official documentation on <code>.str</code> methods and report your findings.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s53">
+  <div class="section-number">SUBMODULE 5.3 · DATAFRAME</div>
+  <h2>5.3 The Pandas DataFrame Object</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 5.3 · NOTE THE FILENAME — A SPACE, NO UNDERSCORE</div>
+    <div class="vc-file">5.3 Pandas DataFrame Object.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 07:42</span><a class="vc-lms" data-video="5.3 Pandas DataFrame Object.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 00:15</td><td>Overview of the submodule</td></tr>
+        <tr><td class="vb-time">00:17 – 04:28</td><td>Creating DataFrame from a dictionary of Series objects</td></tr>
+        <tr><td class="vb-time">04:31 – 06:18</td><td>Building DataFrame using a list of dictionaries</td></tr>
+        <tr><td class="vb-time">06:21 – 07:42</td><td>Forming DataFrame from a two-dimensional NumPy array</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Build a <code>DataFrame</code> three different ways, and read its anatomy — <code>index</code> (row labels), <code>columns</code> (column labels), <code>values</code> (the underlying NumPy data).</p>
+  </div>
+
+  <p>A <strong>DataFrame</strong> is the 2-D sibling of the Series: think of it either as a <strong>dictionary of Series</strong> that share one index (each column is a Series), or as a <strong>generalized 2-D array</strong> with explicit row and column labels. Unlike a NumPy matrix, each column may hold a different dtype — exactly like a spreadsheet or a database table.</p>
+  <table class="cmp-table">
+    <tr><th>You have</th><th>Constructor call</th><th>Note</th></tr>
+    <tr><td>A dict of Series (or lists)</td><td>pd.DataFrame({'area': area, 'subdiv_cnt': subdiv})</td><td class="tl">keys → column names; indexes are aligned</td></tr>
+    <tr><td>A list of dicts</td><td>pd.DataFrame([{'a':1,'b':2}, {'b':3,'c':4}])</td><td class="tl">missing keys are filled with NaN</td></tr>
+    <tr><td>A 2-D NumPy array</td><td>pd.DataFrame(arr, index=[…], columns=[…])</td><td class="tl">labels supplied separately</td></tr>
+  </table>
+  <div class="pseudo-code">
+<span class="line">area   = pd.Series({<span class="str">'New Taipei City'</span>: <span class="num">2052.57</span>, <span class="str">'Taichung City'</span>: <span class="num">2214.90</span>, …})</span>
+<span class="line">subdiv = pd.Series({<span class="str">'New Taipei City'</span>: <span class="num">29</span>,      <span class="str">'Taichung City'</span>: <span class="num">29</span>,      …})</span>
+<span class="line">cities = pd.DataFrame({<span class="str">'area'</span>: area, <span class="str">'subdiv_cnt'</span>: subdiv})  <span class="com"># dict of Series</span></span>
+<span class="line">cities.index    <span class="com"># Index(['New Taipei City', 'Taichung City', …])  — row labels</span></span>
+<span class="line">cities.columns  <span class="com"># Index(['area', 'subdiv_cnt'])  — column labels (also a pd.Index!)</span></span>
+<span class="line">cities.values   <span class="com"># the underlying 2-D NumPy array (or cities.to_numpy())</span></span></div>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="05_Pandas_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="05_Pandas_notebook.html" data-frag="The-Pandas-DataFrame-Object">📓 Notebook §DataFrame</a>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <span class="ai-prompt">Which input/output formats does Pandas support? Show me how to read and write a DataFrame as CSV.</span>
+    <span class="ai-prompt">What does groupby() do? Walk me through split-apply-combine with a small example.</span>
+    <span class="ai-prompt">How can I customize how a DataFrame is displayed (styling, floating-point format, number of rows)?</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) Think of a DataFrame as an expanded 2-D NumPy array: experiment with <code>size</code>, <code>shape</code>, <code>dtype</code>, <code>dtypes</code>, <code>T</code> and <code>ndim</code> — do they align with their NumPy counterparts? (Careful: one of these exists only on Series, not DataFrame — which one, and why?)</p>
+    <p style="margin-bottom:0;">(b) Build the <code>cities</code> DataFrame above (population, territory and division-count Series are in the course notebook), then click Colab's "convert this dataframe to an interactive table" icon. Navigate its features and document your findings.</p>
+  </div>
+</section>
+<!-- ============================================================ -->
+<section id="s54">
+  <div class="section-number">SUBMODULE 5.4 · SELECTION</div>
+  <h2>5.4 Data selection in DataFrame</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 5.4</div>
+    <div class="vc-file">5.4_Data selection in DataFrame.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 13:54</span><a class="vc-lms" data-video="5.4_Data selection in DataFrame.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 00:20</td><td>Overview of the submodule</td></tr>
+        <tr><td class="vb-time">00:21 – 03:57</td><td>Seeing DataFrame as a dictionary for data selection</td></tr>
+        <tr><td class="vb-time">04:01 – 07:33</td><td>Interpreting DataFrame as a two-dimensional array for data selection</td></tr>
+        <tr><td class="vb-time">07:36 – 10:49</td><td>Using iloc and loc for precise data selection in DataFrame</td></tr>
+        <tr><td class="vb-time">10:51 – 13:54</td><td>Adding or removing data in DataFrame</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Pull any column, row, or filtered subset out of a DataFrame — dictionary-style, with <code>loc</code> / <code>iloc</code>, with a boolean <strong>mask</strong> — and add or remove data afterwards.</p>
+  </div>
+
+  <h3>🎬 Interactive: select data from the <code>cities</code> DataFrame</h3>
+  <p>This is the running example of the module — six Taiwanese cities with their area (km²) and number of administrative subdivisions. Click an expression and check the highlight against your prediction — <strong>predict before you click</strong>:</p>
+
+  <div class="preset-row" id="dfPresets"></div>
+  <div class="viz-layout">
+    <div class="viz-panel">
+      <div class="ag-stage" id="dfStage"></div>
+      <div class="sandbox-result" id="dfStatus"></div>
+    </div>
+    <div class="side-panel">
+      <div class="info-card">
+        <div class="ic-title">Selection cheat table</div>
+        <table class="var-table">
+          <tr><td class="vname">cities['area']</td><td class="vval">column → Series</td></tr>
+          <tr><td class="vname">cities.loc[label]</td><td class="vval">row by label</td></tr>
+          <tr><td class="vname">cities.iloc[pos]</td><td class="vval">row by position</td></tr>
+          <tr><td class="vname">cities[mask]</td><td class="vval">rows where True</td></tr>
+          <tr><td class="vname">cities.query('…')</td><td class="vval">mask as a string</td></tr>
+        </table>
+      </div>
+      <div class="info-card">
+        <div class="ic-title">loc includes, iloc excludes</div>
+        <p style="font-size:.82rem;margin:0;"><code>loc</code> slices by <strong>explicit label</strong> and <strong>includes</strong> the endpoint; <code>iloc</code> slices by <strong>implicit position</strong> with Python semantics — endpoint <strong>excluded</strong>. Direct indexing (<code>cities['area']</code>) means <em>columns</em>; slicing (<code>cities[1:4]</code>) means <em>rows</em>.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Adding and removing data</h3>
+  <div class="pseudo-code">
+<span class="line">cities[<span class="str">'area_per_div'</span>] = cities[<span class="str">'area'</span>] / cities[<span class="str">'subdiv_cnt'</span>]  <span class="com"># new column, Series-style math</span></span>
+<span class="line">cities.drop(<span class="str">'Taoyuan City'</span>)             <span class="com"># drop a ROW — returns a modified COPY</span></span>
+<span class="line">cities.drop(<span class="str">'subdiv_cnt'</span>, axis=<span class="num">1</span>)       <span class="com"># drop a COLUMN (axis='columns' also works)</span></span>
+<span class="line">cities.drop(<span class="str">'Taoyuan City'</span>, inplace=<span class="kw">True</span>)  <span class="com"># in-place: modifies cities, returns None</span></span></div>
+  <p>Remember the <strong>in-place</strong> rule: most methods return a modified copy and leave the original untouched; pass <code>inplace=True</code> (or assign the result) when you really mean to change the DataFrame.</p>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="05_Pandas_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="05_Pandas_notebook.html" data-frag="Data-selection-in-DataFrame">📓 Notebook §Data selection</a>
+    <span class="mm-video">🎬 Exercise video: 5.4_Exercise1.mp4</span>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <span class="ai-prompt">Recall views vs copies from the NumPy module. In Pandas this is governed by the Copy-on-Write principle — how does it work, and what changed in recent Pandas versions?</span>
+    <span class="ai-prompt">Spreadsheets can be column-oriented or row-oriented. Which one is Pandas, and what is the BlockManager underneath?</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) Work along with the exercise video <code>5.4_Exercise1.mp4</code>.</p>
+    <p style="margin-bottom:0;">(b) Rebuild the <code>cities</code> DataFrame in Colab, then click the "Suggest Graph" icon. Do the auto-generated visualizations capture the essence of your data effectively?</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s55">
+  <div class="section-number">SUBMODULE 5.5 · OPERATIONS &amp; ALIGNMENT</div>
+  <h2>5.5 Operations on DataFrame</h2>
+
+  <div class="video-card">
+    <div class="vc-tag">VIDEO 5.5 · LAST VIDEO OF THE COURSE</div>
+    <div class="vc-file">5.5_Operations on DataFrame.mp4</div>
+    <div class="vc-meta"><span class="vc-dur">⏱ 13:05</span><a class="vc-lms" data-video="5.5_Operations on DataFrame.mp4" href="#">📺 Watch on 網路大學</a></div>
+    <details>
+      <summary>▸ Video breakdown — what happens when</summary>
+      <table class="vb-table">
+        <tr><td class="vb-time">00:00 – 00:09</td><td>Introduction to the submodule</td></tr>
+        <tr><td class="vb-time">00:11 – 02:51</td><td>Advanced data selection and queries in DataFrame</td></tr>
+        <tr><td class="vb-time">02:55 – 04:13</td><td>Exploring numerical methods in Pandas</td></tr>
+        <tr><td class="vb-time">04:16 – 07:18</td><td>Unary universal function in Pandas preserves the index</td></tr>
+        <tr><td class="vb-time">07:22 – 11:18</td><td>Binary universal function in Pandas aligns the index</td></tr>
+        <tr><td class="vb-time">11:20 – 13:05</td><td>Summary of Pandas' key features</td></tr>
+      </table>
+    </details>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 AFTER THIS VIDEO YOU CAN…</div>
+    <p style="margin-bottom:0;">Filter rows with <code>query()</code>, predict what a ufunc does to the index — <strong>preserve</strong> it (unary) or <strong>align</strong> it (binary) — and judge when Pandas is the right tool for a scientific-computing task.</p>
+  </div>
+
+  <p>Everything you know about NumPy ufuncs still works — element-wise, vectorized, broadcasting — but Pandas adds one superpower on top: operations are <strong>label-aware</strong>.</p>
+  <div class="pseudo-code">
+<span class="line">cities.query(<span class="str">'area &gt; 2200'</span>)   <span class="com"># the mask cities[cities['area'] &gt; 2200] as a readable string</span></span>
+<span class="line">cities.head(<span class="num">2</span>)   <span class="com"># first rows (default n=5)</span></span>
+<span class="line">cities.tail(<span class="num">2</span>)   <span class="com"># last rows  (default n=5)</span></span>
+<span class="line">np.exp(series)                 <span class="com"># unary ufunc → index PRESERVED, values transformed</span></span>
+<span class="line">population / area              <span class="com"># binary ufunc → indexes ALIGNED on the union, NaN where missing</span></span>
+<span class="line">A.add(B, fill_value=<span class="num">0</span>)         <span class="com"># same as A + B but missing slots count as 0</span></span></div>
+
+  <h3>🎬 Interactive: index alignment, step by step</h3>
+  <p>Two Series over <em>different</em> city sets — what happens when you add them? Step through and watch Pandas line the labels up for you:</p>
+
+  <div class="viz-layout">
+    <div class="viz-panel">
+      <div class="ag-stage" id="alnStage"></div>
+      <div class="status-banner"><span class="status-icon">▸</span><span class="status-text" id="alnStatus">Press "Step ▸" to start</span></div>
+      <div class="controls-bar">
+        <button class="btn btn-play" id="alnPlay">▶ Play</button>
+        <button class="btn btn-step" id="alnStep">Step ▸</button>
+        <button class="btn btn-reset" id="alnReset">↺ Reset</button>
+      </div>
+    </div>
+    <div class="side-panel">
+      <div class="info-card">
+        <div class="ic-title">Ufuncs &amp; the index</div>
+        <table class="var-table">
+          <tr><td class="vname">np.exp(A)</td><td class="vval">index preserved</td></tr>
+          <tr><td class="vname">A + B</td><td class="vval">indexes aligned (union)</td></tr>
+          <tr><td class="vname">missing label</td><td class="vval">NaN</td></tr>
+          <tr><td class="vname">A.add(B, fill_value=0)</td><td class="vval">you pick the default</td></tr>
+        </table>
+      </div>
+      <div class="info-card">
+        <div class="ic-title">Why alignment matters</div>
+        <p style="font-size:.82rem;margin:0;">You never have to worry about row <em>order</em> again — data lines up by <strong>label</strong>, not by position. Misaligned or missing entries surface honestly as <code>NaN</code> instead of silently pairing the wrong rows.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="mat-map">
+    <span class="mm-title">MATERIALS · ON 網路大學 ▸</span>
+    <a class="mm-doc" data-doc="05_Pandas_slides.html">🎞 Slides</a>
+    <a class="mm-doc" data-doc="05_Pandas_notebook.html" data-frag="Operations-on-DataFrame">📓 Notebook §Operations</a>
+    <a class="mm-doc" data-doc="05_Pandas_notebook.html" data-frag="More-operation-on-Dataframe">📓 Notebook §More operations</a>
+    <span class="mm-video">🎬 Exercise video: 5.5_Exercise2.mp4</span>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <span class="ai-prompt">Some Pandas operations produce NaN because of misaligned indexes or columns. What are my options when the next analysis step cannot handle missing data?</span>
+    <span class="ai-prompt">Do Pandas reduction functions like sum(), mean() or std() retain the index? What do they return for a DataFrame?</span>
+    <span class="ai-prompt">Do the ufuncs provided by Pandas follow NumPy's broadcasting rules? Design a small experiment to find out.</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ EXERCISES</div>
+    <p style="margin-bottom:.4rem;">(a) Work along with the exercise video <code>5.5_Exercise2.mp4</code>.</p>
+    <p style="margin-bottom:0;">(b) Like NumPy arrays, DataFrames can be stacked or concatenated. Use the <code>make_df()</code> helper from the manual to build <code>df1</code> and <code>df2</code>, then concatenate them along the row axis and along the column axis (hint: <code>pd.concat()</code>).</p>
+  </div>
+</section>
+<!-- ============================================================ -->
+<section id="quiz">
+  <div class="section-number">QUIZ · TEST BANK MODULE 5</div>
+  <h2>Self-check quiz: 7 questions</h2>
+  <p>Straight from the course test bank. Click the option you believe is right — every option explains itself, so a wrong click still teaches you something.</p>
+  <div class="quiz-progress" id="quizProgress">Solved 0 / 7</div>
+  <div id="quizContainer"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="cards">
+  <div class="section-number">FLASHCARDS · KEY TERMS</div>
+  <h2>Key-term flashcards: click to flip</h2>
+  <p>All 11 key terms from Module 5. Say the definition out loud <strong>before</strong> flipping!</p>
+  <div class="card-controls">
+    <button class="btn btn-step" id="flipAll">Flip all</button>
+    <button class="btn btn-reset" id="unflipAll">Unflip all</button>
+    <button class="btn btn-play" id="shuffleCards">🔀 Shuffle</button>
+  </div>
+  <div class="flash-grid" id="flashGrid"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="reference">
+  <div class="section-number">REFERENCE · CHEAT SHEET</div>
+  <h2>Module 5 cheat sheet</h2>
+
+  <h3>Selection — one table to rule them all</h3>
+  <table class="cmp-table">
+    <tr><th>Expression</th><th>Selects</th><th>Returns</th><th>Slice endpoint?</th></tr>
+    <tr><td>df['col']</td><td class="tl">one column by name (dictionary-style)</td><td>Series</td><td>—</td></tr>
+    <tr><td>df.loc[label] / df.loc[a:b]</td><td class="tl">rows by EXPLICIT label</td><td>Series / DataFrame</td><td class="best">includes b</td></tr>
+    <tr><td>df.iloc[pos] / df.iloc[i:j]</td><td class="tl">rows by IMPLICIT position (Python semantics)</td><td>Series / DataFrame</td><td class="worst">excludes j</td></tr>
+    <tr><td>df[mask]</td><td class="tl">rows where the boolean mask is True</td><td>DataFrame</td><td>—</td></tr>
+    <tr><td>df.query('expr')</td><td class="tl">rows matching a string expression</td><td>DataFrame</td><td>—</td></tr>
+  </table>
+
+  <h3>ndarray vs Series vs DataFrame</h3>
+  <table class="cmp-table">
+    <tr><th></th><th>np.ndarray</th><th>pd.Series</th><th>pd.DataFrame</th></tr>
+    <tr><td>Dimensions</td><td>1-D, 2-D, … n-D</td><td>1-D</td><td>2-D</td></tr>
+    <tr><td>Labels</td><td class="worst">implicit integers only</td><td class="best">explicit Index</td><td class="best">Index + columns</td></tr>
+    <tr><td>Mixed dtypes</td><td class="worst">no — one dtype</td><td>one dtype</td><td class="best">one dtype per column</td></tr>
+    <tr><td>Missing data</td><td>not built in</td><td class="best">NaN-aware</td><td class="best">NaN-aware</td></tr>
+  </table>
+
+  <h3>Ufunc behavior on labeled data</h3>
+  <table class="cmp-table">
+    <tr><th>Operation</th><th>Index behavior</th><th>Example</th></tr>
+    <tr><td>Unary ufunc</td><td class="tl">PRESERVES the index — values change, labels stay</td><td>np.exp(series)</td></tr>
+    <tr><td>Binary ufunc</td><td class="tl">ALIGNS on the union of indexes — NaN where a label is missing</td><td>population / area</td></tr>
+    <tr><td>Method with fill_value=</td><td class="tl">aligns, but missing slots get your default instead of NaN</td><td>A.add(B, fill_value=0)</td></tr>
+  </table>
+
+  <h3>Further reading</h3>
+  <ul>
+    <li><a href="https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf" target="_blank" rel="noopener">Pandas cheat sheet</a> — the official one-page PDF</li>
+    <li><a href="https://wesmckinney.com/book/" target="_blank" rel="noopener">Python for Data Analysis</a> — free online book by Pandas creator Wes McKinney</li>
+  </ul>
+
+  <div class="bridge-box">
+    <div class="bb-title">🎓 AFTER THIS MODULE, YOU CAN…</div>
+    <ul>
+      <li>Choose between a plain NumPy array and a labeled Series / DataFrame for any dataset</li>
+      <li>Build DataFrames from dicts of Series, lists of dicts, or 2-D arrays — and read their anatomy</li>
+      <li>Select anything — by name, label, position, mask, or query string — and know which type comes back</li>
+      <li>Predict index preservation and alignment, and tame the resulting NaNs with fill_value</li>
+    </ul>
+    <p class="bb-next">THE END ▸ You now own the full stack: NumPy arrays → Matplotlib figures → SymPy exactness → SciPy algorithms → Pandas tables. Go build something.</p>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="04_scipy.html"><div class="nav-dir">◂ PREVIOUS</div><div class="nav-title">Module 4 · High-level Scientific Computing with SciPy</div></a>
+    <a href="index.html" class="next"><div class="nav-dir">COURSE HOME ▸</div><div class="nav-title">You finished the course! Back to overview</div></a>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Scientific Computing with Python · Module 5: Data Analysis with Pandas · self-study companion<br>
+  Videos, slides &amp; notebooks on 網路大學 · quiz taken from the course test bank · works with <code>05_Pandas.ipynb</code>
+</footer>
+<script>
+/* ============================================================
+   LMS video links — EDIT HERE.
+   Set LMS_BASE to your course page URL to make every "Watch on
+   網路大學" badge a real link, or map individual videos below.
+   ============================================================ */
+const LMS_BASE = '';                 // e.g. 'https://lms.example.edu/course/scicomp'
+const LMS_VIDEO_URLS = {             // per-video override (optional)
+  // '5.1_Introduction to Pandas.mp4': 'https://…',
+};
+(function applyLmsLinks(){
+  document.querySelectorAll('a.vc-lms[data-video]').forEach(a => {
+    const url = LMS_VIDEO_URLS[a.dataset.video] || LMS_BASE;
+    if (url) { a.href = url; a.target = '_blank'; a.rel = 'noopener'; }
+    else { a.classList.add('placeholder'); a.removeAttribute('href'); a.title = 'Please find this video in the course resources on 網路大學'; }
+  });
+})();
+
+/* ============================================================
+   Slides & notebook links — EDIT HERE.
+   The course materials (slides / notebook HTML) are hosted
+   separately, like the videos. Set DOCS_BASE to their base URL,
+   or map individual files in DOC_URLS. Until then the badges
+   show as inactive placeholders.
+   ============================================================ */
+const DOCS_BASE = '';            // e.g. 'https://your-host/scicomp-materials'
+const DOC_URLS  = {};            // per-file override, e.g. {'01_Basic_NumPy_slides.html': 'https://…'}
+(function applyDocLinks(){
+  document.querySelectorAll('a.mm-doc[data-doc]').forEach(a => {
+    let url = DOC_URLS[a.dataset.doc] || (DOCS_BASE ? DOCS_BASE.replace(/\/+$/,'') + '/' + a.dataset.doc : '');
+    if (url) {
+      if (a.dataset.frag) url += '#' + a.dataset.frag;
+      a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    } else {
+      a.classList.add('placeholder');
+      a.removeAttribute('href');
+      a.title = "Please find the slides / notebooks in the course resources on 網路大學";
+    }
+  });
+})();
+
+
+/* ============================================================
+   Shared engines: StepRunner / Quiz / Flashcards
+   ============================================================ */
+
+/** Step-through engine: steps = [{line, vars, out, note, …}] */
+function StepRunner(prefix, steps, opts) {
+  opts = opts || {};
+  const codeEl  = document.getElementById(prefix + 'Code');
+  const statusEl= document.getElementById(prefix + 'Status');
+  const varsEl  = document.getElementById(prefix + 'Vars');
+  const outEl   = document.getElementById(prefix + 'Out');
+  const playBtn = document.getElementById(prefix + 'Play');
+  const stepBtn = document.getElementById(prefix + 'Step');
+  const resetBtn= document.getElementById(prefix + 'Reset');
+  let idx = -1, timer = null;
+
+  function lines(){ return codeEl ? codeEl.querySelectorAll('.line') : []; }
+
+  function render() {
+    lines().forEach((l,i)=>{
+      l.classList.toggle('active', idx>=0 && steps[idx].line===i);
+    });
+    if (idx < 0) {
+      if (statusEl) statusEl.textContent = 'Press "Step ▸" to start';
+      if (varsEl) varsEl.innerHTML = '<div class="var-empty">not started</div>';
+      if (outEl) outEl.innerHTML = '';
+      if (opts.onReset) opts.onReset();
+      return;
+    }
+    const s = steps[idx];
+    if (statusEl) statusEl.textContent = s.note || '';
+    if (varsEl) {
+      if (s.vars && s.vars.length) {
+        varsEl.innerHTML = '<table class="var-table">' + s.vars.map(v =>
+          `<tr${v[3]?' class="changed"':''}><td class="vname">${v[0]}</td><td class="vval">${v[1]}</td><td class="vtype">${v[2]}</td></tr>`
+        ).join('') + '</table>';
+      } else {
+        varsEl.innerHTML = '<div class="var-empty">(no variables)</div>';
+      }
+    }
+    if (outEl) {
+      outEl.innerHTML = (s.out||[]).map((o,i)=>{
+        const cls = o.startsWith('⌨') ? 'in-line' : (i === (s.out.length-1) && s.newOut ? 'out-line new' : 'out-line');
+        return `<div class="${cls}">${o}</div>`;
+      }).join('');
+      outEl.scrollTop = outEl.scrollHeight;
+    }
+    if (opts.onStep) opts.onStep(s, idx);
+  }
+
+  function step() {
+    if (idx < steps.length - 1) { idx++; render(); }
+    if (idx >= steps.length - 1) stopPlay();
+  }
+  function stopPlay(){
+    if (timer) { clearInterval(timer); timer = null; }
+    if (playBtn){ playBtn.classList.remove('active'); playBtn.textContent = '▶ Play'; }
+  }
+  function play(){
+    if (timer) { stopPlay(); return; }
+    if (idx >= steps.length - 1) { idx = -1; render(); }
+    playBtn.classList.add('active'); playBtn.textContent = '⏸ Pause';
+    timer = setInterval(()=>{
+      if (idx >= steps.length - 1) stopPlay(); else step();
+    }, opts.interval || 1800);
+  }
+  function reset(){ stopPlay(); idx = -1; render(); }
+
+  if (playBtn) playBtn.addEventListener('click', play);
+  if (stepBtn) stepBtn.addEventListener('click', ()=>{ stopPlay(); step(); });
+  if (resetBtn) resetBtn.addEventListener('click', reset);
+  render();
+  return { reset, setSteps(newSteps){ stopPlay(); steps = newSteps; idx = -1; render(); } };
+}
+
+/** Quiz engine: data = [{question, code, multi, answers:[{answer, correct, feedback}]}] */
+function buildQuiz(containerId, progressId, data) {
+  const container = document.getElementById(containerId);
+  const progress  = document.getElementById(progressId);
+  const solved = new Set();
+  const LETTERS = 'ABCDEFGH';
+
+  data.forEach((q, qi) => {
+    const box = document.createElement('div');
+    box.className = 'quiz-box';
+    box.innerHTML =
+      `<div class="quiz-label">Q${qi+1} / ${data.length}${q.multi ? ' <span class="multi-badge">MULTI</span>' : ''}</div>` +
+      `<div class="quiz-q">${q.question}</div>` +
+      (q.code ? `<div class="quiz-code">${q.code.replace(/</g,'&lt;')}</div>` : '') +
+      `<div class="quiz-options">` +
+      q.answers.map((a, ai) =>
+        `<div class="quiz-opt" data-q="${qi}" data-a="${ai}">
+           <div class="opt-head"><span class="opt-letter">${LETTERS[ai]}</span><span>${String(a.answer).replace(/</g,'&lt;')}</span></div>
+           <div class="opt-fb"></div>
+         </div>`
+      ).join('') + `</div>`;
+    container.appendChild(box);
+  });
+
+  container.addEventListener('click', e => {
+    const opt = e.target.closest('.quiz-opt');
+    if (!opt || opt.classList.contains('revealed')) return;
+    const q = data[+opt.dataset.q], a = q.answers[+opt.dataset.a];
+    opt.classList.add('revealed', a.correct ? 'correct' : 'wrong');
+    opt.querySelector('.opt-fb').textContent = (a.correct ? '✔ Correct: ' : '✘ Not quite: ') + a.feedback;
+    if (a.correct) {
+      solved.add(+opt.dataset.q);
+      progress.textContent = `Solved ${solved.size} / ${data.length}`;
+    }
+  });
+}
+
+/** Flashcards: data = [{front, back}] */
+function buildFlashcards(gridId, data) {
+  const grid = document.getElementById(gridId);
+  function render(cards) {
+    grid.innerHTML = cards.map(c =>
+      `<div class="flashcard">
+         <div class="fc-inner">
+           <div class="fc-face fc-front"><div>${c.front}</div><div class="fc-hint">CLICK TO FLIP</div></div>
+           <div class="fc-face fc-back">${c.back}</div>
+         </div>
+       </div>`).join('');
+  }
+  render(data);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.flashcard');
+    if (card) card.classList.toggle('flipped');
+  });
+  document.getElementById('flipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.add('flipped')));
+  document.getElementById('unflipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.remove('flipped')));
+  document.getElementById('shuffleCards').addEventListener('click', ()=>{
+    const shuffled = [...data].sort(()=>Math.random()-.5);
+    render(shuffled);
+  });
+}
+
+/* ============================================================
+   5.4 DataFrame selection sandbox — the cities DataFrame
+   ============================================================ */
+const CITY_INDEX = ['New Taipei City', 'Taichung City', 'Kaohsiung City', 'Taipei City', 'Taoyuan City', 'Tainan City'];
+const CITY_COLS  = ['area', 'subdiv_cnt'];
+const CITY_DATA  = {
+  area:       [2052.57, 2214.90, 2951.85, 271.80, 1220.95, 2191.65],
+  subdiv_cnt: [29, 29, 38, 12, 13, 37],
+};
+
+const DF_PRESETS = [
+  { label: "cities['area']",
+    rows: [0,1,2,3,4,5], cols: ['area'], type: 'Series',
+    note: 'dictionary-style column access → returns a Series (the whole area column).' },
+  { label: "cities.loc['Taipei City']",
+    rows: [3], cols: ['area','subdiv_cnt'], type: 'Series',
+    note: 'loc = EXPLICIT label indexer → one row, handed back as a Series.' },
+  { label: 'cities.iloc[0:2]',
+    rows: [0,1], cols: ['area','subdiv_cnt'], type: 'DataFrame',
+    note: 'iloc = IMPLICIT position indexer, Python slice semantics: rows 0, 1 — endpoint 2 EXCLUDED.' },
+  { label: "cities.loc['Taichung City':'Taipei City']",
+    rows: [1,2,3], cols: ['area','subdiv_cnt'], type: 'DataFrame',
+    note: 'label slices INCLUDE the endpoint! Taichung, Kaohsiung AND Taipei make the cut.' },
+  { label: "cities[cities['area'] > 2000]",
+    rows: [0,1,2,5], cols: ['area','subdiv_cnt'], type: 'DataFrame',
+    note: 'boolean masking — keeps exactly the rows where the condition is True.' },
+  { label: "cities.query('subdiv_cnt > 30')",
+    rows: [2,5], cols: ['area','subdiv_cnt'], type: 'DataFrame',
+    note: 'query(): the same filter as a readable string expression.' },
+];
+
+(function initDfSandbox(){
+  const stage = document.getElementById('dfStage');
+  const status = document.getElementById('dfStatus');
+  const presetRow = document.getElementById('dfPresets');
+
+  function render(preset){
+    const anySel = !!preset;
+    const rowSel = c => anySel && preset.rows.includes(c);
+    const colSel = c => anySel && preset.cols.includes(c);
+    let html = '<div class="ag-block"><div class="ag-name">cities (6 rows × 2 columns)</div>';
+    html += '<div class="array-grid" style="grid-template-columns:repeat(3,auto);">';
+    // header row: corner + column headers
+    html += '<div class="ag-cell" style="border:none;background:none;width:auto;"></div>';
+    CITY_COLS.forEach(col => {
+      const on = colSel(col);
+      const style = 'width:auto;min-width:96px;padding:0 12px;font-weight:700;font-size:.74rem;' +
+        (on ? 'background:#f39c12;border-color:#f39c12;color:#1a1a2e;'
+            : 'background:#2c3e7a;border-color:#2c3e7a;color:#fff;');
+      html += `<div class="ag-cell" style="${style}">${col}</div>`;
+    });
+    // data rows: index label + cells
+    CITY_INDEX.forEach((city, r) => {
+      const on = rowSel(r);
+      const style = 'width:auto;padding:0 12px;font-size:.74rem;justify-content:flex-start;' +
+        (on ? 'background:#fff3cd;border-color:#f39c12;color:#b9770e;font-weight:700;'
+            : 'background:#eef2ff;border-color:#e8e2d6;color:#2c3e7a;font-weight:600;');
+      html += `<div class="ag-cell" style="${style}">${city}</div>`;
+      CITY_COLS.forEach(col => {
+        const cellOn = on && colSel(col);
+        const cls = 'ag-cell' + (cellOn ? ' sel' : (anySel ? ' dim' : ''));
+        html += `<div class="${cls}" style="width:auto;min-width:96px;padding:0 12px;">${CITY_DATA[col][r]}</div>`;
+      });
+    });
+    html += '</div></div>';
+    stage.innerHTML = html;
+    if (preset) {
+      status.innerHTML = `<span class="ok">✔</span><span>${preset.note}</span><span class="type-badge">returns: ${preset.type}</span>`;
+    } else {
+      status.innerHTML = '<span>Click an expression above and predict which cells light up.</span>';
+    }
+  }
+
+  DF_PRESETS.forEach(p => {
+    const b = document.createElement('button');
+    b.className = 'preset-btn';
+    b.textContent = p.label;
+    b.addEventListener('click', () => {
+      presetRow.querySelectorAll('.preset-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      render(p);
+    });
+    presetRow.appendChild(b);
+  });
+  render(null);
+})();
+
+/* ============================================================
+   5.5 Index-alignment stepper — A + B on different indexes
+   ============================================================ */
+(function initAlignStepper(){
+  const stage = document.getElementById('alnStage');
+  const status = document.getElementById('alnStatus');
+  const playBtn = document.getElementById('alnPlay');
+
+  const A = [['Taipei', 100], ['Taichung', 80], ['Tainan', 60]];
+  const B = [['Taichung', 5], ['Tainan', 10], ['Kaohsiung', 20]];
+  const UNION = ['Kaohsiung', 'Taichung', 'Tainan', 'Taipei'];   // pandas sorts the union
+  const ALIGNED_A = [NaN, 80, 60, 100];
+  const ALIGNED_B = [20, 5, 10, NaN];
+  const SUM       = [NaN, '85.0', '70.0', NaN];
+  const FILLED    = ['20.0', '85.0', '70.0', '100.0'];
+
+  function seriesBlock(name, labels, values, opts){
+    opts = opts || {};
+    let html = `<div class="ag-block"><div class="ag-name">${name}</div>`;
+    html += '<div class="array-grid" style="grid-template-columns:auto auto;">';
+    labels.forEach((lab, i) => {
+      const v = values[i];
+      const isNaN_ = (typeof v === 'number' && Number.isNaN(v));
+      let cls = 'ag-cell';
+      if (isNaN_) cls += ' ghost';
+      else if (opts.res) cls += ' res';
+      else if (opts.selLabels && opts.selLabels.includes(lab)) cls += ' sel';
+      html += `<div class="ag-cell" style="border:none;background:none;width:auto;padding-right:6px;justify-content:flex-end;"><span class="ag-axis">${lab}</span></div>`;
+      html += `<div class="${cls}" style="width:auto;min-width:60px;padding:0 10px;">${isNaN_ ? 'NaN' : v}</div>`;
+    });
+    html += '</div></div>';
+    return html;
+  }
+
+  const labsA = A.map(p => p[0]), valsA = A.map(p => p[1]);
+  const labsB = B.map(p => p[0]), valsB = B.map(p => p[1]);
+
+  const steps = [
+    { note: 'Step 1 — A and B each hold three cities, but only Taichung and Tainan (highlighted) appear in BOTH Series.',
+      render: () => seriesBlock('A', labsA, valsA, {selLabels:['Taichung','Tainan']})
+               + seriesBlock('B', labsB, valsB, {selLabels:['Taichung','Tainan']}) },
+    { note: 'Step 2 — before computing, pandas re-indexes BOTH operands on the UNION of the indexes: Kaohsiung ∪ Taichung ∪ Tainan ∪ Taipei. Labels a Series does not have become NaN slots.',
+      render: () => seriesBlock('A (aligned)', UNION, ALIGNED_A)
+               + seriesBlock('B (aligned)', UNION, ALIGNED_B) },
+    { note: 'Step 3 — labels that appear in only one operand get NaN — binary ufuncs ALIGN indexes (unary ufuncs just PRESERVE the index).',
+      render: () => seriesBlock('A (aligned)', UNION, ALIGNED_A)
+               + seriesBlock('B (aligned)', UNION, ALIGNED_B)
+               + seriesBlock('A + B', UNION, SUM, {res:true}) },
+    { note: 'Step 4 — A.add(B, fill_value=0) treats every missing slot as 0 before adding: the NaNs are gone. ✔',
+      render: () => seriesBlock('A (aligned)', UNION, ALIGNED_A)
+               + seriesBlock('B (aligned)', UNION, ALIGNED_B)
+               + seriesBlock('A.add(B, fill_value=0)', UNION, FILLED, {res:true}) },
+  ];
+  let idx = -1, timer = null;
+
+  function render(){
+    if (idx < 0) {
+      stage.innerHTML = seriesBlock('A', labsA, valsA) + seriesBlock('B', labsB, valsB);
+      status.textContent = 'Press "Step ▸" to start';
+      return;
+    }
+    stage.innerHTML = steps[idx].render();
+    status.textContent = steps[idx].note;
+  }
+  function stopPlay(){ if (timer){ clearInterval(timer); timer = null; } playBtn.classList.remove('active'); playBtn.textContent = '▶ Play'; }
+  function step(){ if (idx < steps.length - 1){ idx++; render(); } if (idx >= steps.length - 1) stopPlay(); }
+  function reset(){ stopPlay(); idx = -1; render(); }
+  playBtn.addEventListener('click', () => {
+    if (timer) { stopPlay(); return; }
+    if (idx >= steps.length - 1) { idx = -1; render(); }
+    playBtn.classList.add('active'); playBtn.textContent = '⏸ Pause';
+    timer = setInterval(step, 2300);
+  });
+  document.getElementById('alnStep').addEventListener('click', () => { stopPlay(); step(); });
+  document.getElementById('alnReset').addEventListener('click', reset);
+  render();
+})();
+
+/* ============================================================
+   QUIZ — Module 5 test bank (answers verified with pandas 3.0)
+   ============================================================ */
+const QUIZ_DATA = [
+  { question:'What will the following code return: <code>df.dtypes</code>, where df is a DataFrame?', answers:[
+    { answer:'The types of data in the index of df', correct:false, feedback:'The index has its own single dtype, reachable via df.index.dtype — dtypes is about the columns.' },
+    { answer:'The types of data in the columns of df', correct:true, feedback:'Each column of a DataFrame has its own dtype; dtypes returns a Series of those column types, indexed by column name.' },
+    { answer:'The first row of df', correct:false, feedback:'That would be df.head(1) or df.iloc[0].' },
+    { answer:'The total memory usage of df.', correct:false, feedback:'That is df.memory_usage() — dtypes only reports the column types.' } ] },
+  { question:"How can you retrieve the rows of a DataFrame df where column 'A' has a value greater than 10?", answers:[
+    { answer:"df.query('A > 10')", correct:true, feedback:'query() filters rows with a readable string expression — it returns exactly the matching rows.' },
+    { answer:"df['A'] > 10", correct:false, feedback:"df['A'] > 10 returns a boolean Series (the mask itself), not the rows — you'd write df[df['A'] > 10] to apply it." },
+    { answer:"df.loc['A' > 10]", correct:false, feedback:"'A' > 10 compares a string with a number before loc ever sees it — this is invalid, not a mask." },
+    { answer:"df.iloc[df['A'] > 10]", correct:false, feedback:'iloc is positional — masking with a labeled boolean Series raises a ValueError on most indexes (convert with .to_numpy() first if you must); the idiomatic forms are df[mask] or df.loc[mask].' } ] },
+  { question:'Which of the following is NOT a valid way to create a new DataFrame?', answers:[
+    { answer:'pd.DataFrame([[1, 2], [3, 4]])', correct:false, feedback:'Valid — a list of lists becomes the rows, with default integer index and columns.' },
+    { answer:"pd.DataFrame({'A': [1, 2], 'B': [3, 4]})", correct:false, feedback:'Valid — a dict of lists: the keys become the column names.' },
+    { answer:'pd.DataFrame([1, 2, 3, 4])', correct:false, feedback:'Valid — a single list creates a one-column DataFrame.' },
+    { answer:'pd.new_DataFrame([1, 2, 3, 4])', correct:true, feedback:'pd.new_DataFrame does not exist — the constructor is simply pd.DataFrame().' } ] },
+  { question:'Which of the following statements is False?', answers:[
+    { answer:'The .iloc method in Pandas stands for "integer location" and conforms with Python/NumPy slice semantics', correct:false, feedback:'This is true — iloc slices exclude the endpoint, exactly like NumPy.' },
+    { answer:'DataFrames are immutable in Pandas.', correct:true, feedback:"False — and that makes it the answer: DataFrames are MUTABLE. You can add or remove columns and write into cells (cities['density'] = …)." },
+    { answer:'A DataFrame can be created from a dictionary.', correct:false, feedback:'This is true — a dict of lists or a dict of Series are the most common constructors.' },
+    { answer:'The head() method in Pandas returns the first five rows of a DataFrame by default.', correct:false, feedback:'This is true — head() defaults to n=5.' } ] },
+  { question:'Which of the following statements is True?', answers:[
+    { answer:'Pandas cannot handle missing data.', correct:false, feedback:'Pandas was BUILT around missing data — NaN appears whenever indexes misalign, and dropna()/fillna() manage it.' },
+    { answer:'A DataFrame can only contain data of a single datatype.', correct:false, feedback:'Each column has one dtype, but different columns may differ — mixed types across columns are a key selling point.' },
+    { answer:"A DataFrame's row indices must be unique.", correct:false, feedback:'Surprisingly, no — row indices MAY contain duplicates (construct one and see!). Enforcing uniqueness is your job if you need it.' },
+    { answer:'The tail() method in Pandas returns the last five rows of a DataFrame by default.', correct:true, feedback:'Correct — the mirror image of head().' } ] },
+  { question:'Which of the following statements is False?', answers:[
+    { answer:'If data is a Series, an indexing operation like data[1] will utilize the explicit indices, while a slicing operation, such as data[1:3], will employ the implicit Python-style indices', correct:false, feedback:'This is true — and subtle: with integer labels, data[1] uses the EXPLICIT label but data[1:3] slices by IMPLICIT position. This inconsistency is exactly why loc and iloc exist.' },
+    { answer:'For a DataFrame, direct indexing refers to columns and slicing refers to rows.', correct:false, feedback:"This is true — cities['area'] grabs a column, cities[1:4] slices rows." },
+    { answer:"iloc() and loc() are two object's methods that can be called by the DataFrame or Series for indexing", correct:true, feedback:"False — loc and iloc are indexer ATTRIBUTES used with square brackets: data.loc['a'], data.iloc[0] — not methods you call with ()." },
+    { answer:'Pandas also supports broadcasting rules and vectorization using ufuncs like NumPy.', correct:false, feedback:'This is true — with index preservation and alignment added on top.' } ] },
+  { question:'Which of the following statements is True?', answers:[
+    { answer:'In Pandas, the term "axis 0" refers to columns.', correct:false, feedback:'axis 0 runs down the ROWS (it is the index axis); axis 1 is the columns.' },
+    { answer:'A Series object in Pandas is two-dimensional.', correct:false, feedback:'A Series is ONE-dimensional — a single labeled column. The 2-D structure is the DataFrame.' },
+    { answer:'The index is an array-like object of the pd.Index type', correct:true, feedback:'Correct — pd.Index is an immutable, array-like object that even supports set operations such as union and intersection.' },
+    { answer:'In Pandas, the values attribute of a DataFrame returns the data as a list.', correct:false, feedback:'df.values returns a NumPy ndarray, not a list.' } ] },
+];
+buildQuiz('quizContainer', 'quizProgress', QUIZ_DATA);
+
+/* ============================================================
+   FLASHCARDS — Key terms from Module 5
+   ============================================================ */
+const CARD_DATA = [
+  {front:'Missing Data', back:'The absence of values in a dataset. Pandas represents it with NaN and is designed around it — you can drop, fill, or impute missing entries instead of letting them break your analysis.'},
+  {front:'Database', back:'A structured collection of data that programs store, retrieve, modify, and manage. Python talks to databases such as SQLite, MySQL, and PostgreSQL — and Pandas can load query results into DataFrames.'},
+  {front:'Spreadsheet', back:'A tabular arrangement of data used for manipulation and analysis. Pandas reads and writes spreadsheet formats like Excel, turning sheets of rows and columns into DataFrames you can compute on.'},
+  {front:'Data Munging', back:'Also called data wrangling: cleaning, structuring, and enriching raw data into a format ready for analysis. Pandas is the go-to Python library for this messy but essential preparation work.'},
+  {front:'Series', back:'A one-dimensional labeled array holding any data type — a single column of data. Think of it as a generalized NumPy array (explicit index) or a specialized dictionary (typed values).'},
+  {front:'Index', back:'The data structure holding the row labels of a Series or DataFrame. It enables fast lookup and alignment, and can be composed of integers, strings, or even date/time objects.'},
+  {front:'Explicit is Better Than Implicit', back:'A guiding principle from "The Zen of Python": code should be clear rather than clever. It is why loc (always by label) and iloc (always by position) beat plain square brackets: each is explicit about which scheme it uses.'},
+  {front:'DataFrame', back:"Pandas' 2-dimensional labeled data structure — rows and columns, like a spreadsheet or database table. Each column is a Series; together they make structured data easy to manipulate, analyze, and visualize."},
+  {front:'Masking', back:"Filtering with a boolean array: True marks the rows (or elements) that meet a condition, False the rest. Indexing with the mask — cities[cities['area'] > 2000] — keeps only the True rows."},
+  {front:'In-place', back:'Many Pandas methods take an inplace parameter. inplace=True modifies the original DataFrame or Series directly and returns nothing; the default False returns a modified copy, leaving the original unchanged.'},
+  {front:'Query', back:"The query() method filters rows using a string expression — df.query('area > 2000') keeps the rows where the condition holds. A concise, readable alternative to boolean masking."},
+];
+buildFlashcards('flashGrid', CARD_DATA);
+/* ============================================================
+   Floating nav active highlight
+   ============================================================ */
+(function initFloatNav(){
+  const links = document.querySelectorAll('.float-nav a[data-target]');
+  const sections = [...links].map(a => document.getElementById(a.dataset.target)).filter(Boolean);
+  function update(){
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= window.innerHeight * 0.35) active = s.id;
+    }
+    links.forEach(a => a.classList.toggle('active', a.dataset.target === active));
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>

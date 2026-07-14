@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scientific Computing with Python — Self-Study Course Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:17px;}
+
+/* Hero */
+.hero{min-height:56vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2.5rem 2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:880px;}
+.hero .chapter-tag{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#f39c12;letter-spacing:.3em;margin-bottom:.8rem;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(1.9rem,4.6vw,3rem);font-weight:900;color:#fff;letter-spacing:.02em;line-height:1.25;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.15rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{font-family:'JetBrains Mono',monospace;color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.0rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+ul,ol{margin:0 0 1rem 1.4rem;}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:40px;}
+.toc-grid a .toc-dur{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent3);margin-left:auto;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box p:last-child,.info-box ul:last-child,.info-box ol:last-child{margin-bottom:0;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+.cmp-table td.tl{font-family:'Noto Sans TC',sans-serif;text-align:left;font-size:.85rem;}
+
+/* Viz layout */
+.viz-layout{display:grid;grid-template-columns:1fr 320px;gap:1.3rem;margin:1.2rem 0;align-items:start;}
+@media(max-width:900px){.viz-layout{grid-template-columns:1fr;}}
+.viz-panel{background:linear-gradient(160deg,#fffdf7 0%,#f4efe3 100%);border:1px solid var(--card-border);border-radius:12px;padding:1rem;box-shadow:0 4px 18px rgba(0,0,0,.06);position:relative;}
+.side-panel{display:flex;flex-direction:column;gap:.85rem;}
+.info-card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.info-card .ic-title{font-size:.72rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem;border-bottom:1px solid var(--card-border);padding-bottom:.3rem;display:flex;align-items:center;justify-content:space-between;}
+.info-card .ic-title .ic-badge{font-size:.7rem;color:#fff;background:var(--accent3);padding:1px 7px;border-radius:3px;letter-spacing:.05em;font-weight:700;}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.65;overflow-x:auto;margin:.8rem 0;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .line.active{background:rgba(243,156,18,.3);color:#fff;border-left:3px solid #f39c12;padding-left:6px;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .str{color:#f1fa8c;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+
+/* Status banner */
+.status-banner{margin-top:.8rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;min-height:42px;display:flex;align-items:center;gap:.6rem;}
+.status-banner .status-icon{color:#2ecc71;font-weight:700;}
+.status-banner .status-text{flex:1;}
+
+/* Controls */
+.controls-bar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--card-border);}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-play.active{background:var(--accent);}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-step:disabled{background:#ccc;cursor:not-allowed;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+
+/* Preset buttons */
+.preset-row{display:flex;gap:.4rem;flex-wrap:wrap;margin:.6rem 0 1rem;}
+.preset-btn{font-family:'JetBrains Mono',monospace;font-size:.78rem;padding:.4rem .85rem;border-radius:6px;border:2px solid var(--card-border);background:var(--card);cursor:pointer;transition:all .2s;color:var(--ink);}
+.preset-btn:hover{border-color:var(--accent2);}
+.preset-btn.active{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+
+/* Variable state table */
+.var-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+.var-table td{padding:.25rem .4rem;border-bottom:1px dashed var(--card-border);}
+.var-table td.vname{color:var(--accent2);font-weight:600;}
+.var-table td.vval{color:var(--ink);}
+.var-table td.vtype{color:var(--muted);font-size:.72rem;text-align:right;}
+.var-table tr.changed td{background:var(--highlight);}
+.var-empty{color:var(--muted);font-size:.8rem;font-style:italic;}
+
+/* Console */
+.console{background:#111;border-radius:8px;padding:.6rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#d4d4d4;min-height:70px;max-height:220px;overflow-y:auto;line-height:1.6;}
+.console .out-line{white-space:pre-wrap;}
+.console .out-line.new{color:#2ecc71;}
+.console .in-line{color:#f39c12;}
+.console .err-line{color:#e74c3c;}
+
+/* Sandbox */
+.sandbox{background:var(--card);border:2px solid var(--accent3);border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.sandbox .sandbox-label{position:absolute;top:-11px;left:14px;background:var(--accent3);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.input-row{display:flex;gap:.5rem;align-items:center;margin:.5rem 0;flex-wrap:wrap;}
+.input-row label{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent2);font-weight:600;}
+.input-row input[type="text"]{font-family:'JetBrains Mono',monospace;font-size:.9rem;padding:.45rem .7rem;border:1px solid var(--card-border);border-radius:6px;background:#fff;flex:1;min-width:120px;}
+.sandbox-result{margin-top:.6rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.9rem;min-height:46px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+.sandbox-result .ok{color:#2ecc71;font-weight:700;}
+.sandbox-result .bad{color:#e67e22;font-weight:700;}
+.sandbox-result .type-badge{background:#50fa7b;color:#1a1a2e;font-weight:700;padding:1px 10px;border-radius:4px;font-size:.82rem;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.quiz-box .quiz-label .multi-badge{background:#8e44ad;color:#fff;font-size:.68rem;padding:1px 8px;border-radius:3px;}
+.quiz-box .quiz-q{font-weight:600;margin-bottom:.6rem;}
+.quiz-box .quiz-code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:.6rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.84rem;margin-bottom:.8rem;white-space:pre-wrap;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0 0;}
+.quiz-opt{display:flex;flex-direction:column;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.9rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-head{display:flex;align-items:baseline;gap:.6rem;}
+.quiz-opt .opt-letter{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt .opt-fb{display:none;font-size:.82rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--card-border);color:#555;}
+.quiz-opt.revealed .opt-fb{display:block;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.correct .opt-fb{color:#14532d;}
+.quiz-opt.wrong{background:#fef5e7;border-color:#d68910;}
+.quiz-opt.wrong .opt-letter{color:#d68910;}
+.quiz-progress{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;margin:.8rem 0;}
+
+/* Flashcards */
+.card-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.flashcard{perspective:900px;height:160px;cursor:pointer;}
+.flashcard .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+.flashcard .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.flashcard .fc-front{background:linear-gradient(150deg,#2c3e7a,#1a1a2e);color:#fff;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.flashcard .fc-front .fc-hint{font-size:.66rem;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.flashcard .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:34px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+/* Chapter nav */
+.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin:2rem 0 0;flex-wrap:wrap;}
+.chapter-nav a{flex:1;min-width:220px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.3rem;text-decoration:none;color:var(--ink);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.chapter-nav a:hover{border-color:var(--accent2);transform:translateY(-2px);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+footer a{color:var(--accent2);}
+
+/* 🤖 Ask-AI / discussion box */
+.ai-box{background:var(--card);border:2px dashed #8e44ad;border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.ai-box .ai-label{position:absolute;top:-11px;left:14px;background:#8e44ad;color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.ai-box p:last-child{margin-bottom:0;}
+.ai-box .ai-prompt{font-family:'JetBrains Mono',monospace;font-size:.85rem;background:rgba(142,68,173,.08);border-radius:6px;padding:.4rem .8rem;display:block;margin:.4rem 0;color:#6c3485;}
+
+/* 🎓 Chapter-end bridge */
+.bridge-box{background:#eafaf1;border:2px solid var(--accent3);border-radius:12px;padding:1.3rem 1.5rem;margin:2rem 0 0;}
+.bridge-box .bb-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent3);font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.bridge-box ul{margin:.3rem 0 .8rem 1.3rem;font-size:.92rem;}
+.bridge-box .bb-next{font-size:.9rem;color:var(--accent2);border-top:1px dashed var(--accent3);padding-top:.6rem;margin-bottom:0;}
+
+/* ===== Course-companion components ===== */
+
+/* 📺 Video card */
+.video-card{background:linear-gradient(150deg,#1a1a2e 0%,#232345 100%);border-radius:14px;padding:1.3rem 1.6rem;margin:1.2rem 0;color:#fff;position:relative;overflow:hidden;}
+.video-card::before{content:'📺';position:absolute;top:-12px;right:8px;font-size:4.8rem;opacity:.09;}
+.video-card .vc-tag{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#f39c12;letter-spacing:.2em;margin-bottom:.45rem;}
+.video-card .vc-file{font-family:'JetBrains Mono',monospace;font-size:.95rem;color:#8be9fd;word-break:break-all;}
+.video-card .vc-meta{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.6rem 0 .1rem;}
+.vc-dur{font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.14);color:#f1fa8c;font-size:.78rem;font-weight:600;padding:2px 10px;border-radius:4px;}
+.vc-lms{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;background:var(--accent3);color:#fff;text-decoration:none;transition:background .2s;}
+.vc-lms:hover{background:#22845c;}
+.vc-lms.placeholder{background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);cursor:default;}
+.video-card details{margin-top:.7rem;}
+.video-card details summary{cursor:pointer;color:#5dade2;font-size:.85rem;font-family:'JetBrains Mono',monospace;}
+.vb-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:.6rem;}
+.vb-table td{padding:.32rem .5rem;border-bottom:1px dashed rgba(255,255,255,.12);color:rgba(255,255,255,.85);}
+.vb-table tr:last-child td{border-bottom:none;}
+.vb-table td.vb-time{font-family:'JetBrains Mono',monospace;color:#2ecc71;white-space:nowrap;font-size:.76rem;}
+
+/* Materials map */
+.mat-map{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.9rem 0;padding:.7rem 1rem;background:var(--card);border:1px solid var(--card-border);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.mat-map .mm-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.12em;margin-right:.3rem;}
+.mat-map a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;text-decoration:none;border:2px solid var(--card-border);color:var(--accent2);transition:all .2s;background:var(--paper);}
+.mat-map a:hover{border-color:var(--accent2);}
+.mat-map span.mm-video{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);padding:3px 6px;}
+
+/* Array grid visualization */
+.ag-stage{background:#fafafa;border:1px solid #ececec;border-radius:8px;padding:1.1rem;display:flex;gap:1.8rem;align-items:center;justify-content:center;flex-wrap:wrap;min-height:170px;margin-bottom:.6rem;}
+.ag-block{display:flex;flex-direction:column;align-items:center;gap:.45rem;}
+.ag-name{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent2);font-weight:700;}
+.array-grid{display:grid;gap:4px;}
+.ag-cell{width:52px;height:38px;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--card-border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.82rem;transition:all .25s;position:relative;}
+.ag-cell.sel{background:var(--highlight);border-color:#f39c12;color:#b9770e;font-weight:700;transform:scale(1.07);z-index:1;}
+.ag-cell.dim{opacity:.32;}
+.ag-cell.res{background:#eafaf1;border-color:var(--accent3);color:var(--accent3);font-weight:700;}
+.ag-cell.ghost{background:repeating-linear-gradient(45deg,#f6f2ea,#f6f2ea 5px,#efe9dd 5px,#efe9dd 10px);border-style:dashed;color:var(--muted);}
+.ag-axis{font-family:'JetBrains Mono',monospace;font-size:.64rem;color:var(--muted);}
+@media(max-width:600px){.ag-cell{width:42px;height:32px;font-size:.72rem;}}
+
+/* Module cards (index page) */
+.module-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1.1rem;margin:1.3rem 0;}
+.module-card{display:flex;flex-direction:column;gap:.45rem;background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:1.2rem 1.4rem;text-decoration:none;color:var(--ink);box-shadow:0 3px 12px rgba(0,0,0,.05);transition:all .2s;}
+a.module-card:hover{border-color:var(--accent2);transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.09);}
+.module-card .mc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--accent3);letter-spacing:.18em;}
+.module-card .mc-title{font-family:'Noto Serif TC',serif;font-size:1.12rem;font-weight:700;color:var(--accent2);line-height:1.35;}
+.module-card .mc-desc{font-size:.86rem;color:#4a463c;line-height:1.6;flex:1;}
+.module-card .mc-meta{display:flex;gap:.3rem;flex-wrap:wrap;}
+.module-card .mc-topics{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted);border-top:1px dashed var(--card-border);padding-top:.5rem;}
+.module-card.done-card{background:#eafaf1;border-color:var(--accent3);}
+
+/* Materials links become placeholders until DOCS_BASE is configured */
+a.mm-doc.placeholder{opacity:.55;cursor:default;pointer-events:none;border-style:dashed !important;color:var(--muted) !important;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="hero" id="top" style="min-height:70vh;">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="chapter-tag">SELF-STUDY VIDEO COURSE · 5 MODULES · 31 VIDEOS · ≈ 5.5 HOURS</div>
+    <h1>Scientific Computing with <span class="blue">Python</span></h1>
+    <div class="subtitle">From raw arrays to publication-quality figures, exact symbolic math, industrial-strength algorithms, and labeled data analysis — one library at a time.</div>
+    <div class="big-formula">NumPy → Matplotlib → SymPy → SciPy → Pandas</div>
+    <div class="scroll-hint">Scroll down to start<span>↓</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ============================================================ -->
+<section id="about">
+  <div class="section-number">ABOUT · HOW THIS COURSE WORKS</div>
+  <h2>Watch, read, play, quiz — in that order</h2>
+  <p>This course is a series of short videos (hosted on 網路大學, the university e-learning site) paired with Jupyter notebooks and RISE slides. Each module below has a <strong>companion page</strong> — a guided version of the material with video timelines, worked digests, interactive widgets, a self-check quiz from the course test bank, and key-term flashcards.</p>
+  <div class="info-box green">
+    <div class="info-label">📖 THE STUDY LOOP</div>
+    <p style="margin-bottom:0;">① <strong>Watch</strong> one video on 網路大學 → ② <strong>Re-run</strong> the matching notebook section yourself (Colab or Jupyter) → ③ <strong>Play</strong> with the widgets on the companion page until the concept feels obvious → ④ <strong>Quiz</strong> yourself and flip the flashcards at the end of each module.</p>
+  </div>
+  <div class="info-box">
+    <div class="info-label">🎒 PREREQUISITES</div>
+    <p style="margin-bottom:.4rem;">Basic Python: variables, flow control, functions, containers, and a nodding acquaintance with OOP vocabulary (class, object, method, attribute). The modules are designed for first- and second-year college students and reinforce linear algebra, calculus, and statistics along the way.</p>
+    <p style="margin-bottom:0;">Need a refresher first? <a href="https://www.py4e.com/" target="_blank" rel="noopener">Python for Everybody</a> · <a href="https://automatetheboringstuff.com/" target="_blank" rel="noopener">Automate the Boring Stuff with Python</a> · <a href="https://ehmatthes.github.io/pcc_3e/" target="_blank" rel="noopener">Python Crash Course</a></p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="start">
+  <div class="section-number">SETUP · BEFORE MODULE 1</div>
+  <h2>Getting started: two chapters, two short videos</h2>
+  <p>New here? Work through the two Chapter-0 pages first — they take about 20 minutes together:</p>
+  <div class="module-grid">
+    <a class="module-card" href="00a_why_code.html">
+      <div class="mc-num">CHAPTER 00A · READ FIRST</div>
+      <div class="mc-title">Why still learn scientific computing in the AI era?</div>
+      <div class="mc-desc">AI writes NumPy code in seconds — so why are you here? Vibe coding vs engineering, confidently-wrong AI, and the learning loop you must protect.</div>
+      <div class="mc-meta"><span class="pill pill-purple">mindset</span><span class="pill pill-green">3-question self-check</span></div>
+      <div class="mc-topics">vibe coding · determinism · safety factor · learning loop</div>
+    </a>
+    <a class="module-card" href="00b_setup.html">
+      <div class="mc-num">CHAPTER 00B · THEN SET UP</div>
+      <div class="mc-title">Set up your home study environment</div>
+      <div class="mc-desc">Pick one: Google Colab in the browser (recommended, zero install), Anaconda on your own machine, or VS Code/pip — plus Colab's Learn Mode, an AI that tutors instead of ghostwriting.</div>
+      <div class="mc-meta"><span class="pill pill-blue">Colab</span><span class="pill pill-orange">Anaconda</span><span class="pill pill-green">Learn Mode</span></div>
+      <div class="mc-topics">zero-install · local install · setup checklist · Gemini Learn Mode</div>
+    </a>
+  </div>
+  <h3>The two orientation videos</h3>
+  <table class="cmp-table">
+    <tr><th>Video</th><th>What it covers</th><th>Companion material</th></tr>
+    <tr><td>1.0_Overview.mp4</td><td class="tl">A tour of the whole course — what each module does and how they fit together.</td><td class="tl">01_Introduction.pptx</td></tr>
+    <tr><td>0.1_Introduction to Colab.mp4</td><td class="tl">Google Colab: cells, magic &amp; shell commands, the left sidebar, mounting Drive — the recommended zero-install platform for this course.</td><td class="tl"><a class="mm-doc" data-doc="Colab_notebook.html">Colab notebook (HTML)</a></td></tr>
+  </table>
+  <p>All notebooks run on both <strong>Google Colab</strong> (nothing to install) and local <strong>Jupyter</strong> (install via Anaconda). If you prefer a lecture-style view, every module also ships RISE slides and static HTML.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="modules">
+  <div class="section-number">MODULES · PICK YOUR NEXT ONE</div>
+  <h2>The five modules</h2>
+  <p>The recommended order is 1 → 5 (later modules lean on NumPy and Matplotlib), but each module is self-contained enough to study independently.</p>
+
+  <div class="module-grid">
+    <a class="module-card" href="01_numpy.html">
+      <div class="mc-num">MODULE 01</div>
+      <div class="mc-title">Array-Oriented Programming with NumPy</div>
+      <div class="mc-desc">The ndarray: creating, slicing, reducing — then vectorization, broadcasting, ufuncs, and file I/O. The foundation everything else stands on.</div>
+      <div class="mc-meta"><span class="pill pill-blue">8 videos</span><span class="pill pill-green">≈ 106 min</span><span class="pill pill-orange">2 notebooks</span></div>
+      <div class="mc-topics">ndarray · views vs copies · axis reductions · broadcasting rules · ufuncs · .npy</div>
+    </a>
+    <a class="module-card" href="02_matplotlib.html">
+      <div class="mc-num">MODULE 02</div>
+      <div class="mc-title">Visualization with Matplotlib</div>
+      <div class="mc-desc">Line, scatter, and density plots; polar curves; legends, annotations, ticks and spines; multi-panel figures — in both the pyplot and OOP interfaces.</div>
+      <div class="mc-meta"><span class="pill pill-blue">6 videos</span><span class="pill pill-green">≈ 60 min</span></div>
+      <div class="mc-topics">figure &amp; axes · format strings · fill_between · polar plots · annotations · subplots</div>
+    </a>
+    <a class="module-card" href="03_sympy.html">
+      <div class="mc-num">MODULE 03</div>
+      <div class="mc-title">Symbolic Mathematics with SymPy</div>
+      <div class="mc-desc">Exact math on symbols: expand, factor, substitute; solve equations symbolically and numerically; limits, derivatives, integrals, series — and symbolic matrices.</div>
+      <div class="mc-meta"><span class="pill pill-blue">6 videos</span><span class="pill pill-green">≈ 61 min</span></div>
+      <div class="mc-topics">symbols · solve &amp; nsolve · limits · diff &amp; integrate · lambdify · Matrix</div>
+    </a>
+    <a class="module-card" href="04_scipy.html">
+      <div class="mc-num">MODULE 04</div>
+      <div class="mc-title">High-level Scientific Computing with SciPy</div>
+      <div class="mc-desc">Battle-tested algorithms you should never rewrite: linear systems and eigenvalues, numerical integration, curve fitting, optimization, and statistics.</div>
+      <div class="mc-meta"><span class="pill pill-blue">6 videos</span><span class="pill pill-green">≈ 54 min</span></div>
+      <div class="mc-topics">linalg.solve · eig &amp; eigh · integrate.quad · curve_fit · minimize &amp; root · stats</div>
+    </a>
+    <a class="module-card" href="05_pandas.html">
+      <div class="mc-num">MODULE 05</div>
+      <div class="mc-title">Data Analysis with Pandas</div>
+      <div class="mc-desc">Labeled data done right: Series and DataFrame, loc/iloc selection, boolean masking and query(), and the index-alignment magic behind Pandas arithmetic.</div>
+      <div class="mc-meta"><span class="pill pill-blue">5 videos</span><span class="pill pill-green">≈ 52 min</span></div>
+      <div class="mc-topics">Series · DataFrame · loc &amp; iloc · masking · query() · index alignment</div>
+    </a>
+    <div class="module-card done-card">
+      <div class="mc-num">AFTER MODULE 05</div>
+      <div class="mc-title">🎓 You own the stack</div>
+      <div class="mc-desc">Arrays for speed, figures for insight, symbols for exactness, algorithms for heavy lifting, tables for real data. Combine them on a project of your own.</div>
+      <div class="mc-meta"><span class="pill pill-purple">capstone idea</span></div>
+      <div class="mc-topics">analyze a dataset you care about — load with Pandas, compute with NumPy/SciPy, plot with Matplotlib</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="resources">
+  <div class="section-number">RESOURCES · GO DEEPER</div>
+  <h2>Where the course draws from</h2>
+  <ul>
+    <li><a href="https://scipy-lectures.org" target="_blank" rel="noopener">Scientific Python Lectures</a> — the classic free course covering the same stack</li>
+    <li><a href="https://jakevdp.github.io/PythonDataScienceHandbook" target="_blank" rel="noopener">Python Data Science Handbook</a> (Jake VanderPlas) — free online</li>
+    <li><a href="https://patrickwalls.github.io/mathematicalpython/" target="_blank" rel="noopener">Mathematical Python</a> (Patrick Walls) — calculus &amp; linear algebra in Python</li>
+  </ul>
+  <div class="ai-box">
+    <div class="ai-label">🤖 STUDY WITH AN AI</div>
+    <p>Every module page includes "Think · Discuss · Ask an AI" prompts. Two habits that make AI a study partner instead of an answer machine:</p>
+    <span class="ai-prompt">Before asking: write down your own prediction. Then ask the AI and compare — where you disagree is where you learn.</span>
+    <span class="ai-prompt">After a quiz mistake: paste the question and YOUR wrong answer, and ask the AI to explain why the right one wins — not just what it is.</span>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="00a_why_code.html" style="text-align:left;"><div class="nav-dir">START HERE ▸</div><div class="nav-title">00A · Why still learn scientific computing?</div></a>
+    <a href="01_numpy.html" class="next"><div class="nav-dir">ALREADY SET UP? ▸</div><div class="nav-title">Module 1 · Array-Oriented Programming with NumPy</div></a>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Scientific Computing with Python · self-study companion site<br>
+  Videos, slides &amp; notebooks hosted with the course materials · quizzes from the course test bank
+</footer>
+<script>
+/* ============================================================
+   Slides & notebook links — EDIT HERE.
+   The course materials (slides / notebook HTML) are hosted
+   separately, like the videos. Set DOCS_BASE to their base URL,
+   or map individual files in DOC_URLS. Until then the badges
+   show as inactive placeholders.
+   ============================================================ */
+const DOCS_BASE = '';            // e.g. 'https://your-host/scicomp-materials'
+const DOC_URLS  = {};            // per-file override, e.g. {'01_Basic_NumPy_slides.html': 'https://…'}
+(function applyDocLinks(){
+  document.querySelectorAll('a.mm-doc[data-doc]').forEach(a => {
+    let url = DOC_URLS[a.dataset.doc] || (DOCS_BASE ? DOCS_BASE.replace(/\/+$/,'') + '/' + a.dataset.doc : '');
+    if (url) {
+      if (a.dataset.frag) url += '#' + a.dataset.frag;
+      a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    } else {
+      a.classList.add('placeholder');
+      a.removeAttribute('href');
+      a.title = "Please find the slides / notebooks in the course resources on 網路大學";
+    }
+  });
+})();
+</script>
+</body>
+</html>

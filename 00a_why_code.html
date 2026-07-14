@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>00A · Why Still Learn Scientific Computing in the AI Era — Self-Study Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:17px;}
+
+/* Hero */
+.hero{min-height:56vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2.5rem 2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:880px;}
+.hero .chapter-tag{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#f39c12;letter-spacing:.3em;margin-bottom:.8rem;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(1.9rem,4.6vw,3rem);font-weight:900;color:#fff;letter-spacing:.02em;line-height:1.25;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.15rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{font-family:'JetBrains Mono',monospace;color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.0rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+ul,ol{margin:0 0 1rem 1.4rem;}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:40px;}
+.toc-grid a .toc-dur{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent3);margin-left:auto;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box p:last-child,.info-box ul:last-child,.info-box ol:last-child{margin-bottom:0;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+.cmp-table td.tl{font-family:'Noto Sans TC',sans-serif;text-align:left;font-size:.85rem;}
+
+/* Viz layout */
+.viz-layout{display:grid;grid-template-columns:1fr 320px;gap:1.3rem;margin:1.2rem 0;align-items:start;}
+@media(max-width:900px){.viz-layout{grid-template-columns:1fr;}}
+.viz-panel{background:linear-gradient(160deg,#fffdf7 0%,#f4efe3 100%);border:1px solid var(--card-border);border-radius:12px;padding:1rem;box-shadow:0 4px 18px rgba(0,0,0,.06);position:relative;}
+.side-panel{display:flex;flex-direction:column;gap:.85rem;}
+.info-card{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.info-card .ic-title{font-size:.72rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem;border-bottom:1px solid var(--card-border);padding-bottom:.3rem;display:flex;align-items:center;justify-content:space-between;}
+.info-card .ic-title .ic-badge{font-size:.7rem;color:#fff;background:var(--accent3);padding:1px 7px;border-radius:3px;letter-spacing:.05em;font-weight:700;}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.65;overflow-x:auto;margin:.8rem 0;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .line.active{background:rgba(243,156,18,.3);color:#fff;border-left:3px solid #f39c12;padding-left:6px;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .str{color:#f1fa8c;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+
+/* Status banner */
+.status-banner{margin-top:.8rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;min-height:42px;display:flex;align-items:center;gap:.6rem;}
+.status-banner .status-icon{color:#2ecc71;font-weight:700;}
+.status-banner .status-text{flex:1;}
+
+/* Controls */
+.controls-bar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--card-border);}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-play.active{background:var(--accent);}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-step:disabled{background:#ccc;cursor:not-allowed;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+
+/* Preset buttons */
+.preset-row{display:flex;gap:.4rem;flex-wrap:wrap;margin:.6rem 0 1rem;}
+.preset-btn{font-family:'JetBrains Mono',monospace;font-size:.78rem;padding:.4rem .85rem;border-radius:6px;border:2px solid var(--card-border);background:var(--card);cursor:pointer;transition:all .2s;color:var(--ink);}
+.preset-btn:hover{border-color:var(--accent2);}
+.preset-btn.active{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+
+/* Variable state table */
+.var-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+.var-table td{padding:.25rem .4rem;border-bottom:1px dashed var(--card-border);}
+.var-table td.vname{color:var(--accent2);font-weight:600;}
+.var-table td.vval{color:var(--ink);}
+.var-table td.vtype{color:var(--muted);font-size:.72rem;text-align:right;}
+.var-table tr.changed td{background:var(--highlight);}
+.var-empty{color:var(--muted);font-size:.8rem;font-style:italic;}
+
+/* Console */
+.console{background:#111;border-radius:8px;padding:.6rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#d4d4d4;min-height:70px;max-height:220px;overflow-y:auto;line-height:1.6;}
+.console .out-line{white-space:pre-wrap;}
+.console .out-line.new{color:#2ecc71;}
+.console .in-line{color:#f39c12;}
+.console .err-line{color:#e74c3c;}
+
+/* Sandbox */
+.sandbox{background:var(--card);border:2px solid var(--accent3);border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.sandbox .sandbox-label{position:absolute;top:-11px;left:14px;background:var(--accent3);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.input-row{display:flex;gap:.5rem;align-items:center;margin:.5rem 0;flex-wrap:wrap;}
+.input-row label{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--accent2);font-weight:600;}
+.input-row input[type="text"]{font-family:'JetBrains Mono',monospace;font-size:.9rem;padding:.45rem .7rem;border:1px solid var(--card-border);border-radius:6px;background:#fff;flex:1;min-width:120px;}
+.sandbox-result{margin-top:.6rem;padding:.7rem 1rem;background:var(--code-bg);color:#fff;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.9rem;min-height:46px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+.sandbox-result .ok{color:#2ecc71;font-weight:700;}
+.sandbox-result .bad{color:#e67e22;font-weight:700;}
+.sandbox-result .type-badge{background:#50fa7b;color:#1a1a2e;font-weight:700;padding:1px 10px;border-radius:4px;font-size:.82rem;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.quiz-box .quiz-label .multi-badge{background:#8e44ad;color:#fff;font-size:.68rem;padding:1px 8px;border-radius:3px;}
+.quiz-box .quiz-q{font-weight:600;margin-bottom:.6rem;}
+.quiz-box .quiz-code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:.6rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.84rem;margin-bottom:.8rem;white-space:pre-wrap;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0 0;}
+.quiz-opt{display:flex;flex-direction:column;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.9rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-head{display:flex;align-items:baseline;gap:.6rem;}
+.quiz-opt .opt-letter{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt .opt-fb{display:none;font-size:.82rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--card-border);color:#555;}
+.quiz-opt.revealed .opt-fb{display:block;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.correct .opt-fb{color:#14532d;}
+.quiz-opt.wrong{background:#fef5e7;border-color:#d68910;}
+.quiz-opt.wrong .opt-letter{color:#d68910;}
+.quiz-progress{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;margin:.8rem 0;}
+
+/* Flashcards */
+.card-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.flashcard{perspective:900px;height:160px;cursor:pointer;}
+.flashcard .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+.flashcard .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.flashcard .fc-front{background:linear-gradient(150deg,#2c3e7a,#1a1a2e);color:#fff;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.flashcard .fc-front .fc-hint{font-size:.66rem;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.flashcard .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:34px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+/* Chapter nav */
+.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin:2rem 0 0;flex-wrap:wrap;}
+.chapter-nav a{flex:1;min-width:220px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.3rem;text-decoration:none;color:var(--ink);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.chapter-nav a:hover{border-color:var(--accent2);transform:translateY(-2px);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+footer a{color:var(--accent2);}
+
+/* 🤖 Ask-AI / discussion box */
+.ai-box{background:var(--card);border:2px dashed #8e44ad;border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.ai-box .ai-label{position:absolute;top:-11px;left:14px;background:#8e44ad;color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.ai-box p:last-child{margin-bottom:0;}
+.ai-box .ai-prompt{font-family:'JetBrains Mono',monospace;font-size:.85rem;background:rgba(142,68,173,.08);border-radius:6px;padding:.4rem .8rem;display:block;margin:.4rem 0;color:#6c3485;}
+
+/* 🎓 Chapter-end bridge */
+.bridge-box{background:#eafaf1;border:2px solid var(--accent3);border-radius:12px;padding:1.3rem 1.5rem;margin:2rem 0 0;}
+.bridge-box .bb-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent3);font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.bridge-box ul{margin:.3rem 0 .8rem 1.3rem;font-size:.92rem;}
+.bridge-box .bb-next{font-size:.9rem;color:var(--accent2);border-top:1px dashed var(--accent3);padding-top:.6rem;margin-bottom:0;}
+
+/* ===== Course-companion components ===== */
+
+/* 📺 Video card */
+.video-card{background:linear-gradient(150deg,#1a1a2e 0%,#232345 100%);border-radius:14px;padding:1.3rem 1.6rem;margin:1.2rem 0;color:#fff;position:relative;overflow:hidden;}
+.video-card::before{content:'📺';position:absolute;top:-12px;right:8px;font-size:4.8rem;opacity:.09;}
+.video-card .vc-tag{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#f39c12;letter-spacing:.2em;margin-bottom:.45rem;}
+.video-card .vc-file{font-family:'JetBrains Mono',monospace;font-size:.95rem;color:#8be9fd;word-break:break-all;}
+.video-card .vc-meta{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.6rem 0 .1rem;}
+.vc-dur{font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.14);color:#f1fa8c;font-size:.78rem;font-weight:600;padding:2px 10px;border-radius:4px;}
+.vc-lms{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;background:var(--accent3);color:#fff;text-decoration:none;transition:background .2s;}
+.vc-lms:hover{background:#22845c;}
+.vc-lms.placeholder{background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);cursor:default;}
+.video-card details{margin-top:.7rem;}
+.video-card details summary{cursor:pointer;color:#5dade2;font-size:.85rem;font-family:'JetBrains Mono',monospace;}
+.vb-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:.6rem;}
+.vb-table td{padding:.32rem .5rem;border-bottom:1px dashed rgba(255,255,255,.12);color:rgba(255,255,255,.85);}
+.vb-table tr:last-child td{border-bottom:none;}
+.vb-table td.vb-time{font-family:'JetBrains Mono',monospace;color:#2ecc71;white-space:nowrap;font-size:.76rem;}
+
+/* Materials map */
+.mat-map{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.9rem 0;padding:.7rem 1rem;background:var(--card);border:1px solid var(--card-border);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.mat-map .mm-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.12em;margin-right:.3rem;}
+.mat-map a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;text-decoration:none;border:2px solid var(--card-border);color:var(--accent2);transition:all .2s;background:var(--paper);}
+.mat-map a:hover{border-color:var(--accent2);}
+.mat-map span.mm-video{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--muted);padding:3px 6px;}
+
+/* Array grid visualization */
+.ag-stage{background:#fafafa;border:1px solid #ececec;border-radius:8px;padding:1.1rem;display:flex;gap:1.8rem;align-items:center;justify-content:center;flex-wrap:wrap;min-height:170px;margin-bottom:.6rem;}
+.ag-block{display:flex;flex-direction:column;align-items:center;gap:.45rem;}
+.ag-name{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent2);font-weight:700;}
+.array-grid{display:grid;gap:4px;}
+.ag-cell{width:52px;height:38px;display:flex;align-items:center;justify-content:center;background:#fff;border:2px solid var(--card-border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.82rem;transition:all .25s;position:relative;}
+.ag-cell.sel{background:var(--highlight);border-color:#f39c12;color:#b9770e;font-weight:700;transform:scale(1.07);z-index:1;}
+.ag-cell.dim{opacity:.32;}
+.ag-cell.res{background:#eafaf1;border-color:var(--accent3);color:var(--accent3);font-weight:700;}
+.ag-cell.ghost{background:repeating-linear-gradient(45deg,#f6f2ea,#f6f2ea 5px,#efe9dd 5px,#efe9dd 10px);border-style:dashed;color:var(--muted);}
+.ag-axis{font-family:'JetBrains Mono',monospace;font-size:.64rem;color:var(--muted);}
+@media(max-width:600px){.ag-cell{width:42px;height:32px;font-size:.72rem;}}
+</style>
+</head>
+<body>
+
+<!-- Floating navigation sidebar -->
+<nav class="float-nav" id="floatNav" aria-label="Chapter navigation">
+  <div class="fn-title">CHAPTER 00A</div>
+  <a href="#intro" data-target="intro"><span class="fn-num">P00</span><span class="fn-name">The honest question</span></a>
+  <a href="#vibe-vs-eng" data-target="vibe-vs-eng"><span class="fn-num">P01</span><span class="fn-name">Vibe coding vs engineering</span></a>
+  <a href="#determinism" data-target="determinism"><span class="fn-num">P02</span><span class="fn-name">AI is confidently wrong</span></a>
+  <a href="#loop" data-target="loop"><span class="fn-num">P03</span><span class="fn-name">The learning loop</span></a>
+  <a href="#foryou" data-target="foryou"><span class="fn-num">P04</span><span class="fn-name">Why it matters to YOU</span></a>
+  <a href="#tips" data-target="tips"><span class="fn-num">P05</span><span class="fn-name">5 concrete habits</span></a>
+  <a href="#quiz" data-target="quiz"><span class="fn-num">QUIZ</span><span class="fn-name">Self-check (3 Qs)</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">Key-term flashcards</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">Sources</span></a>
+  <a href="#top" class="fn-top" title="Back to top"><span class="fn-num">↑ TOP</span></a>
+</nav>
+
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="chapter-tag">CHAPTER 00A · READ THIS BEFORE MODULE 1</div>
+    <h1>AI writes NumPy code in seconds.<br>Why should <span class="orange">you</span> still learn it?</h1>
+    <div class="subtitle">Before you open the first notebook, answer one honest question: if an AI can produce the whole simulation, what exactly is this course for?</div>
+    <div class="big-formula">using AI ≠ writing code ≠ being able to READ code</div>
+    <div class="scroll-hint">Scroll down for an honest answer<span>↓</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">CONTENTS</div>
+  <div class="toc-grid">
+    <a href="#intro"><span class="toc-num">P00</span>The honest question</a>
+    <a href="#vibe-vs-eng"><span class="toc-num">P01</span>Vibe coding vs software engineering</a>
+    <a href="#determinism"><span class="toc-num">P02</span>AI is confidently wrong</a>
+    <a href="#loop"><span class="toc-num">P03</span>The learning loop cannot be skipped</a>
+    <a href="#foryou"><span class="toc-num">P04</span>Why this matters to YOU</a>
+    <a href="#tips"><span class="toc-num">P05</span>5 concrete habits</a>
+    <a href="#quiz"><span class="toc-num">QUIZ</span>Self-check (3 questions)</a>
+    <a href="#cards"><span class="toc-num">CARD</span>Key-term flashcards (6 cards)</a>
+    <a href="#reference"><span class="toc-num">REF</span>Sources</a>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section id="intro">
+  <div class="section-number">PROLOGUE · THE HONEST QUESTION</div>
+  <h2>"AI already writes the code — why am I here?"</h2>
+  <p>You have probably tried it: paste a homework prompt into ChatGPT, Gemini, or Claude, and out comes a complete, runnable script — NumPy arrays, a Matplotlib figure, even a t-test at the end. It looks like scientific programming has been fully outsourced. So what is left to learn?</p>
+  <p>The short answer first: <strong>precisely because AI can write code, people who can <em>read and judge</em> code have become more valuable, not less.</strong> That sounds like a paradox; the next few minutes explain why — and it is the shared view of many senior engineers, including Martin Fowler, one of the most influential thinkers in software engineering.</p>
+  <div class="info-box">
+    <div class="info-label">💡 THINK FOR 30 SECONDS FIRST</div>
+    <p style="margin-bottom:0;">An AI hands you a simulation. It runs without errors and produces a beautiful plot — but the <em>number</em> it reports is wrong. How would you ever notice? And once you noticed, could you fix it? Keep your answer in mind and compare it with what you read below.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="vibe-vs-eng">
+  <div class="section-number">PART 01 · TWO WAYS OF USING AI</div>
+  <h2>Vibe coding vs. software engineering</h2>
+  <p>People who code with AI fall into two camps. The difference is <strong>not</strong> whether they use AI — both camps do — but whether they <strong>understand what they produce</strong>:</p>
+  <table class="cmp-table">
+    <tr><th></th><th>🎲 Vibe coding</th><th>🔧 Software engineering</th></tr>
+    <tr><td>Attitude to the code</td><td class="tl">Never reads it — only cares whether it runs</td><td class="tl best">Understands every line and why it is there</td></tr>
+    <tr><td>When output is wrong</td><td class="tl worst">Can only "re-roll the dice" and hope</td><td class="tl best">Can locate the bug and say "this line is wrong — fix it"</td></tr>
+    <tr><td>Skill over time</td><td class="tl worst">Stagnates — the AI does the thinking</td><td class="tl best">Compounds with every use</td></tr>
+    <tr><td>Good for</td><td class="tl">Quick throwaway experiments</td><td class="tl">Anything you must trust or maintain — like research results</td></tr>
+  </table>
+  <p>Vibe coding is not evil — for a quick toy or a one-off exploration it is fast and fun. The trouble starts when it becomes your <em>only</em> mode:</p>
+  <div class="info-box warm">
+    <div class="info-label">📣 MARTIN FOWLER</div>
+    <p style="margin-bottom:0;">"It's suitable for exploration and throwaway work, but you wouldn't want to use it for anything that needs long-term maintenance."</p>
+  </div>
+  <p>This course exists to move you into the right-hand column. Not to make you reject AI — but to give you the competence to <strong>read it, judge it, and say "this part is wrong — change it."</strong> In scientific computing that competence is not optional: a silently wrong number can sink an experiment, a report, or a paper.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="determinism">
+  <div class="section-number">PART 02 · AN UNCOMFORTABLE FACT</div>
+  <h2>AI is confidently wrong</h2>
+  <p>Traditional programs have a beautiful property: <strong>determinism</strong> — the same input always yields the same output, so errors can be traced step by step. AI assistants are different: ask the same question twice and you may get two different answers, and <strong>the wrong one sounds exactly as confident as the right one</strong>.</p>
+  <table class="cmp-table">
+    <tr><th></th><th>Deterministic (traditional code)</th><th>Non-deterministic (AI assistants)</th></tr>
+    <tr><td>Behavior</td><td class="tl">Same input → always the same output</td><td class="tl">Same prompt → possibly different answers</td></tr>
+    <tr><td>Trust</td><td class="tl best">Traceable, debuggable, verifiable</td><td class="tl worst">Can hallucinate — with total confidence</td></tr>
+    <tr><td>Your role</td><td class="tl">Author of the logic</td><td class="tl best">Verifier and gatekeeper</td></tr>
+  </table>
+  <div class="info-box warm">
+    <div class="info-label">🏗 THE SAFETY-FACTOR MINDSET</div>
+    <p style="margin-bottom:0;">A structural engineer never designs a beam to hold <em>exactly</em> the expected load — they add a <strong>safety factor</strong> against variability in the material. Treat AI-generated code the same way: never accept "the AI says it works." Add your own margin — <strong>tests and verification</strong>. A test is the contract between you and the AI. <em>(adapted from Martin Fowler's structural-engineering analogy)</em></p>
+  </div>
+  <p>Sound familiar? It is exactly the <strong>predict → run → verify</strong> habit this course drills into you from Module 1 onwards (remember it when you meet the quizzes: predict the answer <em>before</em> you click). In science the stakes are higher than in most software: the most dangerous bug is not the one that crashes, but the <strong>semantic error</strong> — code that runs happily and returns a plausible, wrong number.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="loop">
+  <div class="section-number">PART 03 · THE LEARNING LOOP</div>
+  <h2>Why the learning loop cannot be skipped</h2>
+  <p>Learning anything follows one loop: <strong>idea → try it → observe the result → understand why</strong>. Programming is no exception. The biggest cost of pure vibe coding is that it cuts the loop entirely: you supply the idea, the AI does everything, and you ship the result without even looking at it.</p>
+  <div class="info-box warm">
+    <div class="info-label">📣 MARTIN FOWLER</div>
+    <p style="margin-bottom:.4rem;">"When you vibe-code, you actually remove something very important: the learning loop."</p>
+    <p style="margin-bottom:0;">"If you don't look at the output, you are not learning."</p>
+  </div>
+  <p>Picture two people in a kitchen. The <strong>professional chef</strong> can glance at a recipe and adapt it — less salt, lower heat — because they understand <em>why</em> each step exists. The <strong>recipe-follower</strong> is helpless the moment the dish changes. Rely on AI without understanding its output, and you are training yourself to be the recipe-follower — and one day you will meet a problem the AI cannot fix, and discover you never actually learned to cook.</p>
+  <div class="info-box green">
+    <div class="info-label">💡 THE GOOD NEWS</div>
+    <p style="margin-bottom:0;">The same AI, used differently, becomes the best training partner you have ever had. In the next chapter (<a href="00b_setup.html">00B · Environment setup</a>) you will meet <strong>Colab's Learn Mode</strong> — a mode that deliberately does <em>not</em> hand you finished code, but guides you step by step instead. Used this way, AI spins your learning loop <em>faster</em> instead of cutting it.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="foryou">
+  <div class="section-number">PART 04 · SO WHAT?</div>
+  <h2>Why this matters to <em>you</em> — three reasons for a science/engineering student</h2>
+  <p>Everything above was the software engineer's view. Maybe you never plan to be one — fine. Here are three reasons this course is still a good investment, whatever field you end up in:</p>
+
+  <h3>REASON 01 · Your field already runs on this stack — and someone must be able to judge the code</h3>
+  <p>Physics labs, bio pipelines, financial models, machine-learning papers — NumPy, Matplotlib, SciPy and Pandas are the <strong>lingua franca of quantitative work</strong> in essentially every discipline. You <em>will</em> work with AI on this stack; the dividing line is who directs whom. A person who cannot multiply cannot get the right answer out of the world's best calculator; a person without these foundations can only accept whatever the AI produces — including its mistakes.</p>
+
+  <h3>REASON 02 · Computational thinking is weight training for research</h3>
+  <p>Turning a vague idea into precise, executable steps — decomposing problems, spotting patterns, handling errors — is exactly the skill set of <strong>reproducible research</strong>. The computer is the most honest teammate you will ever have: if your thinking is fuzzy, the program simply won't work. Train with it long enough and your experiment designs, data analyses, and reports get sharper too.</p>
+
+  <h3>REASON 03 · The barrier has never been lower — and "can read &amp; judge" has never been scarcer</h3>
+  <p>Ten years ago a cryptic error message could cost you a whole evening. Today you have a 24/7 AI teaching assistant, so the cost of learning the basics is at a <strong>historic low</strong>. But precisely because everyone can now <em>generate</em> code, generating is worth little — <strong>reading, judging, and fixing</strong> are the rare skills. And there is one thing AI cannot give you: the moment your first simulation runs and the figure looks exactly the way you predicted — that "I built this" feeling. You'll get it in Module 2 at the latest.</p>
+
+  <div class="info-box">
+    <div class="info-label">📣 ONE-LINE SUMMARY</div>
+    <p style="margin-bottom:0;">"AI can make you stronger, or make you weaker. The choice is yours." — adapted from Kao Chen-Lung (高見龍)</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="tips">
+  <div class="section-number">PART 05 · ACTION GUIDE</div>
+  <h2>Five concrete habits before you start</h2>
+  <ol>
+    <li><strong>Build the foundation first.</strong> Understanding arrays, figures, symbols, algorithms and tables (Modules 1–5) is what lets you judge whether AI-generated scientific code is any good.</li>
+    <li><strong>Ask "why", not "write it for me".</strong> When you meet code you don't understand, ask an AI to explain the logic and decompose the concept — this is exactly the habit <a href="00b_setup.html">Colab Learn Mode</a> (next chapter) is built to train.</li>
+    <li><strong>Form your own hypothesis before asking.</strong> When something breaks, predict the cause first, then bring your hypothesis to the AI — don't just dump the traceback and disengage.</li>
+    <li><strong>Regularly go AI-free.</strong> After each module, redo one exercise with AI switched off. It verifies that you actually learned it — not merely that you can follow along.</li>
+    <li><strong>Reading your code is a duty, not an option.</strong> Before submitting anything, ask yourself: what does this code do, line by line? If you can't answer, don't submit it.</li>
+  </ol>
+</section>
+
+<!-- ============================================================ -->
+<section id="quiz">
+  <div class="section-number">QUIZ · DID YOU CATCH THE POINT?</div>
+  <h2>Self-check: 3 questions</h2>
+  <p>These don't test Python — they check whether this page's main ideas landed.</p>
+  <div class="quiz-progress" id="quizProgress">Solved 0 / 3</div>
+  <div id="quizContainer"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="cards">
+  <div class="section-number">FLASHCARDS · KEY TERMS</div>
+  <h2>Key-term flashcards: click to flip</h2>
+  <div class="card-controls">
+    <button class="btn btn-step" id="flipAll">Flip all</button>
+    <button class="btn btn-reset" id="unflipAll">Unflip all</button>
+    <button class="btn btn-play" id="shuffleCards">🔀 Shuffle</button>
+  </div>
+  <div class="flash-grid" id="flashGrid"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="reference">
+  <div class="section-number">REFERENCE · SOURCES</div>
+  <h2>Sources &amp; further reading</h2>
+  <p>The core arguments and quotes in P01–P03 are adapted from the article below (an organized write-up of Martin Fowler's views); P04 adds this course's own perspective for science and engineering students. Worth reading in full:</p>
+  <ul>
+    <li>📖 Kao Chen-Lung (高見龍), <a href="https://vocus.cc/article/666ea96cfd89780001fb1289" target="_blank" rel="noopener">Vibe Coding vs Software Engineering</a></li>
+  </ul>
+
+  <div class="bridge-box">
+    <div class="bb-title">🎓 TAKEAWAY</div>
+    <ul>
+      <li>Use AI — but stay the one who understands, judges, and decides.</li>
+      <li>Verification (tests, predictions, sanity checks) is your safety factor against confidently wrong answers.</li>
+      <li>Protect your learning loop: look at outputs, ask why, and regularly work without AI.</li>
+    </ul>
+    <p class="bb-next">NEXT ▸ Chapter 00B sets up your environment at home — and shows you how to turn Colab's AI into a tutor instead of a ghostwriter.</p>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="index.html"><div class="nav-dir">◂ COURSE HOME</div><div class="nav-title">Scientific Computing with Python</div></a>
+    <a href="00b_setup.html" class="next"><div class="nav-dir">NEXT ▸</div><div class="nav-title">00B · Set up your home environment</div></a>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Scientific Computing with Python · Chapter 00A: Why still learn scientific computing in the AI era<br>
+  Parts adapted from Kao Chen-Lung, <em>Vibe Coding vs Software Engineering</em>
+</footer>
+
+<script>
+/* Quiz + flashcards engines (same as the module pages) */
+function buildQuiz(containerId, progressId, data) {
+  const container = document.getElementById(containerId);
+  const progress  = document.getElementById(progressId);
+  const solved = new Set();
+  const LETTERS = 'ABCDEFGH';
+  data.forEach((q, qi) => {
+    const box = document.createElement('div');
+    box.className = 'quiz-box';
+    box.innerHTML =
+      `<div class="quiz-label">Q${qi+1} / ${data.length}</div>` +
+      `<div class="quiz-q">${q.question}</div>` +
+      `<div class="quiz-options">` +
+      q.answers.map((a, ai) =>
+        `<div class="quiz-opt" data-q="${qi}" data-a="${ai}">
+           <div class="opt-head"><span class="opt-letter">${LETTERS[ai]}</span><span>${String(a.answer).replace(/</g,'&lt;')}</span></div>
+           <div class="opt-fb"></div>
+         </div>`
+      ).join('') + `</div>`;
+    container.appendChild(box);
+  });
+  container.addEventListener('click', e => {
+    const opt = e.target.closest('.quiz-opt');
+    if (!opt || opt.classList.contains('revealed')) return;
+    const q = data[+opt.dataset.q], a = q.answers[+opt.dataset.a];
+    opt.classList.add('revealed', a.correct ? 'correct' : 'wrong');
+    opt.querySelector('.opt-fb').textContent = (a.correct ? '✔ Correct: ' : '✘ Not quite: ') + a.feedback;
+    if (a.correct) { solved.add(+opt.dataset.q); progress.textContent = `Solved ${solved.size} / ${data.length}`; }
+  });
+}
+function buildFlashcards(gridId, data) {
+  const grid = document.getElementById(gridId);
+  function render(cards) {
+    grid.innerHTML = cards.map(c =>
+      `<div class="flashcard"><div class="fc-inner">
+         <div class="fc-face fc-front"><div>${c.front}</div><div class="fc-hint">CLICK TO FLIP</div></div>
+         <div class="fc-face fc-back">${c.back}</div>
+       </div></div>`).join('');
+  }
+  render(data);
+  grid.addEventListener('click', e => { const card = e.target.closest('.flashcard'); if (card) card.classList.toggle('flipped'); });
+  document.getElementById('flipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.add('flipped')));
+  document.getElementById('unflipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.remove('flipped')));
+  document.getElementById('shuffleCards').addEventListener('click', ()=> render([...data].sort(()=>Math.random()-.5)));
+}
+
+const QUIZ_DATA = [
+  { question:'According to this page, what is the biggest cost of making vibe coding your ONLY way of working?', answers:[
+    { answer:'It is slower than writing code by hand.', correct:false, feedback:'Speed is exactly what vibe coding is good at — the cost lies elsewhere.' },
+    { answer:'It cuts out the learning loop, so you never become able to judge or fix what the AI produces.', correct:true, feedback:'That is Fowler\'s point: if you don\'t look at the output, you are not learning — and when the AI can\'t fix it, neither can you.' },
+    { answer:'AI-generated code never runs.', correct:false, feedback:'It usually runs fine — that is what makes silent errors so dangerous.' },
+    { answer:'Using AI to write code is not allowed in this course.', correct:false, feedback:'The course encourages AI use — as a tutor and sparring partner, not a ghostwriter.' } ] },
+  { question:'"The same input always produces the same output." Which property is this, and who has it?', answers:[
+    { answer:'Determinism — traditional programs have it; AI chat assistants do not.', correct:true, feedback:'Exactly. That is why AI output needs YOUR verification: the wrong answer sounds as confident as the right one.' },
+    { answer:'Determinism — AI assistants have it; traditional programs do not.', correct:false, feedback:'Reversed: ask an AI twice and you may get two different answers.' },
+    { answer:'Broadcasting — a NumPy feature.', correct:false, feedback:'Broadcasting is a Module 1 concept about array shapes, not about reproducibility.' },
+    { answer:'The safety factor — both have it automatically.', correct:false, feedback:'A safety factor is something YOU add (tests, verification) — nothing provides it automatically.' } ] },
+  { question:'You meet AI-generated code you don\'t understand. Per this page, what is the best first question to ask?', answers:[
+    { answer:'"Please rewrite this so I can submit it."', correct:false, feedback:'That ships the work but skips the learning loop entirely.' },
+    { answer:'"Is this code good? Answer yes or no."', correct:false, feedback:'A yes/no from a non-deterministic assistant is exactly what you cannot blindly trust.' },
+    { answer:'"Explain step by step why this code is written this way — don\'t give me the final answer yet."', correct:true, feedback:'Ask WHY, not WRITE — that is the Learn-Mode habit, and it keeps the learning loop spinning.' },
+    { answer:'Nothing — never ask AI anything.', correct:false, feedback:'Refusing AI wholesale wastes the best teaching assistant in history. The point is HOW you use it.' } ] },
+];
+buildQuiz('quizContainer', 'quizProgress', QUIZ_DATA);
+
+const CARD_DATA = [
+  {front:'Vibe Coding', back:'Using AI output without reading or understanding it — only caring that it runs. Fast for throwaway experiments; disastrous as your only mode.'},
+  {front:'Software Engineering', back:'Understanding the code\'s logic, verifying its quality, and considering long-term maintenance — with or without AI assistance.'},
+  {front:'Determinism', back:'Same input → same output, always. Traditional programs have it (so they can be debugged and trusted); AI assistants do not.'},
+  {front:'Learning Loop', back:'Idea → try → observe → understand why. Skipping the "observe & understand" half — as pure vibe coding does — means no learning happens.'},
+  {front:'Safety Factor', back:'The engineer\'s margin against variability. For AI-generated code, your safety factor is tests and verification — never trust "it seems to work".'},
+  {front:'Computational Thinking', back:'Decomposing vague problems into precise, executable steps; finding patterns; handling errors. The transferable core skill behind reproducible research.'},
+];
+buildFlashcards('flashGrid', CARD_DATA);
+
+/* Floating nav active highlight */
+(function initFloatNav(){
+  const links = document.querySelectorAll('.float-nav a[data-target]');
+  const sections = [...links].map(a => document.getElementById(a.dataset.target)).filter(Boolean);
+  function update(){
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= window.innerHeight * 0.35) active = s.id;
+    }
+    links.forEach(a => a.classList.toggle('active', a.dataset.target === active));
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>
