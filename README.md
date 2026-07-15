@@ -1,6 +1,6 @@
 # Scientific Computing with Python — Self-Study Companion
 
-Interactive self-study companion site for the **Scientific Computing with Python** video course (NumPy · Matplotlib · SymPy · SciPy · Pandas), designed for first- and second-year college students studying at home.
+Interactive self-study companion site for the **Scientific Computing with Python** video course (NumPy · Matplotlib · SymPy · SciPy · Pandas), designed for first- and second-year college students studying at home. The goal is not software-engineering training — it is to give students a toolbox for the subjects they are already studying: compute, picture, and verify the math from calculus, linear algebra, and statistics with their own hands.
 
 **Live site:** https://phonchi.github.io/scicomp-python-selfstudy/
 
