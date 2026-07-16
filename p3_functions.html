@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P3 · Functions — Prerequisite Refresher</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:17px;}
+
+/* Hero */
+.hero{min-height:56vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2.5rem 2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:880px;}
+.hero .chapter-tag{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#f39c12;letter-spacing:.3em;margin-bottom:.8rem;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(1.9rem,4.6vw,3rem);font-weight:900;color:#fff;letter-spacing:.02em;line-height:1.25;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.15rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{font-family:'JetBrains Mono',monospace;color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.0rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+ul,ol{margin:0 0 1rem 1.4rem;}
+
+/* Prerequisite banner */
+.prereq-banner{background:#fef5e7;border:3px solid #d68910;border-radius:12px;padding:1.2rem 1.5rem;margin:0 0 2.2rem;box-shadow:0 3px 12px rgba(214,137,16,.12);}
+.prereq-banner .pb-title{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:#b9770e;font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.prereq-banner p{margin-bottom:0;font-size:.95rem;}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:40px;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box p:last-child,.info-box ul:last-child,.info-box ol:last-child{margin-bottom:0;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+.cmp-table td.tl{font-family:'Noto Sans TC',sans-serif;text-align:left;font-size:.85rem;}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.65;overflow-x:auto;margin:.8rem 0;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .str{color:#f1fa8c;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.quiz-box .quiz-label .multi-badge{background:#8e44ad;color:#fff;font-size:.68rem;padding:1px 8px;border-radius:3px;}
+.quiz-box .quiz-q{font-weight:600;margin-bottom:.6rem;}
+.quiz-box .quiz-code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:.6rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.84rem;margin-bottom:.8rem;white-space:pre-wrap;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0 0;}
+.quiz-opt{display:flex;flex-direction:column;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.9rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-head{display:flex;align-items:baseline;gap:.6rem;}
+.quiz-opt .opt-letter{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt .opt-code{white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.quiz-opt .opt-fb{display:none;font-size:.82rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--card-border);color:#555;}
+.quiz-opt.revealed .opt-fb{display:block;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.correct .opt-fb{color:#14532d;}
+.quiz-opt.wrong{background:#fef5e7;border-color:#d68910;}
+.quiz-opt.wrong .opt-letter{color:#d68910;}
+.quiz-progress{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;margin:.8rem 0;}
+
+/* Flashcards */
+.card-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.flashcard{perspective:900px;height:160px;cursor:pointer;}
+.flashcard .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+.flashcard .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.flashcard .fc-front{background:linear-gradient(150deg,#2c3e7a,#1a1a2e);color:#fff;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.flashcard .fc-front .fc-hint{font-size:.66rem;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.flashcard .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:34px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+/* Chapter nav */
+.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin:2rem 0 0;flex-wrap:wrap;}
+.chapter-nav a{flex:1;min-width:220px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.3rem;text-decoration:none;color:var(--ink);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.chapter-nav a:hover{border-color:var(--accent2);transform:translateY(-2px);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+footer a{color:var(--accent2);}
+
+/* 🤖 Ask-AI / discussion box */
+.ai-box{background:var(--card);border:2px dashed #8e44ad;border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.ai-box .ai-label{position:absolute;top:-11px;left:14px;background:#8e44ad;color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.ai-box p:last-child{margin-bottom:0;}
+.ai-box .ai-prompt{font-family:'JetBrains Mono',monospace;font-size:.85rem;background:rgba(142,68,173,.08);border-radius:6px;padding:.4rem .8rem;display:block;margin:.4rem 0;color:#6c3485;}
+
+/* 🎓 Chapter-end bridge */
+.bridge-box{background:#eafaf1;border:2px solid var(--accent3);border-radius:12px;padding:1.3rem 1.5rem;margin:2rem 0 0;}
+.bridge-box .bb-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent3);font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.bridge-box ul{margin:.3rem 0 .8rem 1.3rem;font-size:.92rem;}
+.bridge-box .bb-next{font-size:.9rem;color:var(--accent2);border-top:1px dashed var(--accent3);padding-top:.6rem;margin-bottom:0;}
+
+/* Materials map */
+.mat-map{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.9rem 0;padding:.7rem 1rem;background:var(--card);border:1px solid var(--card-border);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.mat-map .mm-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.12em;margin-right:.3rem;}
+.mat-map a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;text-decoration:none;border:2px solid var(--card-border);color:var(--accent2);transition:all .2s;background:var(--paper);}
+.mat-map a:hover{border-color:var(--accent2);}
+</style>
+</head>
+<body>
+
+<nav class="float-nav">
+  <div class="fn-title">P3 · Functions</div>
+  <a href="#s31" data-target="s31"><span class="fn-num">P3.1</span><span class="fn-name">Why functions? def &amp; parameters</span></a>
+  <a href="#s32" data-target="s32"><span class="fn-num">P3.2</span><span class="fn-name">Return values &amp; None</span></a>
+  <a href="#s33" data-target="s33"><span class="fn-num">P3.3</span><span class="fn-name">Keyword &amp; default arguments</span></a>
+  <a href="#s34" data-target="s34"><span class="fn-num">P3.4</span><span class="fn-name">Local vs global scope</span></a>
+  <a href="#s35" data-target="s35"><span class="fn-num">P3.5</span><span class="fn-name">Functions in modules</span></a>
+  <a href="#quiz" data-target="quiz"><span class="fn-num">QUIZ</span><span class="fn-name">Self-check quiz</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">Key-term flashcards</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">Cheat sheet</span></a>
+  <a href="#top" class="fn-top" title="Back to top"><span class="fn-num">↑ TOP</span></a>
+</nav>
+
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="chapter-tag">PREREQUISITE P3 · SUPPLEMENTARY · NOT GRADED</div>
+    <h1><span class="green">Functions</span></h1>
+    <div class="subtitle">Name a computation once with <code style="background:rgba(0,0,0,.3);color:#2ecc71;">def</code> and reuse it everywhere — parameters in, return value out, plus the scope rules that decide which variable your code is really touching.</div>
+    <div class="big-formula">def ｜ parameters → return ｜ None ｜ local vs global scope</div>
+    <div class="scroll-hint">Scroll down to start<span>↓</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="prereq-banner">
+  <div class="pb-title">📌 SUPPLEMENTARY PREREQUISITE — NOT PART OF THE ASSIGNMENTS</div>
+  <p>The prerequisite pages (P1–P8) review the basic Python that Modules 1–5 assume you already know. They are <strong>optional background material for self-study: nothing on these pages is graded, and none of it will appear in the course assignments</strong>（補充先備知識，不列入作業範圍）. Use them to warm up before Module 1, or to look things up whenever a module uses a Python idiom you have forgotten.</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · A REFRESHER, NOT A LECTURE — READ AT YOUR OWN PACE</div>
+  <div class="toc-grid">
+    <a href="#s31"><span class="toc-num">P3.1</span>Why functions? def &amp; parameters</a>
+    <a href="#s32"><span class="toc-num">P3.2</span>Return values &amp; the None value</a>
+    <a href="#s33"><span class="toc-num">P3.3</span>Positional, keyword &amp; default arguments</a>
+    <a href="#s34"><span class="toc-num">P3.4</span>Local vs global scope</a>
+    <a href="#s35"><span class="toc-num">P3.5</span>Storing your functions in modules</a>
+    <a href="#quiz"><span class="toc-num">QUIZ</span>Self-check quiz (7 questions)</a>
+    <a href="#cards"><span class="toc-num">CARD</span>Key-term flashcards (18 cards)</a>
+    <a href="#reference"><span class="toc-num">REF</span>Functions cheat sheet</a>
+  </div>
+</div>
+
+<div class="info-box green">
+  <div class="info-label">📖 HOW TO USE THE P-PAGES</div>
+  <p style="margin-bottom:.4rem;">Unlike the module pages, there are no course videos here — the source is a Jupyter notebook you can run yourself:</p>
+  <p style="margin-bottom:0;">① <strong>Read</strong> each digest section below → ② <strong>Run</strong> the matching notebook cells (one click on the Colab badge — predict each output <em>before</em> you run it) → ③ <strong>Quiz</strong> yourself and flip the <a href="#cards">flashcards</a>. If everything feels obvious, you are ready — move on.</p>
+</div>
+
+<div class="mat-map">
+  <span class="mm-title">SOURCE NOTEBOOK ▸</span>
+  <a href="https://colab.research.google.com/github/phonchi/nsysu-math106A/blob/master/static_files/presentations/03_Function.ipynb" target="_blank" rel="noopener">🚀 Open 03_Function.ipynb in Colab</a>
+  <a href="https://github.com/phonchi/nsysu-math106A/blob/master/static_files/presentations/03_Function.ipynb" target="_blank" rel="noopener">📓 View on GitHub</a>
+</div>
+
+<!-- ============================================================ -->
+<section id="s31">
+  <div class="section-number">PREREQ P3.1 · WHY FUNCTIONS?</div>
+  <h2>P3.1 Why functions? def, calls &amp; parameters</h2>
+
+  <p>The best way to develop and maintain a large program is to build it from smaller pieces — a technique called <strong>divide and conquer</strong>. In programming, <strong>abstraction</strong> means hiding the complexity of an algorithm's sub-steps inside a <strong>function</strong>: once the function is built, you can treat it as a simple expression with defined inputs and outputs, and use it without knowing its internal details.</p>
+  <p>You have already been using functions — <code>print()</code>, <code>str()</code>, and <code>len()</code> are Python's <strong>built-in</strong> ones, parentheses wrapped around their <strong>arguments</strong>. A function gives a name to <em>a series of operations</em>; writing that name in an expression or statement is a <strong>function call</strong>. Two payoffs make this worth learning well:</p>
+  <ul>
+    <li>You can execute a block of code from various places in your program <strong>by calling it</strong> — instead of duplicating the code.</li>
+    <li>Programs become easier to modify: change a function's code once, and <strong>every call runs the updated version</strong>.</li>
+  </ul>
+
+  <h3>def statements with parameters</h3>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">def</span> <span class="fn">hello</span>(name):</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'Hello,'</span>, name)</span>
+<span class="line"></span>
+<span class="line"><span class="fn">hello</span>(<span class="str">'Alice'</span>)    <span class="com"># → Hello, Alice</span></span>
+<span class="line"><span class="fn">hello</span>(<span class="str">'Bob'</span>)      <span class="com"># → Hello, Bob</span></span>
+<span class="line"><span class="fn">print</span>(name)       <span class="com"># NameError! the parameter is gone once the call ends</span></span></div>
+  <p>The <code>def</code> statement <em>defines</em> the <code>hello()</code> function; the indented lines below it make up the function's <strong>body</strong>. The line <code>hello('Alice')</code> <em>calls</em> the function — also described as <strong>passing</strong> the string value <code>'Alice'</code> to it. Here <code>name</code> is a <strong>parameter</strong>: a variable in the definition that receives the argument's value when the function is called. Execution enters the function, <code>name</code> is automatically set to <code>'Alice'</code>, and the body prints the greeting.</p>
+  <p>One thing to note: <strong>the value stored in a parameter is forgotten when the function returns</strong>. That is why the final <code>print(name)</code> above raises a <code>NameError</code> — after <code>hello('Bob')</code> finishes, no variable named <code>name</code> exists any more.</p>
+
+  <div class="info-box warm">
+    <div class="info-label">⚠️ TWO BEGINNER MISTAKES</div>
+    <ul style="margin-bottom:0;">
+      <li>Forgetting the pair of <strong>parentheses</strong> after the function name — especially easy when the function takes no parameters: it's <code>hello()</code>, not <code>hello</code>.</li>
+      <li>Overlooking the <strong>indentation</strong> that separates the function's body from the code that calls the function — the call must be back at the left margin, not inside the body.</li>
+    </ul>
+  </div>
+
+  <div class="info-box">
+    <div class="info-label">📌 A FUNCTION IS A BLACK BOX</div>
+    <p style="margin-bottom:0;">Think of a function as a black box: <strong>input in the form of parameters, output in the form of a return value</strong>, and the code inside doesn't affect variables in other functions. This limits what code <em>could</em> be changing your variables — which is exactly what makes functions such a good debugging tool.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s32">
+  <div class="section-number">PREREQ P3.2 · RETURN VALUES &amp; NONE</div>
+  <h2>P3.2 Return values &amp; the None value</h2>
+
+  <p>When you call <code>len('Hello')</code>, the call <em>evaluates to</em> the integer <code>5</code>. The value a function call evaluates to is its <strong>return value</strong>. In your own functions you specify it with a <strong><code>return</code> statement</strong>: the <code>return</code> keyword, followed by the value or expression the function should hand back. Functions that return values are sometimes called <strong>fruitful functions</strong>.</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">import</span> random</span>
+<span class="line"></span>
+<span class="line"><span class="kw">def</span> <span class="fn">getAnswer</span>(answerNumber):</span>
+<span class="line">    <span class="kw">if</span> answerNumber == <span class="num">1</span>:</span>
+<span class="line">        <span class="kw">return</span> <span class="str">'It is certain'</span></span>
+<span class="line">    <span class="kw">elif</span> answerNumber == <span class="num">2</span>:</span>
+<span class="line">        <span class="kw">return</span> <span class="str">'It is decidedly so'</span></span>
+<span class="line">    <span class="kw">elif</span> answerNumber == <span class="num">3</span>:</span>
+<span class="line">        <span class="kw">return</span> <span class="str">'Yes'</span></span>
+<span class="line"></span>
+<span class="line">r = random.<span class="fn">randint</span>(<span class="num">1</span>, <span class="num">3</span>)</span>
+<span class="line">fortune = <span class="fn">getAnswer</span>(r)   <span class="com"># the returned string lands in fortune</span></span>
+<span class="line"><span class="fn">print</span>(fortune)</span></div>
+  <p>Trace the execution: Python imports <code>random</code>, then <em>defines</em> <code>getAnswer()</code> — defining is not calling, so execution <strong>skips over the body</strong>. <code>random.randint(1, 3)</code> picks a number, and calling <code>getAnswer(r)</code> moves execution to the top of the function with <code>r</code> stored in the parameter <code>answerNumber</code>. The matching <code>return</code> sends a string back to the line that made the call, where it is assigned to <code>fortune</code> and printed.</p>
+
+  <div class="info-box">
+    <div class="info-label">🔍 RETURN EXITS IMMEDIATELY</div>
+    <p style="margin-bottom:0;">The moment execution reaches a <code>return</code> statement, the function <strong>stops</strong> — any statements written after it never run. A <code>print()</code> placed below a <code>return</code> is unreachable code: a very common slip, and one of the quiz questions below is waiting to catch you on it.</p>
+  </div>
+
+  <h3>The None value</h3>
+  <p>Python has a value called <code>None</code> that represents <strong>the absence of a value</strong> — it is the only value of the <code>NoneType</code> data type, useful when you need something that won't be confused for a real value. Every function call must evaluate to <em>something</em>, so a function with no <code>return</code> statement returns <code>None</code>: behind the scenes Python adds <code>return None</code> to the end of its body, and a bare <code>return</code> with no value does the same. A function that returns no value is called a <strong>void function</strong> — <code>print()</code> is one: it displays text on the screen, but that is a side effect, not a return value.</p>
+  <div class="pseudo-code">
+<span class="line">spam = <span class="fn">print</span>(<span class="str">'Hello!'</span>)   <span class="com"># prints Hello! …</span></span>
+<span class="line"><span class="fn">print</span>(spam)             <span class="com"># … but the call evaluated to None</span></span>
+<span class="line"><span class="fn">type</span>(spam)              <span class="com"># &lt;class 'NoneType'&gt;</span></span></div>
+
+  <div class="info-box warm">
+    <div class="info-label">⚠️ PRINT IS NOT RETURN</div>
+    <div class="pseudo-code" style="margin-top:.6rem;">
+<span class="line"><span class="kw">def</span> <span class="fn">add_em</span>(x, y, z):</span>
+<span class="line">    <span class="fn">print</span>(x + y + z)     <span class="com"># displays the sum — but returns nothing</span></span>
+<span class="line"></span>
+<span class="line">a = <span class="fn">add_em</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)      <span class="com"># prints 6</span></span>
+<span class="line"><span class="fn">print</span>(a)                 <span class="com"># None</span></span></div>
+    <p style="margin-bottom:0;">Writing <code>print</code> where you mean <code>return</code> is a classic trap, and it is hard to spot because <strong>the output looks identical when you run the function by itself</strong>. The difference appears the moment you try to <em>use</em> the result: a printed value is gone; a returned value can be stored, passed on, and computed with.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s33">
+  <div class="section-number">PREREQ P3.3 · KEYWORD &amp; DEFAULT ARGUMENTS</div>
+  <h2>P3.3 Positional, keyword &amp; default arguments</h2>
+
+  <p>When you call a function, Python must match each argument in the call with a parameter in the definition. The simplest matching is by <strong>order</strong> — values matched this way are <span class="pill pill-blue">positional arguments</span>:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">def</span> <span class="fn">describe_pet</span>(animal_type, pet_name):</span>
+<span class="line">    <span class="str">"""</span></span>
+<span class="line"><span class="str">    Display information about a pet.</span></span>
+<span class="line"><span class="str">    we can write multiple lines here!</span></span>
+<span class="line"><span class="str">    """</span></span>
+<span class="line">    <span class="fn">print</span>(<span class="str">"\nI have a"</span>, animal_type + <span class="str">"."</span>)</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">"My"</span>, animal_type + <span class="str">"'s name is"</span>, pet_name.<span class="fn">title</span>() + <span class="str">"."</span>)</span>
+<span class="line"></span>
+<span class="line"><span class="fn">describe_pet</span>(<span class="str">'Pokemon'</span>, <span class="str">'Harry'</span>)   <span class="com"># order decides: animal_type='Pokemon', pet_name='Harry'</span></span></div>
+  <p>The triple-quoted string at the top of the body is a <strong>docstring</strong> — a multi-line comment describing what the function does. Python looks for it right after the definition when generating documentation, and <code>help(describe_pet)</code> prints it together with the function's name and parameters. Try <code>help(print)</code> too: you'll find that <code>print()</code> itself accepts a keyword argument — <code>sep</code> replaces the default single-space separator between multiple values:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="str">"8"</span>, <span class="str">"9"</span>, sep=<span class="str">"*"</span>)   <span class="com"># → 8*9</span></span></div>
+
+  <h3>Keyword arguments</h3>
+  <p>A <span class="pill pill-green">keyword argument</span> is a <strong>name-value pair</strong> you pass to the function. Because you directly associate each value with a parameter name, there is no confusion about roles, and you no longer have to worry about ordering the arguments correctly:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">describe_pet</span>(animal_type=<span class="str">'Pokemon'</span>, pet_name=<span class="str">'Harry'</span>)   <span class="com"># same call, names decide</span></span></div>
+
+  <h3>Default parameter values</h3>
+  <p>A <span class="pill pill-orange">default parameter</span> has a pre-assigned value: if the call provides an argument, Python uses it; if not, the default steps in. If most of your calls describe dogs, make <code>'dog'</code> the default:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">def</span> <span class="fn">describe_pet</span>(pet_name, animal_type=<span class="str">'dog'</span>):</span>
+<span class="line">    ...</span>
+<span class="line"></span>
+<span class="line"><span class="fn">describe_pet</span>(<span class="str">'willie'</span>)   <span class="com"># → I have a dog. My dog's name is Willie.</span></span>
+<span class="line"></span>
+<span class="line"><span class="kw">def</span> <span class="fn">describe_pet</span>(animal_type=<span class="str">'dog'</span>, pet_name):   <span class="com"># SyntaxError!</span></span>
+<span class="line">    ...</span></div>
+  <p>Notice the parameter order had to change: <code>'willie'</code> is still interpreted as a positional argument, so it must match the first parameter. The rule: <strong>any parameter with a default value must be listed after all the parameters without defaults</strong> — that is what lets Python keep interpreting positional arguments correctly, and violating it is a <code>SyntaxError</code>.</p>
+
+  <h3>Arbitrary numbers of arguments: *args and **kwargs (optional)</h3>
+  <p>Sometimes you can't know ahead of time how many arguments a call will provide. A parameter written <code>*toppings</code> collects all remaining positional arguments into a tuple (P4 territory); one written <code>**user_info</code> collects extra name-value pairs into a dictionary (P5 territory). You'll often see the generic names <code>*args</code> and <code>**kwargs</code> — and <code>**kwargs</code> must be the rightmost parameter.</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">def</span> <span class="fn">make_pizza</span>(size, *toppings):</span>
+<span class="line">    <span class="str">"""Print the list of toppings that have been requested."""</span></span>
+<span class="line">    <span class="fn">print</span>(<span class="str">"The size of the pizza is"</span>, size, <span class="str">"inch with the following toppings:"</span>)</span>
+<span class="line">    <span class="fn">print</span>(toppings)</span>
+<span class="line"></span>
+<span class="line"><span class="fn">make_pizza</span>(<span class="num">6</span>, <span class="str">'pepperoni'</span>)</span>
+<span class="line"><span class="fn">make_pizza</span>(<span class="num">8</span>, <span class="str">'mushrooms'</span>, <span class="str">'green peppers'</span>, <span class="str">'extra cheese'</span>)</span>
+<span class="line"></span>
+<span class="line"><span class="kw">def</span> <span class="fn">build_profile</span>(first, last, **user_info):</span>
+<span class="line">    <span class="str">"""Build a dictionary containing everything we know about a user."""</span></span>
+<span class="line">    user_info[<span class="str">'first_name'</span>] = first</span>
+<span class="line">    user_info[<span class="str">'last_name'</span>] = last</span>
+<span class="line">    <span class="kw">return</span> user_info</span>
+<span class="line"></span>
+<span class="line">user_profile = <span class="fn">build_profile</span>(<span class="str">'albert'</span>, <span class="str">'einstein'</span>, location=<span class="str">'princeton'</span>, field=<span class="str">'physics'</span>)</span></div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ TRY IT (OPTIONAL — NOT GRADED)</div>
+    <p style="margin-bottom:0;">Write a function for the "guess the number" game: <code>guess_number(max_tries, max_number=10)</code>. Pick a secret with <code>random.randint(1, max_number)</code>, let the player guess up to <code>max_tries</code> times with higher/lower hints, and <code>return True</code> the moment they get it right — <code>return False</code> if they run out of tries. Notice how <code>return</code> doubles as your exit from the loop. The notebook has a skeleton of this exercise waiting for you.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s34">
+  <div class="section-number">PREREQ P3.4 · LOCAL VS GLOBAL SCOPE</div>
+  <h2>P3.4 Local vs global scope</h2>
+
+  <p>Parameters and variables assigned <em>inside</em> a called function exist in that function's <strong>local scope</strong>; variables assigned <em>outside</em> all functions exist in the <strong>global scope</strong>. A variable is a <strong>local variable</strong> or a <strong>global variable</strong> — it must be one or the other, never both. Think of a scope as a <strong>container for variables</strong>: when the scope is destroyed, everything in it is forgotten.</p>
+  <div class="info-box">
+    <div class="info-label">📌 SCOPE LIFETIMES</div>
+    <p style="margin-bottom:0;">There is <strong>one global scope</strong> per module, created when your program begins. A <strong>local scope is created every time a function is called</strong> and destroyed when the function returns — so the next call starts fresh: local variables never remember values from the previous call.</p>
+  </div>
+
+  <h3>Local variables cannot be used in the global scope</h3>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">def</span> <span class="fn">spam</span>():</span>
+<span class="line">    eggs = <span class="num">31337</span></span>
+<span class="line"></span>
+<span class="line"><span class="fn">spam</span>()</span>
+<span class="line"><span class="fn">print</span>(eggs)   <span class="com"># NameError — eggs lived only in spam()'s local scope</span></span></div>
+  <p>The error happens because <code>eggs</code> exists only in the local scope created when <code>spam()</code> is called. Once execution returns, that scope is destroyed — there is no longer any variable named <code>eggs</code>.</p>
+
+  <h3>Each call gets its own local scope</h3>
+  <p>A new local scope is created whenever a function is called — including when a function calls another function, so <strong>multiple local scopes can exist at the same time</strong>, and one function's locals are invisible to another's. Meanwhile, a global variable <strong>can be read</strong> from inside a function, as long as nothing in the function assigns to that name:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">def</span> <span class="fn">spam</span>():</span>
+<span class="line">    eggs = <span class="str">'spam local'</span></span>
+<span class="line">    <span class="fn">print</span>(eggs)    <span class="com"># prints 'spam local'</span></span>
+<span class="line"></span>
+<span class="line"><span class="kw">def</span> <span class="fn">bacon</span>():</span>
+<span class="line">    eggs = <span class="str">'bacon local'</span></span>
+<span class="line">    <span class="fn">print</span>(eggs)    <span class="com"># prints 'bacon local'</span></span>
+<span class="line">    <span class="fn">spam</span>()</span>
+<span class="line">    <span class="fn">print</span>(eggs)    <span class="com"># prints 'bacon local' — spam() never touched bacon()'s eggs</span></span>
+<span class="line"></span>
+<span class="line">eggs = <span class="str">'global'</span></span>
+<span class="line"><span class="fn">bacon</span>()</span>
+<span class="line"><span class="fn">print</span>(eggs)        <span class="com"># prints 'global'</span></span></div>
+  <p>Three different variables, one name: <code>bacon()</code>'s <code>eggs</code>, <code>spam()</code>'s <code>eggs</code>, and the global <code>eggs</code> all coexist without interfering. If you want a function to <em>modify</em> the global variable rather than create its own local one, declare it with the <strong><code>global</code> keyword</strong>:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">def</span> <span class="fn">spam</span>():</span>
+<span class="line">    <span class="kw">global</span> eggs      <span class="com"># now assignments target the global eggs</span></span>
+<span class="line">    eggs = <span class="str">'spam local'</span></span>
+<span class="line"></span>
+<span class="line">eggs = <span class="str">'global'</span></span>
+<span class="line"><span class="fn">spam</span>()</span>
+<span class="line"><span class="fn">print</span>(eggs)          <span class="com"># → 'spam local' — the global was modified</span></span></div>
+
+  <div class="info-box warm">
+    <div class="info-label">⚠️ GO EASY ON GLOBAL VARIABLES</div>
+    <p style="margin-bottom:0;">Don't use global variables unless there is a very good reason. They invite <strong>unintentional changes that propagate through the entire program</strong>: a change that makes sense for one function may quietly break the processing in every other function that shares the variable.</p>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <p>Scope is where predictions go wrong most often — make an AI walk through it with you:</p>
+    <span class="ai-prompt">Paste the spam()/bacon() program above and ask: "Before telling me the output, list every scope that exists at the moment spam() is running, and which eggs lives in each."</span>
+    <span class="ai-prompt">Why does x += 1 inside a function raise an error when x is a global variable, even though print(x) would have worked? Show me two ways to fix it and tell me which one is better style.</span>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s35">
+  <div class="section-number">PREREQ P3.5 · MODULES</div>
+  <h2>P3.5 Storing your functions in modules</h2>
+
+  <p>Functions separate blocks of code from your main program, and descriptive names make programs easier to follow. You can go a step further and store your functions in a separate file — a <strong>module</strong> is simply <strong>a file ending in <code>.py</code></strong> whose code you can bring into your program with an <strong><code>import</code> statement</strong>. Storing functions this way lets you hide implementation details and focus on higher-level logic, reuse the same functions in many programs, share your file with other programmers without sharing the whole program — and use the function libraries other people have written.</p>
+  <div class="pseudo-code">
+<span class="line"><span class="com"># pizza.py — a module is just a .py file with code in it</span></span>
+<span class="line"><span class="kw">def</span> <span class="fn">make_pizza</span>(size, toppings):</span>
+<span class="line">    <span class="str">"""Summarize the pizza we are about to make."""</span></span>
+<span class="line">    <span class="fn">print</span>(<span class="str">"\nMaking a "</span> + <span class="fn">str</span>(size) + <span class="str">"-inch pizza with the following toppings:"</span>)</span>
+<span class="line">    <span class="fn">print</span>(toppings)</span></div>
+  <p>Now any program in the same folder can import it — four flavors, from most explicit to most abbreviated:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">import</span> pizza                          <span class="com"># whole module → call with dot notation</span></span>
+<span class="line">pizza.<span class="fn">make_pizza</span>(<span class="num">16</span>, <span class="str">'pepperoni'</span>)</span>
+<span class="line"></span>
+<span class="line"><span class="kw">from</span> pizza <span class="kw">import</span> make_pizza          <span class="com"># one function → call by bare name</span></span>
+<span class="line"><span class="fn">make_pizza</span>(<span class="num">12</span>, <span class="str">'mushrooms'</span>)</span>
+<span class="line"></span>
+<span class="line"><span class="kw">from</span> pizza <span class="kw">import</span> make_pizza <span class="kw">as</span> mp    <span class="com"># function alias</span></span>
+<span class="line"><span class="fn">mp</span>(<span class="num">16</span>, <span class="str">'pepperoni'</span>)</span>
+<span class="line"></span>
+<span class="line"><span class="kw">import</span> pizza <span class="kw">as</span> p                     <span class="com"># module alias</span></span>
+<span class="line">p.<span class="fn">make_pizza</span>(<span class="num">12</span>, <span class="str">'mushrooms'</span>)</span></div>
+  <p>When Python reads <code>import pizza</code>, it opens <code>pizza.py</code> and makes its functions available — the copying happens behind the scenes just before the program runs. The <code>as</code> alias forms are handy when a function's name is long or would conflict with an existing name in your program. There is also <code>from pizza import *</code>, which copies <em>every</em> function into your file so you can call each by bare name — but it's best avoided with larger modules you didn't write: if the module defines a name that matches one already in your project, you can get unexpected results.</p>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 THE BIG PICTURE</div>
+    <p style="margin-bottom:0;">Functions are the primary way to organize your code into logical groups. Because their variables live in local scopes, <strong>the code in one function cannot directly affect the values of variables in other functions</strong> — inputs come in as parameters, outputs go out as return values, and everything in between stays inside the box. That single idea is what makes big programs debuggable.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="quiz">
+  <div class="section-number">QUIZ · PREREQUISITE SELF-CHECK · NOT GRADED</div>
+  <h2>Self-check quiz: 7 questions</h2>
+  <p>Purely for your own calibration — <strong>this quiz is not graded and not part of the course assignments</strong>. Click the option you believe is right; every option explains itself, so a wrong click still teaches you something.</p>
+  <div class="quiz-progress" id="quizProgress">Solved 0 / 7</div>
+  <div id="quizContainer"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="cards">
+  <div class="section-number">FLASHCARDS · KEY TERMS</div>
+  <h2>Key-term flashcards: click to flip</h2>
+  <p>All 18 key terms from the Functions notebook. Say the definition out loud <strong>before</strong> flipping!</p>
+  <div class="card-controls">
+    <button class="btn btn-step" id="flipAll">Flip all</button>
+    <button class="btn btn-reset" id="unflipAll">Unflip all</button>
+    <button class="btn btn-play" id="shuffleCards">🔀 Shuffle</button>
+  </div>
+  <div class="flash-grid" id="flashGrid"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="reference">
+  <div class="section-number">REFERENCE · CHEAT SHEET</div>
+  <h2>P3 cheat sheet</h2>
+
+  <h3>Three ways to pass an argument</h3>
+  <table class="cmp-table">
+    <tr><th>Style</th><th>Call looks like</th><th>Rule to remember</th></tr>
+    <tr><td>Positional</td><td>describe_pet('Pokemon', 'Harry')</td><td class="tl">order decides which parameter gets which value</td></tr>
+    <tr><td>Keyword</td><td>describe_pet(pet_name='Harry', animal_type='Pokemon')</td><td class="tl">names decide — order no longer matters</td></tr>
+    <tr><td>Default</td><td>def describe_pet(pet_name, animal_type='dog')</td><td class="tl">used when the caller omits it; defaults must come after non-defaults</td></tr>
+    <tr><td>*args (optional)</td><td>def make_pizza(size, *toppings)</td><td class="tl">collects extra positional arguments into a tuple</td></tr>
+    <tr><td>**kwargs (optional)</td><td>def build_profile(first, last, **user_info)</td><td class="tl">collects extra name-value pairs into a dictionary; must be rightmost</td></tr>
+  </table>
+
+  <h3>Scope rules at a glance</h3>
+  <table class="cmp-table">
+    <tr><th>Situation</th><th>What happens</th><th>Example</th></tr>
+    <tr><td>Read a global inside a function</td><td class="tl best">allowed — Python finds the global when no local exists</td><td>print(eggs) → 42</td></tr>
+    <tr><td>Assign a name inside a function</td><td class="tl">creates a fresh local; the global is untouched</td><td>eggs = 99</td></tr>
+    <tr><td>Assign, then also read (x += 1)</td><td class="tl worst">error — local variable referenced before assignment</td><td>UnboundLocalError</td></tr>
+    <tr><td>Modify a global on purpose</td><td class="tl">declare it first with the global keyword — sparingly!</td><td>global eggs</td></tr>
+    <tr><td>Use a local after the call ends</td><td class="tl worst">impossible — the local scope was destroyed</td><td>NameError</td></tr>
+    <tr><td>Another function's locals</td><td class="tl">never visible — every call gets its own scope</td><td>spam() vs bacon()</td></tr>
+  </table>
+
+  <h3>return vs print</h3>
+  <table class="cmp-table">
+    <tr><th>Question</th><th>return</th><th>print()</th></tr>
+    <tr><td>What is it?</td><td>a statement</td><td>a function call</td></tr>
+    <tr><td>Where does the value go?</td><td class="tl best">back to the caller — can be stored, passed on, computed with</td><td class="tl">to the screen only — gone after display</td></tr>
+    <tr><td>What does the call evaluate to?</td><td>the returned value</td><td class="worst">None</td></tr>
+    <tr><td>What happens next in the function?</td><td class="tl">execution stops immediately</td><td class="tl">execution continues</td></tr>
+    <tr><td>With no return statement at all?</td><td colspan="2">Python adds return None behind the scenes — a void function</td></tr>
+  </table>
+
+  <h3>Import flavors</h3>
+  <table class="cmp-table">
+    <tr><th>Statement</th><th>Call syntax</th><th>Note</th></tr>
+    <tr><td>import pizza</td><td>pizza.make_pizza(16, 'pepperoni')</td><td class="tl">dot notation — clearest about where the function came from</td></tr>
+    <tr><td>from pizza import make_pizza</td><td>make_pizza(16, 'pepperoni')</td><td class="tl">bare name, no dot needed</td></tr>
+    <tr><td>from pizza import *</td><td>make_pizza(16, 'pepperoni')</td><td class="tl worst">imports everything — risks name collisions; avoid for modules you didn't write</td></tr>
+    <tr><td>from pizza import make_pizza as mp</td><td>mp(16, 'pepperoni')</td><td class="tl">function alias — short or conflict-free name</td></tr>
+    <tr><td>import pizza as p</td><td>p.make_pizza(16, 'pepperoni')</td><td class="tl">module alias — the pattern behind import numpy as np</td></tr>
+  </table>
+
+  <h3>Further reading</h3>
+  <ul>
+    <li><a href="https://automatetheboringstuff.com/" target="_blank" rel="noopener">Automate the Boring Stuff with Python</a> — chapter 3 covers functions, return values, and scope, free online</li>
+    <li><a href="https://www.py4e.com/" target="_blank" rel="noopener">Python for Everybody</a> — gentle videos + exercises if you want more repetition</li>
+  </ul>
+
+  <div class="bridge-box">
+    <div class="bb-title">🎓 AFTER THIS REFRESHER, YOU CAN…</div>
+    <ul>
+      <li>Define a function with def, tell parameters from arguments, and trace a call from entry to return</li>
+      <li>Predict what any function call evaluates to — a returned value or None — and explain why print is not return</li>
+      <li>Mix positional, keyword, and default arguments in the right order (defaults last!)</li>
+      <li>Decide which variable an assignment really touches using the local vs global scope rules</li>
+      <li>Move reusable functions into a .py module and import them by name, by alias, or via dot notation</li>
+    </ul>
+    <p class="bb-next">NEXT ▸ P4 · Lists &amp; Tuples — the sequence types your functions will receive, build, and return.</p>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="p2_flow_control.html"><div class="nav-dir">◂ PREVIOUS PREREQ</div><div class="nav-title">P2 · Flow Control</div></a>
+    <a href="p4_lists_tuples.html" class="next"><div class="nav-dir">NEXT PREREQ ▸</div><div class="nav-title">P4 · Lists &amp; Tuples</div></a>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Scientific Computing with Python · Prerequisite P3: Functions · supplementary self-study — not graded, not part of the assignments<br>
+  Digest of <code>03_Function.ipynb</code> · quiz &amp; flashcards from the notebook's own question bank
+</footer>
+<script>
+/* ============================================================
+   Shared engines: Quiz / Flashcards
+   (buildQuiz extended for the P-pages: answers flagged isCode
+   render monospace with newlines preserved)
+   ============================================================ */
+function buildQuiz(containerId, progressId, data) {
+  const container = document.getElementById(containerId);
+  const progress  = document.getElementById(progressId);
+  const solved = new Set();
+  const LETTERS = 'ABCDEFGH';
+
+  data.forEach((q, qi) => {
+    const box = document.createElement('div');
+    box.className = 'quiz-box';
+    box.innerHTML =
+      `<div class="quiz-label">Q${qi+1} / ${data.length}${q.multi ? ' <span class="multi-badge">MULTI</span>' : ''}</div>` +
+      `<div class="quiz-q">${q.question}</div>` +
+      (q.code ? `<div class="quiz-code">${q.code.replace(/</g,'&lt;')}</div>` : '') +
+      `<div class="quiz-options">` +
+      q.answers.map((a, ai) =>
+        `<div class="quiz-opt" data-q="${qi}" data-a="${ai}">
+           <div class="opt-head"><span class="opt-letter">${LETTERS[ai]}</span><span${a.isCode ? ' class="opt-code"' : ''}>${String(a.answer).replace(/</g,'&lt;')}</span></div>
+           <div class="opt-fb"></div>
+         </div>`
+      ).join('') + `</div>`;
+    container.appendChild(box);
+  });
+
+  container.addEventListener('click', e => {
+    const opt = e.target.closest('.quiz-opt');
+    if (!opt || opt.classList.contains('revealed')) return;
+    const q = data[+opt.dataset.q], a = q.answers[+opt.dataset.a];
+    opt.classList.add('revealed', a.correct ? 'correct' : 'wrong');
+    opt.querySelector('.opt-fb').textContent = (a.correct ? '✔ Correct: ' : '✘ Not quite: ') + a.feedback;
+    if (a.correct) {
+      solved.add(+opt.dataset.q);
+      progress.textContent = `Solved ${solved.size} / ${data.length}`;
+    }
+  });
+}
+
+function buildFlashcards(gridId, data) {
+  const grid = document.getElementById(gridId);
+  function render(cards) {
+    grid.innerHTML = cards.map(c =>
+      `<div class="flashcard">
+         <div class="fc-inner">
+           <div class="fc-face fc-front"><div>${c.front}</div><div class="fc-hint">CLICK TO FLIP</div></div>
+           <div class="fc-face fc-back">${c.back}</div>
+         </div>
+       </div>`).join('');
+  }
+  render(data);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.flashcard');
+    if (card) card.classList.toggle('flipped');
+  });
+  document.getElementById('flipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.add('flipped')));
+  document.getElementById('unflipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.remove('flipped')));
+  document.getElementById('shuffleCards').addEventListener('click', ()=>{
+    const shuffled = [...data].sort(()=>Math.random()-.5);
+    render(shuffled);
+  });
+}
+
+/* ============================================================
+   QUIZ — questions/ch3 of the prerequisite notebook
+   (answers and feedback carried over verbatim)
+   ============================================================ */
+const QUIZ_DATA = [
+  { question:"What is a function in Python?", answers:[
+    { answer:" A named sequence of statements.", correct:true, feedback:"Yes, a function is a named sequence of statements." },
+    { answer:"Any sequence of statements.", correct:false, feedback:"While functions contain sequences of statements, not all sequences of statements are considered functions." },
+    { answer:"A mathematical expression that calculates a value.", correct:false, feedback:"While some functions do calculate values, the python idea of a function is slightly different from the mathematical idea of a function in that not all functions calculate values. Consider, for example, the print() function." },
+    { answer:"A statement of the form x = 5 + 4.", correct:false, feedback:"This statement is called an assignment statement not a function" } ] },
+  { question:"How many lines will be output by executing this code?", code:"def hello():\n    print(\"Hello\")\n    print(\"NSYSU\")", answers:[
+    { answer:" 0", correct:true, feedback:"The code only defines the function. Nothing prints until the function is called." },
+    { answer:"2", correct:false, feedback:"When the function is invoked, it will print two lines, but it has only been defined, not invoked." },
+    { answer:"3", correct:false, feedback:"There are three line, but the code only defines the function. Nothing prints until the function is called." } ] },
+  { question:"What is wrong with the following function definition:", code:"def add_em(x, y, z):\n    return x+y+z\n    print(\"the answer is\", x+y+z)", answers:[
+    { answer:"You should never use a print statement in a function definition.", correct:false, feedback:"You may include print statements inside your functions." },
+    { answer:"You should not have any statements in a function after the return statement. Once the function gets to the return statement it will immediately stop executing the function.", correct:true, feedback:"This is a very common mistake so be sure to watch out for it when you write your code!" },
+    { answer:"You must calculate the value of x+y+z before you return it.", correct:false, feedback:"Python will automatically calculate the value x+y+z and then return it in the statement as it is written" },
+    { answer:"A function cannot return a number.", correct:false, feedback:"Functions can return any legal data, including (but not limited to) numbers, strings, booleans, etc." } ] },
+  { question:"What is wrong with the following function definition if we would like to receive the summation from the function", code:"def add_em(x, y, z):\n    print(x+y+z)", answers:[
+    { answer:"The value None", correct:true, feedback:"We have accidentally used print where we mean return. Therefore, the function will return the value None by default. This mistake is also particularly difficult to find because when you run the function the output looks the same." },
+    { answer:"The value of x+y+z", correct:false, feedback:"Careful! This is a very common mistake. Here we have printed the value x+y+z but we have not returned it. To return a value we MUST use the return keyword." },
+    { answer:"The string ’x+y+z’", correct:false, feedback:"x+y+z calculates a number which represents the sum of the values x, y and z." } ] },
+  { question:"What would be the result of running the following code?", code:"x = 9\ndef adding():\n    x+=1\n    print(x)\nadding()", answers:[
+    { answer:"1", correct:false, feedback:"Incorrect, pay attention to the local scope in the function." },
+    { answer:"9", correct:false, feedback:"Incorrect, pay attention to the local scope in the function." },
+    { answer:"10", correct:false, feedback:"Incorrect, pay attention to the local scope in the function." },
+    { answer:"Error, local variable ’x’ is referenced before assignment.", correct:true, feedback:"This code gives an error because the local variable ’x’ was referenced in the local scope before it was assigned a value." } ] },
+  { question:"What would be the result of running the following code?", code:"x = 3 * 2 \ny = 1\ndef subtract(z):\n    y = 10\n    return y - z\nprint(subtract(x))", answers:[
+    { answer:"4", correct:true, feedback:"Correct, the output is right because the subtract function takes in x as the global variable for the z parameter and puts it into the function. The subtract function uses the local variable y for its return." },
+    { answer:"6", correct:false, feedback:"Incorrect, look again at what is being produced in the subtract function." },
+    { answer:"10", correct:false, feedback:"Incorrect, look again at what is being produced in the subtract function." },
+    { answer:"Code will give an error because there are two different y values.", correct:false, feedback:"Incorrect, one y value is in global scope while the other is in local scope." } ] },
+  { question:"Which of the following statement about the function is correct?", code:"def func(a, b=2, c, *args, **kwargs):\n    return a+b", answers:[
+    { answer:"It will not raise a SyntaxError.", correct:false, feedback:"Incorrect. The function definition is problematic because a non-default parameter (c) comes after a default parameter (b)." },
+    { answer:"It will raise a SyntaxError because non-default parameters cannot follow default parameters.", correct:true, feedback:"Correct! In Python, once you provide a default value for a parameter, all subsequent parameters must also have default values, unless they are defined as keyword-only by being placed after *args." },
+    { answer:"It will raise a SyntaxError because *args must come before default parameters.", correct:false, feedback:"Incorrect. *args can follow parameters with default values; the error here is due to the ordering of default and non-default parameters." },
+    { answer:"It will raise a SyntaxError because **kwargs must come before *args.", correct:false, feedback:"Incorrect. In Python, **kwargs must always come last. The error in this function is not related to the positions of *args or **kwargs." } ] },
+];
+buildQuiz('quizContainer', 'quizProgress', QUIZ_DATA);
+
+/* ============================================================
+   FLASHCARDS — Key terms from the Functions notebook
+   ============================================================ */
+const CARD_DATA = [
+  {front:"divide and conquer", back:"A strategy that breaks a problem into smaller, manageable subproblems, solves each independently, and then combines the results."},
+  {front:"abstraction", back:"The concept of hiding complex details and showing only the essential features of an object or process."},
+  {front:"function", back:"A reusable block of code designed to perform a specific task when called."},
+  {front:"function call", back:"The act of executing a function by specifying its name along with any required arguments."},
+  {front:"argument", back:"The actual value or variable passed to a function when it is called."},
+  {front:"parameter", back:"A variable in a function definition that receives the value of an argument when the function is called."},
+  {front:"positional argument", back:"An argument that must be passed to a function in the correct order as defined by its parameters."},
+  {front:"docstring", back:"A literal string placed at the beginning of a function or module to describe its purpose and usage."},
+  {front:"return statement", back:"A statement that ends a function's execution and optionally passes back a value to the caller."},
+  {front:"fruitful function", back:"A function that returns a value after execution."},
+  {front:"void function", back:"A function that does not return any value."},
+  {front:"keyword argument", back:"An argument passed to a function by explicitly naming the parameter, allowing arguments to be specified in any order."},
+  {front:"default parameter", back:"A parameter that has a pre-assigned value, which is used if no argument is provided during the function call."},
+  {front:"local scope", back:"The region of a program (typically within a function) where a variable is defined and accessible only within that block."},
+  {front:"global scope", back:"The region of a program where variables are accessible from any part of the code, usually defined outside of functions."},
+  {front:"local variable", back:"A variable defined inside a function that can only be used within that function."},
+  {front:"global variable", back:"A variable defined at the top level of a module that can be accessed from anywhere within that module."},
+  {front:"module", back:"A file containing Python code, such as functions, classes, or variables, that can be imported and reused in other Python programs."},
+];
+buildFlashcards('flashGrid', CARD_DATA);
+
+/* ============================================================
+   Floating nav active highlight
+   ============================================================ */
+(function initFloatNav(){
+  const links = document.querySelectorAll('.float-nav a[data-target]');
+  const sections = [...links].map(a => document.getElementById(a.dataset.target)).filter(Boolean);
+  function update(){
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= window.innerHeight * 0.35) active = s.id;
+    }
+    links.forEach(a => a.classList.toggle('active', a.dataset.target === active));
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>

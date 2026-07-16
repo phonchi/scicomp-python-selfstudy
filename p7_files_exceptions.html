@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P7 · Files &amp; Exceptions — Prerequisite Refresher</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:17px;}
+
+/* Hero */
+.hero{min-height:56vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2.5rem 2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:880px;}
+.hero .chapter-tag{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#f39c12;letter-spacing:.3em;margin-bottom:.8rem;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(1.9rem,4.6vw,3rem);font-weight:900;color:#fff;letter-spacing:.02em;line-height:1.25;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.15rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{font-family:'JetBrains Mono',monospace;color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.0rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+ul,ol{margin:0 0 1rem 1.4rem;}
+
+/* Prerequisite banner */
+.prereq-banner{background:#fef5e7;border:3px solid #d68910;border-radius:12px;padding:1.2rem 1.5rem;margin:0 0 2.2rem;box-shadow:0 3px 12px rgba(214,137,16,.12);}
+.prereq-banner .pb-title{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:#b9770e;font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.prereq-banner p{margin-bottom:0;font-size:.95rem;}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:40px;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box p:last-child,.info-box ul:last-child,.info-box ol:last-child{margin-bottom:0;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+.cmp-table td.tl{font-family:'Noto Sans TC',sans-serif;text-align:left;font-size:.85rem;}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.65;overflow-x:auto;margin:.8rem 0;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .str{color:#f1fa8c;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.quiz-box .quiz-label .multi-badge{background:#8e44ad;color:#fff;font-size:.68rem;padding:1px 8px;border-radius:3px;}
+.quiz-box .quiz-q{font-weight:600;margin-bottom:.6rem;}
+.quiz-box .quiz-code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:.6rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.84rem;margin-bottom:.8rem;white-space:pre-wrap;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0 0;}
+.quiz-opt{display:flex;flex-direction:column;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.9rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-head{display:flex;align-items:baseline;gap:.6rem;}
+.quiz-opt .opt-letter{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt .opt-code{white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.quiz-opt .opt-fb{display:none;font-size:.82rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--card-border);color:#555;}
+.quiz-opt.revealed .opt-fb{display:block;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.correct .opt-fb{color:#14532d;}
+.quiz-opt.wrong{background:#fef5e7;border-color:#d68910;}
+.quiz-opt.wrong .opt-letter{color:#d68910;}
+.quiz-progress{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;margin:.8rem 0;}
+
+/* Flashcards */
+.card-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.flashcard{perspective:900px;height:160px;cursor:pointer;}
+.flashcard .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+.flashcard .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.flashcard .fc-front{background:linear-gradient(150deg,#2c3e7a,#1a1a2e);color:#fff;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.flashcard .fc-front .fc-hint{font-size:.66rem;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.flashcard .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:34px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+/* Chapter nav */
+.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin:2rem 0 0;flex-wrap:wrap;}
+.chapter-nav a{flex:1;min-width:220px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.3rem;text-decoration:none;color:var(--ink);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.chapter-nav a:hover{border-color:var(--accent2);transform:translateY(-2px);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+footer a{color:var(--accent2);}
+
+/* 🤖 Ask-AI / discussion box */
+.ai-box{background:var(--card);border:2px dashed #8e44ad;border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.ai-box .ai-label{position:absolute;top:-11px;left:14px;background:#8e44ad;color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.ai-box p:last-child{margin-bottom:0;}
+.ai-box .ai-prompt{font-family:'JetBrains Mono',monospace;font-size:.85rem;background:rgba(142,68,173,.08);border-radius:6px;padding:.4rem .8rem;display:block;margin:.4rem 0;color:#6c3485;}
+
+/* 🎓 Chapter-end bridge */
+.bridge-box{background:#eafaf1;border:2px solid var(--accent3);border-radius:12px;padding:1.3rem 1.5rem;margin:2rem 0 0;}
+.bridge-box .bb-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent3);font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.bridge-box ul{margin:.3rem 0 .8rem 1.3rem;font-size:.92rem;}
+.bridge-box .bb-next{font-size:.9rem;color:var(--accent2);border-top:1px dashed var(--accent3);padding-top:.6rem;margin-bottom:0;}
+
+/* Materials map */
+.mat-map{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.9rem 0;padding:.7rem 1rem;background:var(--card);border:1px solid var(--card-border);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.mat-map .mm-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.12em;margin-right:.3rem;}
+.mat-map a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;text-decoration:none;border:2px solid var(--card-border);color:var(--accent2);transition:all .2s;background:var(--paper);}
+.mat-map a:hover{border-color:var(--accent2);}
+</style>
+</head>
+<body>
+
+<nav class="float-nav">
+  <div class="fn-title">P7 · Files &amp; Exceptions</div>
+  <a href="#s71" data-target="s71"><span class="fn-num">P7.1</span><span class="fn-name">Reading a file</span></a>
+  <a href="#s72" data-target="s72"><span class="fn-num">P7.2</span><span class="fn-name">File paths</span></a>
+  <a href="#s73" data-target="s73"><span class="fn-num">P7.3</span><span class="fn-name">Writing &amp; appending</span></a>
+  <a href="#s74" data-target="s74"><span class="fn-num">P7.4</span><span class="fn-name">Storing data with json</span></a>
+  <a href="#s75" data-target="s75"><span class="fn-num">P7.5</span><span class="fn-name">Exceptions: try / except</span></a>
+  <a href="#quiz" data-target="quiz"><span class="fn-num">QUIZ</span><span class="fn-name">Self-check quiz</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">Key-term flashcards</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">Cheat sheet</span></a>
+  <a href="#top" class="fn-top" title="Back to top"><span class="fn-num">↑ TOP</span></a>
+</nav>
+
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="chapter-tag">PREREQUISITE P7 · SUPPLEMENTARY · NOT GRADED</div>
+    <h1><span class="orange">Files</span> &amp; <span class="green">Exceptions</span></h1>
+    <div class="subtitle">Variables vanish the moment your program ends — files and json make your results outlive the run, and try/except lets a program fail gracefully instead of crashing. Skim what you know; slow down where you hesitate.</div>
+    <div class="big-formula">with open(...) ｜ read · write ｜ json ｜ try / except</div>
+    <div class="scroll-hint">Scroll down to start<span>↓</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="prereq-banner">
+  <div class="pb-title">📌 SUPPLEMENTARY PREREQUISITE — NOT PART OF THE ASSIGNMENTS</div>
+  <p>The prerequisite pages (P1–P8) review the basic Python that Modules 1–5 assume you already know. They are <strong>optional background material for self-study: nothing on these pages is graded, and none of it will appear in the course assignments</strong>（補充先備知識，不列入作業範圍）. Use them to warm up before Module 1, or to look things up whenever a module uses a Python idiom you have forgotten.</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · A REFRESHER, NOT A LECTURE — READ AT YOUR OWN PACE</div>
+  <div class="toc-grid">
+    <a href="#s71"><span class="toc-num">P7.1</span>Reading a file</a>
+    <a href="#s72"><span class="toc-num">P7.2</span>File paths</a>
+    <a href="#s73"><span class="toc-num">P7.3</span>Writing &amp; appending</a>
+    <a href="#s74"><span class="toc-num">P7.4</span>Storing data with json</a>
+    <a href="#s75"><span class="toc-num">P7.5</span>Exceptions: try / except</a>
+    <a href="#quiz"><span class="toc-num">QUIZ</span>Self-check quiz (4 questions)</a>
+    <a href="#cards"><span class="toc-num">CARD</span>Key-term flashcards (7 cards)</a>
+    <a href="#reference"><span class="toc-num">REF</span>P7 cheat sheet</a>
+  </div>
+</div>
+
+<div class="info-box green">
+  <div class="info-label">📖 HOW TO USE THE P-PAGES</div>
+  <p style="margin-bottom:.4rem;">Unlike the module pages, there are no course videos here — the source is a Jupyter notebook you can run yourself:</p>
+  <p style="margin-bottom:0;">① <strong>Read</strong> each digest section below → ② <strong>Run</strong> the matching notebook cells (one click on the Colab badge — predict each output <em>before</em> you run it) → ③ <strong>Quiz</strong> yourself and flip the <a href="#cards">flashcards</a>. If everything feels obvious, you are ready — move on.</p>
+</div>
+
+<div class="mat-map">
+  <span class="mm-title">SOURCE NOTEBOOK ▸</span>
+  <a href="https://colab.research.google.com/github/phonchi/nsysu-math106A/blob/master/static_files/presentations/07_Files.ipynb" target="_blank" rel="noopener">🚀 Open 07_Files.ipynb in Colab</a>
+  <a href="https://github.com/phonchi/nsysu-math106A/blob/master/static_files/presentations/07_Files.ipynb" target="_blank" rel="noopener">📓 View on GitHub</a>
+</div>
+
+<!-- ============================================================ -->
+<section id="s71">
+  <div class="section-number">PREREQ P7.1 · READING FROM A FILE</div>
+  <h2>P7.1 Reading a file</h2>
+
+  <p>Variables are a fine way to store data <em>while</em> your program is running, but if you want data to persist after the program has finished, you need to save it to a <strong>file</strong>. You can think of a file's contents as a single string value — potentially gigabytes in size. To do any work with a file, even just printing its contents, you first <strong>open</strong> it. The <code>open()</code> function takes the file's name, looks for it in the directory where the running program lives, and returns a <strong>file object</strong> you work with:</p>
+  <div class="pseudo-code">
+<span class="line">file_object = <span class="fn">open</span>(<span class="str">'pi_digits.txt'</span>)   <span class="com"># returns an object representing the file</span></span>
+<span class="line"><span class="fn">print</span>(file_object.read())             <span class="com"># read() → the whole contents as one long string</span></span>
+<span class="line">file_object.close()                   <span class="com"># you must remember to close it yourself…</span></span></div>
+  <p>The recommended way skips the bookkeeping. The keyword <code>with</code> closes the file once access to it is no longer needed — notice we call <code>open()</code> but never <code>close()</code>:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="com"># The recommended way:</span></span>
+<span class="line"><span class="kw">with</span> <span class="fn">open</span>(<span class="str">'pi_digits.txt'</span>) <span class="kw">as</span> file_object:</span>
+<span class="line">    contents = file_object.read()   <span class="com"># one long string; no close() needed</span></span>
+<span class="line"><span class="fn">print</span>(contents.strip())             <span class="com"># strip() removes the trailing blank line</span></span></div>
+  <div class="info-box">
+    <div class="info-label">📌 WHY with?</div>
+    <p style="margin-bottom:0;">You <em>could</em> pair <code>open()</code> and <code>close()</code> yourself — but if a bug prevents the <code>close()</code> line from running, the file may never close, and data can be lost or corrupted. It is not always easy to know exactly when to close a file; with the <code>with</code> block, Python figures that out for you and closes the file automatically when the block finishes.</p>
+  </div>
+
+  <h3>Reading line by line</h3>
+  <p>Often you want to examine a file one line at a time — looking for certain information, or modifying the text in some way. The file object is <strong>iterable</strong>, so a plain <code>for</code> loop does it:</p>
+  <div class="pseudo-code">
+<span class="line">filename = <span class="str">'pi_digits.txt'</span></span>
+<span class="line"><span class="kw">with</span> <span class="fn">open</span>(filename) <span class="kw">as</span> file_object:   <span class="com"># the file object is iterable!</span></span>
+<span class="line">    <span class="kw">for</span> line <span class="kw">in</span> file_object:</span>
+<span class="line">        <span class="fn">print</span>(line.strip())</span></div>
+
+  <h3>Making a list of lines</h3>
+  <p>The file object returned by <code>open()</code> is only available <em>inside</em> the <code>with</code> block. To keep access to the contents afterwards, store the lines in a list with <code>readlines()</code> and work with the list:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">with</span> <span class="fn">open</span>(filename) <span class="kw">as</span> file_object:</span>
+<span class="line">    lines = file_object.readlines()   <span class="com"># a list of strings — survives the block</span></span>
+<span class="line"></span>
+<span class="line">pi_string = <span class="str">''</span></span>
+<span class="line"><span class="kw">for</span> line <span class="kw">in</span> lines:</span>
+<span class="line">    pi_string += line.strip()         <span class="com"># glue the digits, dropping each newline</span></span>
+<span class="line"><span class="fn">print</span>(pi_string)                      <span class="com"># 3.141592653589793238462643383279</span></span>
+<span class="line"><span class="fn">print</span>(<span class="fn">len</span>(pi_string))                 <span class="com"># 32 — counts the leading 3 and the decimal point</span></span></div>
+
+  <div class="info-box warm">
+    <div class="info-label">⚠️ THREE READING TRAPS</div>
+    <ul style="margin-bottom:0;">
+      <li><strong>Everything you read is a string.</strong> Read in a number and you get <code>'3.14'</code>, not <code>3.14</code> — convert with <code>int()</code> or <code>float()</code> before doing math.</li>
+      <li><strong>Doubled newlines.</strong> Each line of the file ends in <code>\n</code>, and <code>print()</code> adds its own — so a naive loop prints a blank line after every line. <code>strip()</code> each line to fix it.</li>
+      <li><strong>read() at the end of the file returns an empty string</strong> — it does not raise an error. That empty string is what shows up as the extra blank line after <code>read()</code>, and why a second <code>read()</code> in a row prints nothing.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s72">
+  <div class="section-number">PREREQ P7.2 · FILE PATHS</div>
+  <h2>P7.2 File paths</h2>
+
+  <p>Sometimes the file you want won't be in the same directory as your program. To open a file from somewhere else, you give <code>open()</code> a <strong>file path</strong> — directions to a specific location on your system. A <strong>relative file path</strong> starts from the directory where the currently running program lives:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">with</span> <span class="fn">open</span>(<span class="str">'text_files/pi_digits2.txt'</span>) <span class="kw">as</span> file_object:   <span class="com"># look inside the folder text_files,</span></span>
+<span class="line">    contents = file_object.read()                          <span class="com"># assumed to sit in the current directory</span></span></div>
+  <p>An <strong>absolute file path</strong> instead spells out exactly where the file is on the computer, regardless of where the program runs from. Absolute paths tend to be long, so it's helpful to assign them to a variable and pass that to <code>open()</code>:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="com"># Linux / macOS — slashes, starting from the root</span></span>
+<span class="line">file_path = <span class="str">'/home/Users/Desktop/text_files/pi_digits2.txt'</span></span>
+<span class="line"><span class="kw">with</span> <span class="fn">open</span>(file_path) <span class="kw">as</span> file_object:</span>
+<span class="line">    contents = file_object.read()</span>
+<span class="line"></span>
+<span class="line"><span class="com"># Windows — drive letter and backslashes (note the r'…' raw string)</span></span>
+<span class="line">file_path = <span class="str">r'C:\Users\adm\Desktop\text_files\pi_digits2.txt'</span></span></div>
+  <div class="info-box">
+    <div class="info-label">🔍 SLASH OR BACKSLASH?</div>
+    <p style="margin-bottom:0;">Windows <em>displays</em> paths with backslashes (<code>\</code>), but you can still use forward slashes (<code>/</code>) in your Python code — they work on every system. If you do write backslashes, prefix the string with <code>r</code> (a raw string) so Python doesn't mistake <code>\t</code> or <code>\n</code> for escape characters.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s73">
+  <div class="section-number">PREREQ P7.3 · WRITING &amp; APPENDING</div>
+  <h2>P7.3 Writing &amp; appending</h2>
+
+  <p>One of the simplest ways to save data is to write it to a file: the output is still there after your program ends, you can examine it later, share it, or write another program that reads it back in. To write, call <code>open()</code> with a second argument — the <strong>mode</strong>:</p>
+  <div class="pseudo-code">
+<span class="line">filename = <span class="str">'programming.txt'</span></span>
+<span class="line"></span>
+<span class="line"><span class="kw">with</span> <span class="fn">open</span>(filename, <span class="str">'w'</span>) <span class="kw">as</span> file_object:      <span class="com"># 'w' = write mode — overwrites the contents!</span></span>
+<span class="line">    file_object.write(<span class="str">"We love programming!"</span>)</span></div>
+  <table class="cmp-table">
+    <tr><th>Mode</th><th>Meaning</th><th>If the file exists</th><th>If it doesn't</th></tr>
+    <tr><td>'r' (default)</td><td class="tl">read only — what you get when you omit the mode</td><td>reads it</td><td class="worst">FileNotFoundError</td></tr>
+    <tr><td>'w'</td><td class="tl">write</td><td class="worst">erases it first</td><td>creates it</td></tr>
+    <tr><td>'a'</td><td class="tl">append — new text goes at the end</td><td class="best">keeps it</td><td>creates it</td></tr>
+    <tr><td>'r+'</td><td class="tl">read and write</td><td>reads/writes</td><td class="worst">must already exist</td></tr>
+  </table>
+  <div class="info-box warm">
+    <div class="info-label">⚠️ THREE WRITING TRAPS</div>
+    <ul style="margin-bottom:0;">
+      <li><strong><code>'w'</code> erases before it writes.</strong> <code>open()</code> creates the file if it doesn't exist — but if it <em>does</em> exist, write mode wipes its contents before returning the file object.</li>
+      <li><strong>Only strings go in.</strong> <code>file_object.write(12)</code> fails — Python can only write strings to a text file, so convert numbers with <code>str()</code> first.</li>
+      <li><strong>No free newlines.</strong> <code>write()</code> doesn't add <code>\n</code> for you — include the newline characters yourself. (There is also <code>writelines()</code> for writing a list of strings.)</li>
+    </ul>
+  </div>
+
+  <h3>Appending to a file</h3>
+  <p>To add content <em>without</em> writing over what's already there, open the file in <strong>append mode</strong>: nothing is erased, every line you write lands at the end, and a missing file is created empty for you.</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">with</span> <span class="fn">open</span>(filename, <span class="str">'a'</span>) <span class="kw">as</span> file_object:      <span class="com"># 'a' = append mode</span></span>
+<span class="line">    file_object.write(<span class="str">"\nWe also love finding meaning in large datasets.\n"</span>)</span>
+<span class="line">    file_object.write(<span class="str">"We love creating apps that can run in a browser.\n"</span>)</span></div>
+
+  <h3>The file-position pointer</h3>
+  <p>While reading through a file, the system maintains a <strong>file-position pointer</strong> — an index marking where the next character will be read or written. <code>tell()</code> reports the current position and <code>seek()</code> moves it. That is why this <code>'r+'</code> snippet ends up appending: reading everything first pushes the pointer to the end, so the write lands there.</p>
+  <div class="pseudo-code">
+<span class="line">year = <span class="num">2025</span></span>
+<span class="line"></span>
+<span class="line"><span class="kw">with</span> <span class="fn">open</span>(filename, <span class="str">'r+'</span>) <span class="kw">as</span> file_object:   <span class="com"># the file must already exist!</span></span>
+<span class="line">    spam = file_object.readlines()           <span class="com"># reading moves the pointer to the end…</span></span>
+<span class="line">    <span class="fn">print</span>(file_object.tell())                <span class="com"># …tell() reports that position</span></span>
+<span class="line">    file_object.write(<span class="fn">str</span>(year))             <span class="com"># …so this write appends</span></span></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s74">
+  <div class="section-number">PREREQ P7.4 · STORING DATA WITH JSON</div>
+  <h2>P7.4 Storing data with json</h2>
+
+  <p>Many programs collect information from users — preferences in a game, data for a visualization — and store it in data structures like lists and dictionaries. When the user closes the program, you almost always want to save what they entered. Writing a list to a text file by hand is clumsy; the <strong><code>json</code></strong> module lets you <strong>dump</strong> a simple Python data structure into a file and <strong>load</strong> it back the next time the program runs.</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">import</span> json</span>
+<span class="line"></span>
+<span class="line">numbers = [<span class="num">2</span>, <span class="num">3</span>, <span class="num">5</span>, <span class="num">7</span>, <span class="num">11</span>, <span class="num">13</span>]</span>
+<span class="line">filename = <span class="str">'numbers.json'</span></span>
+<span class="line"></span>
+<span class="line"><span class="kw">with</span> <span class="fn">open</span>(filename, <span class="str">'w'</span>) <span class="kw">as</span> f:</span>
+<span class="line">    json.dump(numbers, f)        <span class="com"># two arguments: the data, then the file object</span></span></div>
+  <p>A second program — or the same one, next week — reads the list back into memory with <code>json.load()</code>:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">with</span> <span class="fn">open</span>(filename) <span class="kw">as</span> f:</span>
+<span class="line">    numbers = json.load(f)</span>
+<span class="line"></span>
+<span class="line"><span class="fn">print</span>(numbers)                   <span class="com"># [2, 3, 5, 7, 11, 13] — a real list again, not a string</span></span></div>
+  <div class="info-box green">
+    <div class="info-label">🎯 WHY JSON?</div>
+    <p style="margin-bottom:0;">Two reasons to reach for <span class="pill pill-green">json</span>: it saves whole <strong>data structures</strong> (lists, dictionaries) so your users never have to start over each time they run the program — and it is a <strong>portable, language-independent format</strong>, so the same file can be shared with programs written in other languages.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s75">
+  <div class="section-number">PREREQ P7.5 · EXCEPTIONS</div>
+  <h2>P7.5 Exceptions: try / except</h2>
+
+  <p>Python manages errors that arise while a program runs with special objects called <strong>exceptions</strong>. Whenever an error makes Python unsure what to do next, it creates an exception object. If you write code that <em>handles</em> the exception, the program keeps running; if you don't, the program halts and shows a <strong>traceback</strong> — a report of the exception that was raised:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="num">5</span>/<span class="num">0</span>)</span>
+<span class="line"><span class="com"># Traceback (most recent call last): …</span></span>
+<span class="line"><span class="com"># ZeroDivisionError: division by zero   ← the exception object, named on the last line</span></span></div>
+  <p>When you suspect an error may occur, wrap the risky line in a <strong>try-except block</strong>: Python <em>tries</em> the code, and if it raises the named exception, runs the <code>except</code> block instead of crashing. The user sees a friendly message you wrote, not a traceback:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">try</span>:</span>
+<span class="line">    <span class="fn">print</span>(<span class="num">10</span>/<span class="num">0</span>)</span>
+<span class="line"><span class="kw">except</span> ZeroDivisionError:</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">"You can't divide by zero!"</span>, end=<span class="str">" "</span>)</span>
+<span class="line"><span class="kw">finally</span>:</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">"terminated"</span>)</span>
+<span class="line"><span class="com"># → You can't divide by zero! terminated</span></span></div>
+  <p>If the code in the <code>try</code> block works, Python skips the <code>except</code> block entirely. And if you write <code>except:</code> with no exception type, it captures <em>all</em> exceptions — convenient, but it can also hide errors you didn't anticipate.</p>
+
+  <h3>Using exceptions to prevent crashes</h3>
+  <p>Handling errors matters most when the program has more work to do after the error occurs. This division-only calculator keeps running no matter what the user types, thanks to two more clauses — <code>else</code> and <code>finally</code>:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="str">"Give me two numbers, and I'll divide them."</span>)</span>
+<span class="line"><span class="fn">print</span>(<span class="str">"Enter 'q' to quit."</span>)</span>
+<span class="line"></span>
+<span class="line"><span class="kw">while</span> <span class="kw">True</span>:</span>
+<span class="line">    first_number = <span class="fn">input</span>(<span class="str">"\nFirst number: "</span>)</span>
+<span class="line">    <span class="kw">if</span> first_number == <span class="str">'q'</span>:</span>
+<span class="line">        <span class="kw">break</span></span>
+<span class="line">    second_number = <span class="fn">input</span>(<span class="str">"Second number: "</span>)</span>
+<span class="line">    <span class="kw">if</span> second_number == <span class="str">'q'</span>:</span>
+<span class="line">        <span class="kw">break</span></span>
+<span class="line">    <span class="kw">try</span>:</span>
+<span class="line">        answer = <span class="fn">int</span>(first_number) / <span class="fn">int</span>(second_number)</span>
+<span class="line">    <span class="kw">except</span> ZeroDivisionError:</span>
+<span class="line">        <span class="fn">print</span>(<span class="str">"You can't divide by 0!"</span>)</span>
+<span class="line">    <span class="kw">else</span>:      <span class="com"># runs only if the try block succeeded</span></span>
+<span class="line">        <span class="fn">print</span>(answer)</span>
+<span class="line">    <span class="kw">finally</span>:   <span class="com"># always runs — success or exception</span></span>
+<span class="line">        <span class="fn">print</span>(<span class="str">"\nGive me two numbers, and I'll divide them."</span>)</span></div>
+  <table class="cmp-table">
+    <tr><th>Clause</th><th>When it runs</th><th>What belongs there</th></tr>
+    <tr><td>try</td><td class="tl">always attempted first</td><td class="tl">only the code that might raise the error</td></tr>
+    <tr><td>except</td><td class="tl">only if the named exception is raised in try</td><td class="tl">the friendly message / recovery code</td></tr>
+    <tr><td>else</td><td class="tl">only if the try block succeeded</td><td class="tl">code that depends on try having worked</td></tr>
+    <tr><td>finally</td><td class="tl">guaranteed — success or exception</td><td class="tl">cleanup that must happen either way</td></tr>
+  </table>
+
+  <h3>Handling the FileNotFoundError exception</h3>
+  <p>One common issue when working with files is a missing file: it's in a different location, the name is misspelled, or it doesn't exist at all. Opening it in read mode then raises a <span class="pill pill-red">FileNotFoundError</span> — exactly the kind of exception a <code>try-except</code> block turns into a friendly message:</p>
+  <div class="pseudo-code">
+<span class="line">filename = <span class="str">'alice.txt'</span></span>
+<span class="line"><span class="kw">with</span> <span class="fn">open</span>(filename) <span class="kw">as</span> f:     <span class="com"># read mode — the file must exist</span></span>
+<span class="line">    contents = f.read()</span>
+<span class="line"><span class="com"># FileNotFoundError: [Errno 2] No such file or directory: 'alice.txt'</span></span></div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <p>Exceptions are where an AI assistant can sharpen your mental model — if you drive:</p>
+    <span class="ai-prompt">Paste a full traceback ending in FileNotFoundError and ask: "Explain what raised this and show two ways to handle it — one with try/except, one that avoids the error — but don't rewrite my program yet."</span>
+    <span class="ai-prompt">In the calculator above, what happens if I type 'abc' as the first number? Which line raises which exception, and why doesn't the except clause catch it?</span>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ TRY IT (OPTIONAL — NOT GRADED)</div>
+    <p style="margin-bottom:0;">The notebook ends with a mini word game, <em>"The Mysterious Island"</em>, that loads player and enemy statistics from <code>game_data.json</code> each time it starts. Complete <code>load_data()</code> and <code>save_data()</code>: <strong>try</strong> to read the saved file with <code>json.load()</code>; if it doesn't exist yet, <strong>catch the FileNotFoundError</strong>, build the default data, and store it with <code>json.dump()</code>. The exercise cells are waiting in the notebook.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="quiz">
+  <div class="section-number">QUIZ · PREREQUISITE SELF-CHECK · NOT GRADED</div>
+  <h2>Self-check quiz: 4 questions</h2>
+  <p>Purely for your own calibration — <strong>this quiz is not graded and not part of the course assignments</strong>. Click the option you believe is right; every option explains itself, so a wrong click still teaches you something.</p>
+  <div class="quiz-progress" id="quizProgress">Solved 0 / 4</div>
+  <div id="quizContainer"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="cards">
+  <div class="section-number">FLASHCARDS · KEY TERMS</div>
+  <h2>Key-term flashcards: click to flip</h2>
+  <p>All 7 key terms from the Files notebook. Say the definition out loud <strong>before</strong> flipping!</p>
+  <div class="card-controls">
+    <button class="btn btn-step" id="flipAll">Flip all</button>
+    <button class="btn btn-reset" id="unflipAll">Unflip all</button>
+    <button class="btn btn-play" id="shuffleCards">🔀 Shuffle</button>
+  </div>
+  <div class="flash-grid" id="flashGrid"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="reference">
+  <div class="section-number">REFERENCE · CHEAT SHEET</div>
+  <h2>P7 cheat sheet</h2>
+
+  <h3>open() modes at a glance</h3>
+  <table class="cmp-table">
+    <tr><th>Call</th><th>Mode</th><th>Watch out for</th></tr>
+    <tr><td>open(f) · open(f, 'r')</td><td>read (the default)</td><td class="tl">FileNotFoundError if the file is missing</td></tr>
+    <tr><td>open(f, 'w')</td><td>write</td><td class="tl">erases existing contents before returning the file object; creates the file if missing</td></tr>
+    <tr><td>open(f, 'a')</td><td>append</td><td class="tl">writes land at the end; creates an empty file if missing</td></tr>
+    <tr><td>open(f, 'r+')</td><td>read + write</td><td class="tl">file must already exist; writes go wherever the file-position pointer is (tell()/seek())</td></tr>
+  </table>
+
+  <h3>Three ways to read</h3>
+  <table class="cmp-table">
+    <tr><th>Pattern</th><th>You get</th><th>Best when</th></tr>
+    <tr><td>contents = f.read()</td><td>one long string</td><td class="tl">the whole file at once — remember read() returns '' at end of file</td></tr>
+    <tr><td>for line in f:</td><td>one line per pass</td><td class="tl">scanning a big file line by line — strip() the trailing \n</td></tr>
+    <tr><td>lines = f.readlines()</td><td>a list of strings</td><td class="tl">you need the lines after the with block ends</td></tr>
+  </table>
+
+  <h3>try / except / else / finally</h3>
+  <table class="cmp-table">
+    <tr><th>Clause</th><th>Runs when</th><th>Typical contents</th></tr>
+    <tr><td>try</td><td class="tl">always attempted</td><td class="tl">only the risky line(s)</td></tr>
+    <tr><td>except SomeError</td><td class="tl">that exception was raised</td><td class="tl">friendly message instead of a traceback</td></tr>
+    <tr><td>except (bare)</td><td class="worst">any exception at all</td><td class="tl">catches everything — can hide bugs you didn't anticipate</td></tr>
+    <tr><td>else</td><td class="tl">try succeeded</td><td class="tl">code that depends on the try block working</td></tr>
+    <tr><td>finally</td><td class="best">always — guaranteed</td><td class="tl">cleanup that must happen either way</td></tr>
+  </table>
+
+  <h3>Further reading</h3>
+  <ul>
+    <li><a href="https://automatetheboringstuff.com/" target="_blank" rel="noopener">Automate the Boring Stuff with Python</a> — the chapters on reading/writing files cover this same ground, free online</li>
+    <li><a href="https://docs.python.org/3/tutorial/errors.html" target="_blank" rel="noopener">Python docs: Errors and Exceptions</a> — the official tutorial on tracebacks, handling, and raising exceptions</li>
+  </ul>
+
+  <div class="bridge-box">
+    <div class="bb-title">🎓 AFTER THIS REFRESHER, YOU CAN…</div>
+    <ul>
+      <li>Open a file inside a <code>with</code> block and read it whole (<code>read()</code>), line by line (<code>for line in f</code>), or into a list (<code>readlines()</code>)</li>
+      <li>Tell a relative path from an absolute one, and open files that live outside your program's folder</li>
+      <li>Pick the right <code>open()</code> mode — knowing that <code>'w'</code> erases, <code>'a'</code> appends, and <code>write()</code> takes strings only</li>
+      <li>Save a list or dictionary with <code>json.dump()</code> and load it back with <code>json.load()</code></li>
+      <li>Wrap risky code in <code>try/except</code> — with <code>else</code> and <code>finally</code> where they belong — so users see a friendly message instead of a traceback</li>
+    </ul>
+    <p class="bb-next">NEXT ▸ P8 · Object-Oriented Programming — classes: bundling data with the functions that work on it.</p>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="p6_strings.html"><div class="nav-dir">◂ PREVIOUS PREREQ</div><div class="nav-title">P6 · Manipulating Strings</div></a>
+    <a href="p8_oop.html" class="next"><div class="nav-dir">NEXT PREREQ ▸</div><div class="nav-title">P8 · Object-Oriented Programming</div></a>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Scientific Computing with Python · Prerequisite P7: Files &amp; Exceptions · supplementary self-study — not graded, not part of the assignments<br>
+  Digest of <code>07_Files.ipynb</code> · quiz &amp; flashcards from the notebook's own question bank
+</footer>
+<script>
+/* ============================================================
+   Shared engines: Quiz / Flashcards
+   (buildQuiz extended for the P-pages: answers flagged isCode
+   render monospace with newlines preserved)
+   ============================================================ */
+function buildQuiz(containerId, progressId, data) {
+  const container = document.getElementById(containerId);
+  const progress  = document.getElementById(progressId);
+  const solved = new Set();
+  const LETTERS = 'ABCDEFGH';
+
+  data.forEach((q, qi) => {
+    const box = document.createElement('div');
+    box.className = 'quiz-box';
+    box.innerHTML =
+      `<div class="quiz-label">Q${qi+1} / ${data.length}${q.multi ? ' <span class="multi-badge">MULTI</span>' : ''}</div>` +
+      `<div class="quiz-q">${q.question}</div>` +
+      (q.code ? `<div class="quiz-code">${q.code.replace(/</g,'&lt;')}</div>` : '') +
+      `<div class="quiz-options">` +
+      q.answers.map((a, ai) =>
+        `<div class="quiz-opt" data-q="${qi}" data-a="${ai}">
+           <div class="opt-head"><span class="opt-letter">${LETTERS[ai]}</span><span${a.isCode ? ' class="opt-code"' : ''}>${String(a.answer).replace(/</g,'&lt;')}</span></div>
+           <div class="opt-fb"></div>
+         </div>`
+      ).join('') + `</div>`;
+    container.appendChild(box);
+  });
+
+  container.addEventListener('click', e => {
+    const opt = e.target.closest('.quiz-opt');
+    if (!opt || opt.classList.contains('revealed')) return;
+    const q = data[+opt.dataset.q], a = q.answers[+opt.dataset.a];
+    opt.classList.add('revealed', a.correct ? 'correct' : 'wrong');
+    opt.querySelector('.opt-fb').textContent = (a.correct ? '✔ Correct: ' : '✘ Not quite: ') + a.feedback;
+    if (a.correct) {
+      solved.add(+opt.dataset.q);
+      progress.textContent = `Solved ${solved.size} / ${data.length}`;
+    }
+  });
+}
+
+function buildFlashcards(gridId, data) {
+  const grid = document.getElementById(gridId);
+  function render(cards) {
+    grid.innerHTML = cards.map(c =>
+      `<div class="flashcard">
+         <div class="fc-inner">
+           <div class="fc-face fc-front"><div>${c.front}</div><div class="fc-hint">CLICK TO FLIP</div></div>
+           <div class="fc-face fc-back">${c.back}</div>
+         </div>
+       </div>`).join('');
+  }
+  render(data);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.flashcard');
+    if (card) card.classList.toggle('flipped');
+  });
+  document.getElementById('flipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.add('flipped')));
+  document.getElementById('unflipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.remove('flipped')));
+  document.getElementById('shuffleCards').addEventListener('click', ()=>{
+    const shuffled = [...data].sort(()=>Math.random()-.5);
+    render(shuffled);
+  });
+}
+
+/* ============================================================
+   QUIZ — questions/ch7 of the prerequisite notebook
+   (answers and feedback carried over verbatim)
+   ============================================================ */
+const QUIZ_DATA = [
+  { question:"What is printed by the following statements?", code:"try:\n    x = int(\"abc\")\n    print(\"Conversion succeeded\")\nexcept ValueError:\n    print(\"Conversion failed\")\nelse:\n    print(\"No exception occurred\")\nfinally:\n    print(\"Execution finished\")", answers:[
+    { answer:"Conversion succeeded\nNo exception occurred\nExecution finished", isCode:true, correct:false, feedback:"Incorrect. The conversion of \"abc\" to an integer fails, so the try block does not complete normally." },
+    { answer:"Conversion failed\nExecution finished", isCode:true, correct:true, feedback:"Correct! int(\"abc\") raises a ValueError, so the except block executes. The else block is skipped, and the finally block always runs." },
+    { answer:"Conversion failed\nNo exception occurred\nExecution finished", isCode:true, correct:false, feedback:"Incorrect. The else block does not execute when an exception is raised." },
+    { answer:"Conversion succeeded\nExecution finished", isCode:true, correct:false, feedback:"Incorrect. The conversion fails because \"abc\" is not a valid integer, so the try block doesn't succeed." } ] },
+  { question:"Which of the following paths are relative file paths?", multi:true, answers:[
+    { answer:"Stacy/Applications/README.txt", correct:true, feedback:"Yes, this is a relative file path. You can tell by the lack of \"/\" at the beginning of the path." },
+    { answer:"/Users/Raquel/Documents/graduation_plans.doc", correct:false, feedback:"This is an absolute file path. All absolute file paths start with \"/\"." },
+    { answer:"/private/tmp/swtag.txt", correct:false, feedback:"This is an absolute file path." },
+    { answer:"ScienceData/ProjectFive/experiment_data.csv", correct:true, feedback:"Yes, this is a relative file path. You can tell by the lack of \"/\" at the beginning of the path." } ] },
+  { question:"What is printed by the following statements?", code:"# Assume that the file 'data.txt' contains: 'Python is great.'\nwith open('data.txt', 'r') as f:\n    print(f.read())\n    print(f.read())", answers:[
+    { answer:"Python is great.\nPython is great.", isCode:true, correct:false, feedback:"Incorrect. After the first call to read(), the file pointer reaches the end of the file, so the second read() returns an empty string." },
+    { answer:"Python is great.\n", isCode:true, correct:true, feedback:"Correct! The first read() prints the entire content, and the second read() prints an empty string because there is nothing left to read." },
+    { answer:"An error is raised during the second read().", isCode:true, correct:false, feedback:"Incorrect. No error is raised; the second read() simply returns an empty string." },
+    { answer:"Nothing is printed.", isCode:true, correct:false, feedback:"Incorrect. The first read() successfully prints the file content." } ] },
+  { question:"What is the final content of the file 'data.txt' after executing the following code?", code:"with open('data.txt', 'w') as f:\n    f.write('First line\\n')\n\nwith open('data.txt', 'w') as f:\n    f.write('Second line')", answers:[
+    { answer:"First line\nSecond line", isCode:true, correct:false, feedback:"Incorrect. The second 'w' mode open overwrites the file, so the content from the first write is lost." },
+    { answer:"First line", correct:false, feedback:"Incorrect. The file is overwritten by the second write operation." },
+    { answer:"Second line", correct:true, feedback:"Correct! Opening the file in 'w' mode replaces its content. The final content is just 'Second line'." },
+    { answer:"First line\n\nSecond line", isCode:true, correct:false, feedback:"Incorrect. No additional newline is inserted, and the second open in 'w' mode completely overwrites the file." } ] },
+];
+buildQuiz('quizContainer', 'quizProgress', QUIZ_DATA);
+
+/* ============================================================
+   FLASHCARDS — Key terms from the Files notebook
+   ============================================================ */
+const CARD_DATA = [
+  {front:"with", back:"A context management statement that simplifies resource management by automatically handling setup and teardown operations, such as opening and closing files."},
+  {front:"relative file path", back:"A file path specified relative to the current working directory, not including the full path from the root."},
+  {front:"absolute file path", back:"A file path that includes the complete directory hierarchy from the root to the target file."},
+  {front:"file-position pointer", back:"A marker that indicates the current position within a file, used to track where the next read or write will occur."},
+  {front:"json", back:"JavaScript Object Notation, a lightweight text-based data format for representing structured data, commonly used for data interchange."},
+  {front:"exception", back:"An error event that disrupts normal program flow, which can be caught and handled to prevent the program from crashing."},
+  {front:"try-catch", back:"A structure used to handle exceptions. In Python, it is implemented as 'try' and 'except' blocks to catch and manage errors."},
+];
+buildFlashcards('flashGrid', CARD_DATA);
+
+/* ============================================================
+   Floating nav active highlight
+   ============================================================ */
+(function initFloatNav(){
+  const links = document.querySelectorAll('.float-nav a[data-target]');
+  const sections = [...links].map(a => document.getElementById(a.dataset.target)).filter(Boolean);
+  function update(){
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= window.innerHeight * 0.35) active = s.id;
+    }
+    links.forEach(a => a.classList.toggle('active', a.dataset.target === active));
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>

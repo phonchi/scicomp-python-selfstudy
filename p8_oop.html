@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P8 · Object-Oriented Programming — Prerequisite Refresher</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:17px;}
+
+/* Hero */
+.hero{min-height:56vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2.5rem 2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:880px;}
+.hero .chapter-tag{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#f39c12;letter-spacing:.3em;margin-bottom:.8rem;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(1.9rem,4.6vw,3rem);font-weight:900;color:#fff;letter-spacing:.02em;line-height:1.25;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.15rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{font-family:'JetBrains Mono',monospace;color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.0rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+ul,ol{margin:0 0 1rem 1.4rem;}
+
+/* Prerequisite banner */
+.prereq-banner{background:#fef5e7;border:3px solid #d68910;border-radius:12px;padding:1.2rem 1.5rem;margin:0 0 2.2rem;box-shadow:0 3px 12px rgba(214,137,16,.12);}
+.prereq-banner .pb-title{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:#b9770e;font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.prereq-banner p{margin-bottom:0;font-size:.95rem;}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:40px;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box p:last-child,.info-box ul:last-child,.info-box ol:last-child{margin-bottom:0;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+.cmp-table td.tl{font-family:'Noto Sans TC',sans-serif;text-align:left;font-size:.85rem;}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.65;overflow-x:auto;margin:.8rem 0;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .str{color:#f1fa8c;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.quiz-box .quiz-label .multi-badge{background:#8e44ad;color:#fff;font-size:.68rem;padding:1px 8px;border-radius:3px;}
+.quiz-box .quiz-q{font-weight:600;margin-bottom:.6rem;}
+.quiz-box .quiz-code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:.6rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.84rem;margin-bottom:.8rem;white-space:pre-wrap;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0 0;}
+.quiz-opt{display:flex;flex-direction:column;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.9rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-head{display:flex;align-items:baseline;gap:.6rem;}
+.quiz-opt .opt-letter{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt .opt-code{white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.quiz-opt .opt-fb{display:none;font-size:.82rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--card-border);color:#555;}
+.quiz-opt.revealed .opt-fb{display:block;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.correct .opt-fb{color:#14532d;}
+.quiz-opt.wrong{background:#fef5e7;border-color:#d68910;}
+.quiz-opt.wrong .opt-letter{color:#d68910;}
+.quiz-progress{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;margin:.8rem 0;}
+
+/* Flashcards */
+.card-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.flashcard{perspective:900px;height:160px;cursor:pointer;}
+.flashcard .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+.flashcard .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.flashcard .fc-front{background:linear-gradient(150deg,#2c3e7a,#1a1a2e);color:#fff;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.flashcard .fc-front .fc-hint{font-size:.66rem;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.flashcard .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:34px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+/* Chapter nav */
+.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin:2rem 0 0;flex-wrap:wrap;}
+.chapter-nav a{flex:1;min-width:220px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.3rem;text-decoration:none;color:var(--ink);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.chapter-nav a:hover{border-color:var(--accent2);transform:translateY(-2px);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+footer a{color:var(--accent2);}
+
+/* 🤖 Ask-AI / discussion box */
+.ai-box{background:var(--card);border:2px dashed #8e44ad;border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.ai-box .ai-label{position:absolute;top:-11px;left:14px;background:#8e44ad;color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.ai-box p:last-child{margin-bottom:0;}
+.ai-box .ai-prompt{font-family:'JetBrains Mono',monospace;font-size:.85rem;background:rgba(142,68,173,.08);border-radius:6px;padding:.4rem .8rem;display:block;margin:.4rem 0;color:#6c3485;}
+
+/* 🎓 Chapter-end bridge */
+.bridge-box{background:#eafaf1;border:2px solid var(--accent3);border-radius:12px;padding:1.3rem 1.5rem;margin:2rem 0 0;}
+.bridge-box .bb-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent3);font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.bridge-box ul{margin:.3rem 0 .8rem 1.3rem;font-size:.92rem;}
+.bridge-box .bb-next{font-size:.9rem;color:var(--accent2);border-top:1px dashed var(--accent3);padding-top:.6rem;margin-bottom:0;}
+
+/* Materials map */
+.mat-map{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.9rem 0;padding:.7rem 1rem;background:var(--card);border:1px solid var(--card-border);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.mat-map .mm-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.12em;margin-right:.3rem;}
+.mat-map a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;text-decoration:none;border:2px solid var(--card-border);color:var(--accent2);transition:all .2s;background:var(--paper);}
+.mat-map a:hover{border-color:var(--accent2);}
+</style>
+</head>
+<body>
+
+<nav class="float-nav">
+  <div class="fn-title">P8 · OOP &amp; Classes</div>
+  <a href="#s81" data-target="s81"><span class="fn-num">P8.1</span><span class="fn-name">Creating and using a class</span></a>
+  <a href="#s82" data-target="s82"><span class="fn-num">P8.2</span><span class="fn-name">Working with classes &amp; instances</span></a>
+  <a href="#s83" data-target="s83"><span class="fn-num">P8.3</span><span class="fn-name">Inheritance</span></a>
+  <a href="#s84" data-target="s84"><span class="fn-num">P8.4</span><span class="fn-name">Encapsulation &amp; class methods</span></a>
+  <a href="#s85" data-target="s85"><span class="fn-num">P8.5</span><span class="fn-name">Polymorphism &amp; data classes</span></a>
+  <a href="#quiz" data-target="quiz"><span class="fn-num">QUIZ</span><span class="fn-name">Self-check quiz</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">Key-term flashcards</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">Cheat sheet</span></a>
+  <a href="#top" class="fn-top" title="Back to top"><span class="fn-num">↑ TOP</span></a>
+</nav>
+
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="chapter-tag">PREREQUISITE P8 · SUPPLEMENTARY · NOT GRADED · LAST PREREQ</div>
+    <h1>Object-Oriented <span class="green">Programming</span></h1>
+    <div class="subtitle">Class, object, method, attribute — the vocabulary that every library in this course speaks: every NumPy array, pandas DataFrame, and Matplotlib figure is an object made from a class.</div>
+    <div class="big-formula">class ｜ __init__ · self ｜ attributes · methods ｜ inheritance</div>
+    <div class="scroll-hint">Scroll down to start<span>↓</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="prereq-banner">
+  <div class="pb-title">📌 SUPPLEMENTARY PREREQUISITE — NOT PART OF THE ASSIGNMENTS</div>
+  <p>The prerequisite pages (P1–P8) review the basic Python that Modules 1–5 assume you already know. They are <strong>optional background material for self-study: nothing on these pages is graded, and none of it will appear in the course assignments</strong>（補充先備知識，不列入作業範圍）. Use them to warm up before Module 1, or to look things up whenever a module uses a Python idiom you have forgotten.</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · A REFRESHER, NOT A LECTURE — READ AT YOUR OWN PACE</div>
+  <div class="toc-grid">
+    <a href="#s81"><span class="toc-num">P8.1</span>Creating and using a class</a>
+    <a href="#s82"><span class="toc-num">P8.2</span>Working with classes &amp; instances</a>
+    <a href="#s83"><span class="toc-num">P8.3</span>Inheritance</a>
+    <a href="#s84"><span class="toc-num">P8.4</span>Encapsulation &amp; class methods</a>
+    <a href="#s85"><span class="toc-num">P8.5</span>Polymorphism &amp; data classes</a>
+    <a href="#quiz"><span class="toc-num">QUIZ</span>Self-check quiz (6 questions)</a>
+    <a href="#cards"><span class="toc-num">CARD</span>Key-term flashcards (25 cards)</a>
+    <a href="#reference"><span class="toc-num">REF</span>OOP cheat sheet</a>
+  </div>
+</div>
+
+<div class="info-box green">
+  <div class="info-label">📖 HOW TO USE THE P-PAGES</div>
+  <p style="margin-bottom:.4rem;">Unlike the module pages, there are no course videos here — the source is a Jupyter notebook you can run yourself:</p>
+  <p style="margin-bottom:0;">① <strong>Read</strong> each digest section below → ② <strong>Run</strong> the matching notebook cells (one click on the Colab badge — predict each output <em>before</em> you run it) → ③ <strong>Quiz</strong> yourself and flip the <a href="#cards">flashcards</a>. If everything feels obvious, you are ready — move on.</p>
+</div>
+
+<div class="mat-map">
+  <span class="mm-title">SOURCE NOTEBOOK ▸</span>
+  <a href="https://colab.research.google.com/github/phonchi/nsysu-math106A/blob/master/static_files/presentations/08_OOP.ipynb" target="_blank" rel="noopener">🚀 Open 08_OOP.ipynb in Colab</a>
+  <a href="https://github.com/phonchi/nsysu-math106A/blob/master/static_files/presentations/08_OOP.ipynb" target="_blank" rel="noopener">📓 View on GitHub</a>
+</div>
+
+<!-- ============================================================ -->
+<section id="s81">
+  <div class="section-number">PREREQ P8.1 · CREATING AND USING A CLASS</div>
+  <h2>P8.1 Creating and using a class</h2>
+
+  <p>Everything in Python is an object, so you have been using objects all along — <code>int</code>, <code>str</code>, <code>list</code>, and <code>dict</code> are all classes that other people wrote. <strong>Object-oriented programming (OOP)</strong> is the paradigm behind them: group variables (data, called <strong>attributes</strong>) and functions (called <strong>methods</strong>) into a new custom data type called a <strong>class</strong>, then create <strong>objects (instances)</strong> from it. Making an object from a class is called <strong>instantiation</strong>. When you write a class you define the general behavior of a whole category of things; each object you create gets that behavior automatically, plus whatever unique traits you give it.</p>
+
+  <div class="info-box">
+    <div class="info-label">📌 THE FOUR WORDS THIS COURSE NEEDS</div>
+    <p style="margin-bottom:0;"><strong>Class</strong> = the blueprint. <strong>Object (instance)</strong> = one thing built from the blueprint. <strong>Attribute</strong> = a variable attached to an object (<code>my_dog.name</code> — no parentheses). <strong>Method</strong> = a function attached to an object (<code>my_dog.sit()</code> — parentheses). Modules 1–5 never ask you to <em>write</em> classes, but every line like <code>arr.mean()</code> or <code>df.shape</code> reads instantly once these four words are solid.</p>
+  </div>
+
+  <p>Let's model a dog — not one dog in particular, but any dog. Most pet dogs have a <code>name</code> and an <code>age</code>, and most can sit and roll over — so those two attributes and two behaviors go into our <code>Dog</code> class:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">class</span> <span class="fn">Dog</span>:</span>
+<span class="line">    <span class="str">"""A simple attempt to model a dog."""</span></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">__init__</span>(self, name, age):</span>
+<span class="line">        <span class="str">"""Initialize name and age attributes."""</span></span>
+<span class="line">        self.name = name</span>
+<span class="line">        self.age = age</span>
+<span class="line"></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">sit</span>(self):</span>
+<span class="line">        <span class="fn">print</span>(<span class="str">f"{self.name} is now sitting."</span>)</span>
+<span class="line"></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">roll_over</span>(self):</span>
+<span class="line">        <span class="fn">print</span>(<span class="str">f"{self.name} rolled over!"</span>)</span></div>
+  <ul>
+    <li>The <code>class</code> keyword starts the definition; by convention, <strong>capitalized names refer to classes</strong>. No parentheses here — we're building this class from scratch.</li>
+    <li>A function that's part of a class is a <strong>method</strong>. <code>__init__()</code> is a special method that Python runs automatically <em>every time</em> a new instance is created — the double underscores keep Python's default names from colliding with yours.</li>
+    <li><code>self</code> must be the first parameter of every method: when Python calls the method later, it passes the instance itself into <code>self</code> automatically.</li>
+    <li><code>self.name = name</code> takes the value of the parameter <code>name</code> and attaches it to the instance being created. Variables reachable through an instance like this are its <strong>attributes</strong>.</li>
+  </ul>
+
+  <h3>Making instances</h3>
+  <div class="pseudo-code">
+<span class="line">my_dog = <span class="fn">Dog</span>(<span class="str">'Willie'</span>, <span class="num">6</span>)      <span class="com"># constructor expression — __init__ runs here</span></span>
+<span class="line"><span class="fn">print</span>(my_dog.name)             <span class="com"># attribute → 'Willie' (no parentheses)</span></span>
+<span class="line">my_dog.sit()                   <span class="com"># method → 'Willie is now sitting.'</span></span>
+<span class="line"></span>
+<span class="line">your_dog = <span class="fn">Dog</span>(<span class="str">'Lucy'</span>, <span class="num">3</span>)      <span class="com"># a second, separate instance</span></span>
+<span class="line"><span class="fn">print</span>(my_dog == your_dog)      <span class="com"># False — two distinct objects in memory</span></span></div>
+  <p>The line <code>Dog('Willie', 6)</code> is a <strong>constructor expression</strong>: Python calls <code>__init__()</code> with those arguments (<code>self</code> is passed for you), builds an instance representing this particular dog, and returns it. You reach everything inside with <strong>dot notation</strong>. One class, many objects — Willie and Lucy each carry their own <code>name</code> and <code>age</code>, yet both can <code>sit()</code>.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="s82">
+  <div class="section-number">PREREQ P8.2 · WORKING WITH CLASSES AND INSTANCES</div>
+  <h2>P8.2 Working with classes &amp; instances</h2>
+
+  <p>Once a class exists, most of your time goes into working with the instances made from it — especially <em>modifying their attributes</em>. Here is a <code>Car</code> class with a twist: one attribute gets a value without being passed in as a parameter.</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">class</span> <span class="fn">Car</span>:</span>
+<span class="line">    <span class="str">"""A simple attempt to represent a car."""</span></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">__init__</span>(self, make, model, year):</span>
+<span class="line">        self.make = make</span>
+<span class="line">        self.model = model</span>
+<span class="line">        self.year = year</span>
+<span class="line">        self.odometer_reading = <span class="num">0</span>       <span class="com"># default value — no parameter needed</span></span>
+<span class="line"></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">read_odometer</span>(self):</span>
+<span class="line">        <span class="fn">print</span>(<span class="str">f"This car has {self.odometer_reading} miles on it."</span>)</span>
+<span class="line"></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">update_odometer</span>(self, mileage):</span>
+<span class="line">        <span class="str">"""Set the reading — reject any attempt to roll it back."""</span></span>
+<span class="line">        <span class="kw">if</span> mileage &gt;= self.odometer_reading:</span>
+<span class="line">            self.odometer_reading = mileage</span>
+<span class="line">        <span class="kw">else</span>:</span>
+<span class="line">            <span class="fn">print</span>(<span class="str">"You can't roll back an odometer!"</span>)</span>
+<span class="line"></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">increment_odometer</span>(self, miles):</span>
+<span class="line">        <span class="str">"""Add the given amount to the odometer reading."""</span></span>
+<span class="line">        self.odometer_reading += miles</span></div>
+  <p>You can change an attribute three ways — directly through the instance, through a method that <em>sets</em> it, or through a method that <em>increments</em> it:</p>
+  <div class="pseudo-code">
+<span class="line">my_new_car = <span class="fn">Car</span>(<span class="str">'audi'</span>, <span class="str">'a4'</span>, <span class="num">2025</span>)</span>
+<span class="line">my_new_car.odometer_reading = <span class="num">23</span>    <span class="com"># 1. change the attribute directly…</span></span>
+<span class="line">my_new_car.update_odometer(<span class="num">100</span>)     <span class="com"># 2. …or let a method guard the change</span></span>
+<span class="line">my_new_car.update_odometer(<span class="num">50</span>)      <span class="com"># → You can't roll back an odometer!</span></span>
+<span class="line">my_new_car.increment_odometer(<span class="num">10</span>)   <span class="com"># 3. or add to it through a method</span></span>
+<span class="line">my_new_car.read_odometer()          <span class="com"># This car has 110 miles on it.</span></span></div>
+  <p>The method version wins whenever an update needs logic: <code>update_odometer()</code> checks that the new reading makes sense before touching the attribute. Methods like this let you control <em>how</em> your class gets used.</p>
+
+  <h3><code>__repr__</code> and <code>__str__</code>: how your object introduces itself</h3>
+  <p>Evaluate <code>my_new_car</code> in a cell and Python answers with an unhelpful memory address. Two special methods fix that: <code>__repr__()</code> returns the "official" string representation (what <code>repr()</code> and a bare cell evaluation show), and <code>__str__()</code> returns the friendly version used by <code>print()</code> and <code>str()</code>:</p>
+  <div class="pseudo-code">
+<span class="line">    <span class="kw">def</span> <span class="fn">__repr__</span>(self):</span>
+<span class="line">        <span class="kw">return</span> <span class="str">f'Car(make={self.make}, model={self.model}, year={self.year})'</span></span>
+<span class="line"></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">__str__</span>(self):</span>
+<span class="line">        <span class="kw">return</span> <span class="str">f"Created in {self.year} {self.make} {self.model}"</span>.title()</span>
+<span class="line"></span>
+<span class="line"><span class="com"># my_new_car        → Car(make=audi, model=a4, year=2025)   ← __repr__</span></span>
+<span class="line"><span class="com"># print(my_new_car) → Created In 2025 Audi A4               ← __str__</span></span></div>
+  <div class="info-box">
+    <div class="info-label">🔍 DUNDER METHODS</div>
+    <p style="margin-bottom:0;">Special methods like <code>__init__()</code>, <code>__repr__()</code>, and <code>__str__()</code> are called <strong>dunder methods</strong> (Double UNDERscore). There are many more, and they are how Python's built-in machinery — printing, comparing, even the <code>+</code> operator (see P8.5) — hooks into <em>your</em> classes.</p>
+  </div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ TRY IT (OPTIONAL — NOT GRADED)</div>
+    <p style="margin-bottom:0;">Create a <code>Pokemon</code> class with three instance attributes — <code>name</code>, <code>type</code>, and <code>total_species</code> — plus a <code>__str__()</code> method so that printing an instance shows <code>Pikachu (Electric, total species 320)</code>. The notebook's Exercise 1 cell downloads a real Pokédex and hands your class six random Pokémon to print — predict the output of <code>str(pokemon)</code> before you run it.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s83">
+  <div class="section-number">PREREQ P8.3 · INHERITANCE</div>
+  <h2>P8.3 Inheritance: building on what exists</h2>
+
+  <p>You don't always have to start from scratch. If your new class is a specialized version of one you already have, use <strong>inheritance</strong> — the <span class="pill pill-blue">is-a</span> relationship. The original class is the <strong>parent (base) class</strong>; the new one is the <strong>child (derived) class</strong>, and it takes on the parent's attributes and methods while adding its own. An electric car <em>is a</em> car, so:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">class</span> <span class="fn">ElectricCar</span>(Car):                     <span class="com"># ← parent class in parentheses</span></span>
+<span class="line">    <span class="str">"""Represent aspects of a car, specific to electric vehicles."""</span></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">__init__</span>(self, make, model, year):</span>
+<span class="line">        <span class="fn">super</span>().<span class="fn">__init__</span>(make, model, year)  <span class="com"># run Car's __init__ first…</span></span>
+<span class="line">        self.battery_size = <span class="num">40</span>               <span class="com"># …then add what's new</span></span>
+<span class="line"></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">describe_battery</span>(self):</span>
+<span class="line">        <span class="fn">print</span>(<span class="str">f"This car has a {self.battery_size}-kWh battery."</span>)</span>
+<span class="line"></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">fill_gas_tank</span>(self):                   <span class="com"># ← same name as Car's method: OVERRIDE</span></span>
+<span class="line">        <span class="fn">print</span>(<span class="str">"This car doesn't have a gas tank!"</span>)</span></div>
+  <ul>
+    <li>The parent class must be defined before the child, and its name goes in <strong>parentheses</strong> in the child's definition.</li>
+    <li><code>super()</code> is a special function that calls a method from the parent class — here it runs <code>Car</code>'s <code>__init__()</code>, so every <code>ElectricCar</code> gets <code>make</code>, <code>model</code>, <code>year</code>, and the odometer for free. (The name comes from calling the parent a <strong>superclass</strong> and the child a <strong>subclass</strong>.)</li>
+    <li>To <strong>override</strong> a parent method that doesn't fit the child, define a method in the child <strong>with the same name</strong> — filling a gas tank is meaningless for an EV, so <code>ElectricCar</code> replaces it. Python then ignores the parent's version.</li>
+  </ul>
+  <div class="pseudo-code">
+<span class="line">my_leaf = <span class="fn">ElectricCar</span>(<span class="str">'nissan'</span>, <span class="str">'leaf'</span>, <span class="num">2025</span>)</span>
+<span class="line"><span class="fn">print</span>(my_leaf.get_descriptive_name())     <span class="com"># inherited from Car</span></span>
+<span class="line">my_leaf.describe_battery()                 <span class="com"># new in ElectricCar</span></span>
+<span class="line">my_leaf.fill_gas_tank()                    <span class="com"># This car doesn't have a gas tank!</span></span>
+<span class="line"></span>
+<span class="line"><span class="fn">isinstance</span>(my_leaf, ElectricCar), <span class="fn">isinstance</span>(my_leaf, Car)   <span class="com"># (True, True)</span></span></div>
+  <div class="info-box">
+    <div class="info-label">🔍 TYPE-CHECKING AN OBJECT</div>
+    <p style="margin-bottom:0;"><code>type(my_leaf)</code> tells you the exact class, but for checking "is this thing a Car?" prefer <code>isinstance()</code>: it returns <code>True</code> if the object is of the given class <strong>or any subclass of it</strong> — so an <code>ElectricCar</code> counts as a <code>Car</code>, which is usually what you mean.</p>
+  </div>
+
+  <h3>Composition: the other way to combine classes</h3>
+  <p>As a class grows, part of it may deserve to be a separate class. Breaking a large class into smaller classes that work together is called <strong>composition</strong> — the <span class="pill pill-green">has-a</span> relationship. If <code>ElectricCar</code> keeps accumulating battery attributes and methods, move them into a <code>Battery</code> class and store an <em>instance</em> of it as an attribute:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">class</span> <span class="fn">Battery</span>:</span>
+<span class="line">    <span class="str">"""A simple attempt to model a battery for an electric car."""</span></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">__init__</span>(self, battery_size=<span class="num">40</span>):    <span class="com"># optional parameter, default 40</span></span>
+<span class="line">        self.battery_size = battery_size</span>
+<span class="line"></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">get_range</span>(self):</span>
+<span class="line">        <span class="kw">if</span> self.battery_size == <span class="num">40</span>:</span>
+<span class="line">            range = <span class="num">150</span></span>
+<span class="line">        <span class="kw">elif</span> self.battery_size == <span class="num">65</span>:</span>
+<span class="line">            range = <span class="num">225</span></span>
+<span class="line">        <span class="fn">print</span>(<span class="str">f"This car can go about {range} miles on a full charge."</span>)</span>
+<span class="line"></span>
+<span class="line"><span class="kw">class</span> <span class="fn">ElectricCar</span>(Car):</span>
+<span class="line">    <span class="kw">def</span> <span class="fn">__init__</span>(self, make, model, year):</span>
+<span class="line">        <span class="fn">super</span>().<span class="fn">__init__</span>(make, model, year)</span>
+<span class="line">        self.battery = <span class="fn">Battery</span>()             <span class="com"># an ElectricCar HAS A Battery</span></span>
+<span class="line"></span>
+<span class="line">my_leaf = <span class="fn">ElectricCar</span>(<span class="str">'nissan'</span>, <span class="str">'leaf'</span>, <span class="num">2025</span>)</span>
+<span class="line">my_leaf.battery.get_range()                  <span class="com"># reach through the attribute</span></span></div>
+  <table class="cmp-table">
+    <tr><th>Relationship</th><th>Reads as</th><th>Code shape</th><th>Example</th></tr>
+    <tr><td>Inheritance</td><td class="tl">child <strong>is a</strong> parent</td><td>class Child(Parent)</td><td class="tl">an ElectricCar is a Car</td></tr>
+    <tr><td>Composition</td><td class="tl">whole <strong>has a</strong> part</td><td>self.part = Part()</td><td class="tl">an ElectricCar has a Battery</td></tr>
+  </table>
+</section>
+
+<!-- ============================================================ -->
+<section id="s84">
+  <div class="section-number">PREREQ P8.4 · ENCAPSULATION &amp; CLASS METHODS</div>
+  <h2>P8.4 Encapsulation, class methods &amp; class attributes</h2>
+
+  <p>Most OOP languages let you <strong>encapsulate</strong> — hide — an object's data, making it <strong>private</strong>. Python does not have truly private data; instead it relies on <strong>naming conventions</strong>: any attribute name beginning with an underscore (<code>_hour</code>) is meant for the class's internal use only, and outside code should go through the class's methods instead. Names without a leading underscore are considered public. A <strong>getter</strong> method returns an internal value; a <strong>setter</strong> method validates a new value before storing it — together they form the class's <em>public interface</em>:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">class</span> <span class="fn">Time</span>:</span>
+<span class="line">    <span class="str">"""Class Time with read-write attributes."""</span></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">__init__</span>(self, hour=<span class="num">0</span>, minute=<span class="num">0</span>, second=<span class="num">0</span>):</span>
+<span class="line">        self.set_hour(hour)             <span class="com"># even the constructor uses the setter</span></span>
+<span class="line"></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">get_hour</span>(self):                   <span class="com"># getter — read the value</span></span>
+<span class="line">        <span class="kw">return</span> self._hour               <span class="com"># _hour: internal use by convention</span></span>
+<span class="line"></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">set_hour</span>(self, hour):             <span class="com"># setter — validate, then write</span></span>
+<span class="line">        <span class="kw">if</span> <span class="kw">not</span> (<span class="num">0</span> &lt;= hour &lt; <span class="num">24</span>):</span>
+<span class="line">            <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="str">f'Hour ({hour}) must be 0-23'</span>)</span>
+<span class="line">        self._hour = hour</span>
+<span class="line"></span>
+<span class="line">wake_up = <span class="fn">Time</span>(hour=<span class="num">11</span>, minute=<span class="num">30</span>)</span>
+<span class="line">wake_up.get_hour()      <span class="com"># 11 — through the public interface</span></span>
+<span class="line">wake_up.set_hour(<span class="num">8</span>)     <span class="com"># instead of wake_up._hour = 8</span></span>
+<span class="line">wake_up._hour           <span class="com"># still works! _ is a convention, not a lock</span></span></div>
+  <p>Methods can be internal too: a <strong>utility method</strong> that only serves the class's inner workings gets a single leading underscore, the same way other languages would mark it a <em>private method</em>. Doubling the underscore goes one step further — Python <em>name-mangles</em> <code>__x</code> into <code>_ClassName__x</code>, so naive outside access fails:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">class</span> <span class="fn">PrivateClass</span>:</span>
+<span class="line">    <span class="kw">def</span> <span class="fn">__init__</span>(self):</span>
+<span class="line">        self.public_data = <span class="str">"public"</span>        <span class="com"># public attribute</span></span>
+<span class="line">        self._private_data = <span class="str">"private1"</span>    <span class="com"># internal by convention</span></span>
+<span class="line">        self.__private_data = <span class="str">"private2"</span>   <span class="com"># name-mangled</span></span>
+<span class="line"></span>
+<span class="line">my_object = <span class="fn">PrivateClass</span>()</span>
+<span class="line">my_object.public_data                    <span class="com"># 'public'</span></span>
+<span class="line">my_object._private_data                  <span class="com"># 'private1' — reachable, just frowned upon</span></span>
+<span class="line">my_object.__private_data                 <span class="com"># AttributeError!</span></span>
+<span class="line">my_object._PrivateClass__private_data    <span class="com"># 'private2' — the mangled name still works</span></span></div>
+  <div class="info-box warm">
+    <div class="info-label">⚠️ "PRIVATE" IS A HANDSHAKE, NOT A LOCK</div>
+    <p style="margin-bottom:0;">Even with conventions in place, <strong>attributes are always accessible</strong>: <code>_hour</code> can be read directly, and <code>__private_data</code> only <em>looks</em> hidden — Python simply renamed it to <code>_PrivateClass__private_data</code>. Encapsulation in Python is an agreement between programmers, which is exactly why library docs matter: names starting with <code>_</code> are the author telling you "don't rely on this." (Python also offers a more Pythonic getter/setter mechanism called <em>properties</em> — worth a look once this pattern feels natural.)</p>
+  </div>
+
+  <h3>Class methods and class attributes</h3>
+  <p><strong>Class methods</strong> belong to the class rather than to individual objects. You recognize one by two markers: the <code>@classmethod</code> decorator above its <code>def</code>, and <code>cls</code> as the first parameter — <code>cls</code> is to the class what <code>self</code> is to an instance, so a class method cannot touch any individual object's attributes. A <strong>class attribute</strong> is a variable created inside the class but outside all methods; it is <strong>shared by every instance</strong>:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">class</span> <span class="fn">CreateCounter</span>:</span>
+<span class="line">    count = <span class="num">0</span>                       <span class="com"># class attribute — shared by ALL instances</span></span>
+<span class="line"></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">__init__</span>(self):</span>
+<span class="line">        CreateCounter.count += <span class="num">1</span></span>
+<span class="line"></span>
+<span class="line">    <span class="kw">@classmethod</span></span>
+<span class="line">    <span class="kw">def</span> <span class="fn">how_many</span>(cls):               <span class="com"># cls = the class itself, not an instance</span></span>
+<span class="line">        <span class="kw">return</span> cls.count</span>
+<span class="line"></span>
+<span class="line">a = <span class="fn">CreateCounter</span>(); b = <span class="fn">CreateCounter</span>(); c = <span class="fn">CreateCounter</span>()</span>
+<span class="line"><span class="fn">print</span>(CreateCounter.how_many())     <span class="com"># 3 — no instance needed to call it</span></span></div>
+  <p>The most frequent real use of class methods is as <strong>alternative constructors</strong>: the notebook's <code>AsciiArt</code> class can be built from a string with <code>__init__()</code> <em>or</em> from a file with <code>AsciiArt.fromFile(filename)</code> — a class method that reads the file and then returns <code>AsciiArt(characters)</code>, reusing <code>__init__()</code> so the logic lives in one place (the DRY principle). There are also <strong>static methods</strong> (<code>@staticmethod</code>, no <code>self</code> or <code>cls</code>) — effectively plain functions parked inside a class. You'll rarely <em>need</em> any of these; the notebook's own advice is that if you're thinking "why can't I just use a function or a global variable?", you probably don't need them. The goal here is only to <strong>recognize</strong> them in code you read.</p>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <p>OOP vocabulary sticks fastest when you make an AI test you on it:</p>
+    <span class="ai-prompt">Explain the difference between an instance attribute and a class attribute, then show me one short snippet where confusing the two gives a surprising output — let me predict it before you reveal the answer.</span>
+    <span class="ai-prompt">In Module 1 I will write np.zeros(5).mean(). Using OOP vocabulary, identify the class, the object, and the method in that line — and tell me where an attribute like .shape fits in.</span>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s85">
+  <div class="section-number">PREREQ P8.5 · POLYMORPHISM &amp; DATA CLASSES</div>
+  <h2>P8.5 Polymorphism &amp; data classes</h2>
+
+  <p><strong>Polymorphism</strong> lets objects of one type be treated as objects of another. You've met it constantly without the name: <code>len()</code> happily takes a string, a list, or a dictionary (a generic function — <strong>function overloading</strong>), and <code>+</code> adds two numbers but concatenates two strings (<strong>operator overloading</strong>). In your own classes, the classic route is <strong>method overriding</strong>: define a method in a base class, override it in each derived class, and then treat every object through the same interface:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">class</span> <span class="fn">Animal</span>:</span>
+<span class="line">    <span class="kw">def</span> <span class="fn">__init__</span>(self, name):</span>
+<span class="line">        self.name = name</span>
+<span class="line">    <span class="kw">def</span> <span class="fn">speak</span>(self):</span>
+<span class="line">        <span class="kw">pass</span>                        <span class="com"># do nothing — each child fills this in</span></span>
+<span class="line"></span>
+<span class="line"><span class="kw">class</span> <span class="fn">Dog</span>(Animal):</span>
+<span class="line">    <span class="kw">def</span> <span class="fn">speak</span>(self):</span>
+<span class="line">        <span class="kw">return</span> <span class="str">"Woof!"</span></span>
+<span class="line"></span>
+<span class="line"><span class="kw">class</span> <span class="fn">Cat</span>(Animal):</span>
+<span class="line">    <span class="kw">def</span> <span class="fn">speak</span>(self):</span>
+<span class="line">        <span class="kw">return</span> <span class="str">"Meow!"</span></span>
+<span class="line"></span>
+<span class="line"><span class="kw">for</span> animal <span class="kw">in</span> [<span class="fn">Dog</span>(<span class="str">"Rufus"</span>), <span class="fn">Cat</span>(<span class="str">"Whiskers"</span>), <span class="fn">Dog</span>(<span class="str">"Buddy"</span>)]:</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">f'{animal.name} : {animal.speak()}'</span>)</span>
+<span class="line"><span class="com"># Rufus : Woof!  ·  Whiskers : Meow!  ·  Buddy : Woof!</span></span></div>
+  <div class="info-box green">
+    <div class="info-label">🎯 THE PAYOFF</div>
+    <p style="margin-bottom:0;">One loop, one method name, many classes — the loop never asks which kind of animal it holds. Any function that calls <code>animal.speak()</code> works for every current <em>and future</em> subclass of <code>Animal</code>. This is why library code can say "give me anything array-like": the interface, not the exact class, is what matters.</p>
+  </div>
+
+  <h3>Operator overloading with dunder methods</h3>
+  <p>Dunder methods let your objects work with Python's built-in operators. Define <code>__add__()</code> and <code>+</code> works on your class; define <code>__eq__()</code> and <code>==</code> compares by value instead of by identity:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">class</span> <span class="fn">Point</span>:</span>
+<span class="line">    <span class="kw">def</span> <span class="fn">__init__</span>(self, x, y):</span>
+<span class="line">        self.x = x</span>
+<span class="line">        self.y = y</span>
+<span class="line">    <span class="kw">def</span> <span class="fn">__add__</span>(self, other):               <span class="com"># runs when you write p1 + p2</span></span>
+<span class="line">        <span class="kw">return</span> <span class="fn">Point</span>(self.x + other.x, self.y + other.y)</span>
+<span class="line">    <span class="kw">def</span> <span class="fn">__eq__</span>(self, other):                <span class="com"># runs when you write p1 == p2</span></span>
+<span class="line">        <span class="kw">return</span> (self.x == other.x) <span class="kw">and</span> (self.y == other.y)</span>
+<span class="line"></span>
+<span class="line">p3 = <span class="fn">Point</span>(<span class="num">1</span>, <span class="num">2</span>) + <span class="fn">Point</span>(<span class="num">3</span>, <span class="num">4</span>)</span>
+<span class="line"><span class="fn">print</span>(p3.x, p3.y)                <span class="com"># 4 6</span></span>
+<span class="line"><span class="fn">print</span>(p3 == <span class="fn">Point</span>(<span class="num">4</span>, <span class="num">6</span>))         <span class="com"># True</span></span></div>
+  <p>This is exactly how <code>numpy</code> arrays make <code>a + b</code> mean element-wise addition — the library authors wrote the dunder methods so <em>you</em> can write plain arithmetic.</p>
+
+  <h3>Data classes — one line of recognition</h3>
+  <p>Python 3.7 added <strong>data classes</strong>: decorate a class with <code>@dataclass</code> and Python autogenerates the boilerplate — <code>__init__()</code>, <code>__repr__()</code>, <code>__eq__()</code>, and optionally the comparison operators — from a short list of annotated attributes. Less code to write, less to maintain and debug, and static analysis tools can use the type annotations to flag mistakes before you run. Optional here: just recognize <code>@dataclass</code> as "a class whose plumbing was generated automatically."</p>
+
+  <div class="info-box warm" style="background:#fef5e7;">
+    <div class="info-label">🔭 WHERE YOU'LL SEE ALL THIS NEXT</div>
+    <p style="margin-bottom:0;">From Module 1 onward, every object you touch speaks this vocabulary: <code>np.array([1, 2, 3])</code> is a constructor expression, <code>.reshape(3, 1)</code> is a method, <code>.dtype</code> and <code>.shape</code> are attributes, and a pandas <code>DataFrame</code> leans on inheritance and composition internally. You will <em>read</em> classes far more often than you write them — and now you can.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="quiz">
+  <div class="section-number">QUIZ · PREREQUISITE SELF-CHECK · NOT GRADED</div>
+  <h2>Self-check quiz: 6 questions</h2>
+  <p>Purely for your own calibration — <strong>this quiz is not graded and not part of the course assignments</strong>. Click the option you believe is right; every option explains itself, so a wrong click still teaches you something.</p>
+  <div class="quiz-progress" id="quizProgress">Solved 0 / 6</div>
+  <div id="quizContainer"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="cards">
+  <div class="section-number">FLASHCARDS · KEY TERMS</div>
+  <h2>Key-term flashcards: click to flip</h2>
+  <p>All 25 key terms from the OOP notebook. Say the definition out loud <strong>before</strong> flipping!</p>
+  <div class="card-controls">
+    <button class="btn btn-step" id="flipAll">Flip all</button>
+    <button class="btn btn-reset" id="unflipAll">Unflip all</button>
+    <button class="btn btn-play" id="shuffleCards">🔀 Shuffle</button>
+  </div>
+  <div class="flash-grid" id="flashGrid"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="reference">
+  <div class="section-number">REFERENCE · CHEAT SHEET</div>
+  <h2>P8 cheat sheet</h2>
+
+  <h3>The vocabulary, spotted in the wild</h3>
+  <table class="cmp-table">
+    <tr><th>Term</th><th>Looks like</th><th>What it is</th></tr>
+    <tr><td>class</td><td>class Dog: · np.ndarray</td><td class="tl">the blueprint — defines attributes and methods for a whole category</td></tr>
+    <tr><td>object (instance)</td><td>my_dog = Dog('Willie', 6)</td><td class="tl">one thing built from the blueprint, via a constructor expression</td></tr>
+    <tr><td>method</td><td>my_dog.sit() · arr.mean()</td><td class="tl">a function attached to an object — note the parentheses</td></tr>
+    <tr><td>attribute</td><td>my_dog.name · arr.shape</td><td class="tl">a variable attached to an object — no parentheses</td></tr>
+    <tr><td>constructor</td><td>def __init__(self, ...)</td><td class="tl">special method that runs automatically when an instance is created</td></tr>
+  </table>
+
+  <h3>Function vs method · variable vs attribute</h3>
+  <table class="cmp-table">
+    <tr><th>Standalone</th><th>Attached to an object</th><th>The difference</th></tr>
+    <tr><td>function: len(s)</td><td>method: s.upper()</td><td class="tl">a method is called with dot notation and receives the object as self</td></tr>
+    <tr><td>variable: count = 0</td><td>attribute: self.count = 0</td><td class="tl">an attribute lives on the instance (or class) and travels with it</td></tr>
+    <tr><td>plain function def</td><td>def inside a class body</td><td class="tl">same def keyword — location makes it a method</td></tr>
+  </table>
+
+  <h3>Inheritance &amp; friends</h3>
+  <table class="cmp-table">
+    <tr><th>Code shape</th><th>Name</th><th>What it does</th></tr>
+    <tr><td>class Child(Parent):</td><td>inheritance (is-a)</td><td class="tl">child takes on the parent's attributes and methods</td></tr>
+    <tr><td>super().__init__(...)</td><td>super()</td><td class="tl">calls the parent's method — usually its constructor — from the child</td></tr>
+    <tr><td>same-name method in child</td><td>override</td><td class="tl">child's version replaces the parent's for its instances</td></tr>
+    <tr><td>self.part = Part()</td><td>composition (has-a)</td><td class="tl">store another class's instance as an attribute</td></tr>
+    <tr><td>isinstance(obj, Cls)</td><td>type check</td><td class="tl">True for the class or any of its subclasses — prefer over type()</td></tr>
+  </table>
+
+  <h3>Underscore conventions</h3>
+  <table class="cmp-table">
+    <tr><th>Name</th><th>Convention</th><th>Enforced?</th></tr>
+    <tr><td>name</td><td>public</td><td class="tl">freely accessible from anywhere</td></tr>
+    <tr><td>_name</td><td>internal use only</td><td class="tl worst">no — a handshake between programmers, still accessible</td></tr>
+    <tr><td>__name</td><td>"private", name-mangled</td><td class="tl">barely — renamed to _ClassName__name, so direct access raises AttributeError</td></tr>
+    <tr><td>__name__</td><td>dunder method</td><td class="tl">reserved for Python's special hooks: __init__, __str__, __add__, …</td></tr>
+  </table>
+
+  <h3>Further reading</h3>
+  <ul>
+    <li><a href="https://ehmatthes.github.io/pcc_3e/" target="_blank" rel="noopener">Python Crash Course</a> — the Dog, Car, and ElectricCar examples come from its classes chapter, free resources online</li>
+    <li><a href="https://docs.python.org/3/tutorial/classes.html" target="_blank" rel="noopener">Python docs: Classes tutorial</a> — the official walkthrough, including scopes, inheritance, and private-variable conventions</li>
+  </ul>
+
+  <div class="bridge-box">
+    <div class="bb-title">🎓 AFTER THIS REFRESHER, YOU CAN…</div>
+    <ul>
+      <li>Read a class definition and name its constructor, attributes, and methods — and explain what <code>self</code> refers to</li>
+      <li>Create instances with a constructor expression and reach their data and behavior with dot notation</li>
+      <li>Tell inheritance (is-a) from composition (has-a), and explain what <code>super()</code> and method overriding do</li>
+      <li>Recognize encapsulation conventions (<code>_name</code>, <code>__name</code>), class attributes/methods, and polymorphism when you meet them in library code</li>
+      <li>Decode a line like <code>np.array([1, 2, 3]).mean()</code> as class → object → method without slowing down</li>
+    </ul>
+    <p class="bb-next">PREREQUISITES COMPLETE ▸ You now speak enough Python for the whole course — head back to the course home and start Module 1 · NumPy.</p>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="p7_files_exceptions.html"><div class="nav-dir">◂ PREVIOUS PREREQ</div><div class="nav-title">P7 · Files &amp; Exceptions</div></a>
+    <a href="index.html" class="next"><div class="nav-dir">BACK TO COURSE ▸</div><div class="nav-title">Course home — start Module 1 · NumPy</div></a>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Scientific Computing with Python · Prerequisite P8: Object-Oriented Programming · supplementary self-study — not graded, not part of the assignments<br>
+  Digest of <code>08_OOP.ipynb</code> · quiz &amp; flashcards from the notebook's own question bank
+</footer>
+<script>
+/* ============================================================
+   Shared engines: Quiz / Flashcards
+   (buildQuiz extended for the P-pages: answers flagged isCode
+   render monospace with newlines preserved)
+   ============================================================ */
+function buildQuiz(containerId, progressId, data) {
+  const container = document.getElementById(containerId);
+  const progress  = document.getElementById(progressId);
+  const solved = new Set();
+  const LETTERS = 'ABCDEFGH';
+
+  data.forEach((q, qi) => {
+    const box = document.createElement('div');
+    box.className = 'quiz-box';
+    box.innerHTML =
+      `<div class="quiz-label">Q${qi+1} / ${data.length}${q.multi ? ' <span class="multi-badge">MULTI</span>' : ''}</div>` +
+      `<div class="quiz-q">${q.question}</div>` +
+      (q.code ? `<div class="quiz-code">${q.code.replace(/</g,'&lt;')}</div>` : '') +
+      `<div class="quiz-options">` +
+      q.answers.map((a, ai) =>
+        `<div class="quiz-opt" data-q="${qi}" data-a="${ai}">
+           <div class="opt-head"><span class="opt-letter">${LETTERS[ai]}</span><span${a.isCode ? ' class="opt-code"' : ''}>${String(a.answer).replace(/</g,'&lt;')}</span></div>
+           <div class="opt-fb"></div>
+         </div>`
+      ).join('') + `</div>`;
+    container.appendChild(box);
+  });
+
+  container.addEventListener('click', e => {
+    const opt = e.target.closest('.quiz-opt');
+    if (!opt || opt.classList.contains('revealed')) return;
+    const q = data[+opt.dataset.q], a = q.answers[+opt.dataset.a];
+    opt.classList.add('revealed', a.correct ? 'correct' : 'wrong');
+    opt.querySelector('.opt-fb').textContent = (a.correct ? '✔ Correct: ' : '✘ Not quite: ') + a.feedback;
+    if (a.correct) {
+      solved.add(+opt.dataset.q);
+      progress.textContent = `Solved ${solved.size} / ${data.length}`;
+    }
+  });
+}
+
+function buildFlashcards(gridId, data) {
+  const grid = document.getElementById(gridId);
+  function render(cards) {
+    grid.innerHTML = cards.map(c =>
+      `<div class="flashcard">
+         <div class="fc-inner">
+           <div class="fc-face fc-front"><div>${c.front}</div><div class="fc-hint">CLICK TO FLIP</div></div>
+           <div class="fc-face fc-back">${c.back}</div>
+         </div>
+       </div>`).join('');
+  }
+  render(data);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.flashcard');
+    if (card) card.classList.toggle('flipped');
+  });
+  document.getElementById('flipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.add('flipped')));
+  document.getElementById('unflipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.remove('flipped')));
+  document.getElementById('shuffleCards').addEventListener('click', ()=>{
+    const shuffled = [...data].sort(()=>Math.random()-.5);
+    render(shuffled);
+  });
+}
+
+/* ============================================================
+   QUIZ — questions/ch8 of the prerequisite notebook
+   (answers and feedback carried over verbatim)
+   ============================================================ */
+const QUIZ_DATA = [
+  { question:"What is printed by the following code?", code:"class MyClass:\n    count = 0\n\n    def __init__(self):\n        MyClass.count += 1\n\n    @classmethod\n    def get_count(cls):\n        return cls.count\n\nobj1 = MyClass()\nobj2 = MyClass()\nprint(obj1.get_count())\nprint(MyClass.get_count())", answers:[
+    { answer:"1\n1", isCode:true, correct:false, feedback:"Incorrect! Two instances are created, so the class attribute 'count' should be incremented twice." },
+    { answer:"2\n2", isCode:true, correct:true, feedback:"Correct! Each instance increments 'count' by 1, so with two instances the value is 2, returned by both obj1.get_count() and MyClass.get_count()." },
+    { answer:"0\n2", isCode:true, correct:false, feedback:"Incorrect! The __init__ method increments 'count' upon creating each instance." },
+    { answer:"2\n0", isCode:true, correct:false, feedback:"Incorrect! The class method 'get_count()' correctly returns the updated 'count' value." } ] },
+  { question:"What is printed by the following code?", code:"class Car:\n    def __init__(self, brand, year):\n        self.brand = brand\n        self.year = year\n    def get_info(self):\n        return f\"{self.brand} - {self.year}\"\n\nmy_car = Car(\"Toyota\", 2020)\nprint(my_car.get_info())", answers:[
+    { answer:"Toyota - 2020", correct:true, feedback:"Correct! The Car class is created with the __init__ method and a get_info() method, which returns the formatted string 'Toyota - 2020'." },
+    { answer:"Car - 2020", correct:false, feedback:"Incorrect. The get_info() method returns the brand attribute ('Toyota'), not the class name 'Car'." },
+    { answer:"Error: __init__ missing required arguments", correct:false, feedback:"Incorrect. The __init__ method is defined properly, and the Car instance is created with the required arguments." },
+    { answer:"Toyota", correct:false, feedback:"Incorrect. The get_info() method returns both the brand and the year, not just the brand." } ] },
+  { question:"What is printed by the following code?", code:"class Person:\n    def __init__(self, name):\n        self.__name = name  # private attribute\n\n    def get_name(self):\n        return self.__name\n\np = Person(\"Alice\")\nprint(p.get_name())\nprint(p.__name)", answers:[
+    { answer:"Alice\nAlice", isCode:true, correct:false, feedback:"Incorrect! Although the get_name() method correctly returns 'Alice', directly accessing the private attribute __name is not allowed and will raise an AttributeError." },
+    { answer:"Alice\nAttributeError", isCode:true, correct:true, feedback:"Correct! The get_name() method provides controlled access to the private attribute, printing 'Alice', while accessing p.__name directly results in an AttributeError due to encapsulation." },
+    { answer:"AttributeError\nAttributeError", isCode:true, correct:false, feedback:"Incorrect! The get_name() method successfully returns 'Alice', so the first print statement does not raise an error." },
+    { answer:"Alice\nNone", isCode:true, correct:false, feedback:"Incorrect! Direct access of p.__name is not allowed and does not return None; it raises an AttributeError." } ] },
+  { question:"What is printed by the following statements?", code:"class Engine:\n    def start(self):\n        return \"Engine started\"\n\nclass Car:\n    def __init__(self):\n        self.engine = Engine()  # Composition: Car has an Engine\n    def start(self):\n        return self.engine.start()\n\nclass ElectricCar(Car):  # Inheritance: ElectricCar inherits from Car\n    def start(self):\n        return \"ElectricCar ready\"\n\ncar = Car()\nelectric_car = ElectricCar()\nprint(car.start())\nprint(electric_car.start())", answers:[
+    { answer:"Engine started\nElectricCar ready", isCode:true, correct:true, feedback:"Correct! The Car class uses composition by containing an Engine instance, so car.start() returns 'Engine started'. The ElectricCar class inherits from Car and overrides the start() method, so electric_car.start() returns 'ElectricCar ready'." },
+    { answer:"Engine started\nEngine started", isCode:true, correct:false, feedback:"Incorrect. While Car uses composition to call Engine.start(), ElectricCar overrides the start() method to return 'ElectricCar ready'." },
+    { answer:"ElectricCar ready\nElectricCar ready", isCode:true, correct:false, feedback:"Incorrect. The Car instance does not override the start() method, so it returns 'Engine started'." },
+    { answer:"ElectricCar ready\nEngine started", isCode:true, correct:false, feedback:"Incorrect. The output order is reversed; Car prints 'Engine started' and ElectricCar prints 'ElectricCar ready'." } ] },
+  { question:"What is printed by the following code?", code:"class Shape:\n    def area(self):\n        return \"No area\"\n\nclass Circle(Shape):\n    def __init__(self, radius):\n        self.radius = radius\n    def area(self):\n        return 3.14 * self.radius * self.radius\n\nclass Square(Shape):\n    def __init__(self, side):\n        self.side = side\n    def area(self):\n        return self.side * self.side\n\nshapes = [Circle(2), Square(3)]\nfor shape in shapes:\n    print(shape.area())", answers:[
+    { answer:"12.56\n9", isCode:true, correct:true, feedback:"Correct! For a Circle with radius 2, the area is 3.14*2*2 = 12.56, and for a Square with side 3, the area is 3*3 = 9." },
+    { answer:"No area\nNo area", isCode:true, correct:false, feedback:"Incorrect! The area() methods in Circle and Square override the one in the base class, so their computed values are used." },
+    { answer:"9\n12.56", isCode:true, correct:false, feedback:"Incorrect! The shapes are printed in the order they appear in the list: the Circle first then the Square." },
+    { answer:"12.56 9", isCode:true, correct:false, feedback:"Incorrect! The outputs are printed on separate lines, not on the same line." } ] },
+  { question:"What is printed by the following code?", code:"class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n    def __repr__(self):\n        return f\"Person('{self.name}', {self.age})\"\n    def __str__(self):\n        return f\"{self.name} ({self.age} years old)\"\n\np = Person(\"Bob\", 25)\nprint(repr(p))\nprint(p)", answers:[
+    { answer:"Person('Bob', 25)\nBob (25 years old)", isCode:true, correct:true, feedback:"Correct! The __repr__ method returns the official string representation 'Person('Bob', 25)', and the __str__ method returns the readable string 'Bob (25 years old)'." },
+    { answer:"Bob (25 years old)\nPerson('Bob', 25)", isCode:true, correct:false, feedback:"Incorrect! The first printed line comes from repr(p), which returns 'Person('Bob', 25)', not 'Bob (25 years old)'." },
+    { answer:"Person('Bob', 25)\nPerson('Bob', 25)", isCode:true, correct:false, feedback:"Incorrect! The __str__ method should override the string conversion, so the second printed line is 'Bob (25 years old)'." },
+    { answer:"Bob (25 years old)\nBob (25 years old)", isCode:true, correct:false, feedback:"Incorrect! The __repr__ method returns a different, more formal representation than __str__." } ] },
+];
+buildQuiz('quizContainer', 'quizProgress', QUIZ_DATA);
+
+/* ============================================================
+   FLASHCARDS — Key terms from the OOP notebook
+   ============================================================ */
+const CARD_DATA = [
+  {front:"Object Oriented Programming (OOP)", back:"A programming paradigm that organizes code using objects and classes to model real-world entities and relationships."},
+  {front:"class", back:"A blueprint for creating objects that defines attributes and methods."},
+  {front:"object", back:"An instance of a class containing data (attributes) and behavior (methods)."},
+  {front:"method", back:"A function defined within a class that operates on instances of that class."},
+  {front:"attribute", back:"A variable that is bound to an object or class, holding data relevant to that object."},
+  {front:"constructor", back:"A special method, typically __init__, that initializes a new object's state when it is created."},
+  {front:"destructor", back:"A special method, typically __del__, that is called when an object is about to be destroyed, used for cleanup."},
+  {front:"dunder method", back:"A special method with double underscores before and after its name (e.g., __init__, __str__) that enables built-in behaviors."},
+  {front:"inheritance", back:"A mechanism where a new class (child) derives attributes and methods from an existing class (parent)."},
+  {front:"parent(base) class", back:"A class whose properties and methods are inherited by another class."},
+  {front:"child(derived) class", back:"A class that inherits from a parent class and can extend or override its behavior."},
+  {front:"override", back:"To provide a new implementation for an inherited method in a child class."},
+  {front:"composition", back:"A design principle where a class is composed of one or more objects of other classes, representing a 'has-a' relationship."},
+  {front:"encapsulation", back:"The bundling of data and methods within a class, restricting access to internal details and protecting object integrity."},
+  {front:"private data", back:"Attributes intended to be hidden from outside access, usually denoted with a leading underscore (e.g., _data)."},
+  {front:"public data", back:"Attributes that are accessible from outside the class without restrictions."},
+  {front:"public method", back:"Methods that are accessible from outside the class without restrictions."},
+  {front:"private method", back:"A method intended for internal use within a class, typically indicated by a leading underscore."},
+  {front:"utility method", back:"A method that performs a supportive or common function, often independent of instance-specific data."},
+  {front:"class method", back:"A method bound to the class rather than an instance, marked with the @classmethod decorator, and takes the class as its first parameter."},
+  {front:"class attribute", back:"An attribute that is shared among all instances of a class."},
+  {front:"polymorphism", back:"The ability for different classes to be treated through a common interface, often by overriding methods."},
+  {front:"function overloading", back:"Defining multiple functions with the same name but different parameters."},
+  {front:"operator overloading", back:"Defining special methods to customize the behavior of built-in operators for user-defined classes."},
+  {front:"method overriding", back:"Providing a new implementation for a method inherited from a parent class, allowing the child class to customize behavior."},
+];
+buildFlashcards('flashGrid', CARD_DATA);
+
+/* ============================================================
+   Floating nav active highlight
+   ============================================================ */
+(function initFloatNav(){
+  const links = document.querySelectorAll('.float-nav a[data-target]');
+  const sections = [...links].map(a => document.getElementById(a.dataset.target)).filter(Boolean);
+  function update(){
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= window.innerHeight * 0.35) active = s.id;
+    }
+    links.forEach(a => a.classList.toggle('active', a.dataset.target === active));
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P4 · Lists &amp; Tuples — Prerequisite Refresher</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:17px;}
+
+/* Hero */
+.hero{min-height:56vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2.5rem 2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:880px;}
+.hero .chapter-tag{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#f39c12;letter-spacing:.3em;margin-bottom:.8rem;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(1.9rem,4.6vw,3rem);font-weight:900;color:#fff;letter-spacing:.02em;line-height:1.25;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.15rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{font-family:'JetBrains Mono',monospace;color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.0rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+ul,ol{margin:0 0 1rem 1.4rem;}
+
+/* Prerequisite banner */
+.prereq-banner{background:#fef5e7;border:3px solid #d68910;border-radius:12px;padding:1.2rem 1.5rem;margin:0 0 2.2rem;box-shadow:0 3px 12px rgba(214,137,16,.12);}
+.prereq-banner .pb-title{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:#b9770e;font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.prereq-banner p{margin-bottom:0;font-size:.95rem;}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:40px;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box p:last-child,.info-box ul:last-child,.info-box ol:last-child{margin-bottom:0;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+.cmp-table td.tl{font-family:'Noto Sans TC',sans-serif;text-align:left;font-size:.85rem;}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.65;overflow-x:auto;margin:.8rem 0;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .str{color:#f1fa8c;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.quiz-box .quiz-label .multi-badge{background:#8e44ad;color:#fff;font-size:.68rem;padding:1px 8px;border-radius:3px;}
+.quiz-box .quiz-q{font-weight:600;margin-bottom:.6rem;}
+.quiz-box .quiz-code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:.6rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.84rem;margin-bottom:.8rem;white-space:pre-wrap;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0 0;}
+.quiz-opt{display:flex;flex-direction:column;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.9rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-head{display:flex;align-items:baseline;gap:.6rem;}
+.quiz-opt .opt-letter{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt .opt-code{white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.quiz-opt .opt-fb{display:none;font-size:.82rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--card-border);color:#555;}
+.quiz-opt.revealed .opt-fb{display:block;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.correct .opt-fb{color:#14532d;}
+.quiz-opt.wrong{background:#fef5e7;border-color:#d68910;}
+.quiz-opt.wrong .opt-letter{color:#d68910;}
+.quiz-progress{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;margin:.8rem 0;}
+
+/* Flashcards */
+.card-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.flashcard{perspective:900px;height:160px;cursor:pointer;}
+.flashcard .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+.flashcard .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.flashcard .fc-front{background:linear-gradient(150deg,#2c3e7a,#1a1a2e);color:#fff;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.flashcard .fc-front .fc-hint{font-size:.66rem;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.flashcard .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:34px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+/* Chapter nav */
+.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin:2rem 0 0;flex-wrap:wrap;}
+.chapter-nav a{flex:1;min-width:220px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.3rem;text-decoration:none;color:var(--ink);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.chapter-nav a:hover{border-color:var(--accent2);transform:translateY(-2px);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+footer a{color:var(--accent2);}
+
+/* 🤖 Ask-AI / discussion box */
+.ai-box{background:var(--card);border:2px dashed #8e44ad;border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.ai-box .ai-label{position:absolute;top:-11px;left:14px;background:#8e44ad;color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.ai-box p:last-child{margin-bottom:0;}
+.ai-box .ai-prompt{font-family:'JetBrains Mono',monospace;font-size:.85rem;background:rgba(142,68,173,.08);border-radius:6px;padding:.4rem .8rem;display:block;margin:.4rem 0;color:#6c3485;}
+
+/* 🎓 Chapter-end bridge */
+.bridge-box{background:#eafaf1;border:2px solid var(--accent3);border-radius:12px;padding:1.3rem 1.5rem;margin:2rem 0 0;}
+.bridge-box .bb-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent3);font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.bridge-box ul{margin:.3rem 0 .8rem 1.3rem;font-size:.92rem;}
+.bridge-box .bb-next{font-size:.9rem;color:var(--accent2);border-top:1px dashed var(--accent3);padding-top:.6rem;margin-bottom:0;}
+
+/* Materials map */
+.mat-map{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.9rem 0;padding:.7rem 1rem;background:var(--card);border:1px solid var(--card-border);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.mat-map .mm-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.12em;margin-right:.3rem;}
+.mat-map a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;text-decoration:none;border:2px solid var(--card-border);color:var(--accent2);transition:all .2s;background:var(--paper);}
+.mat-map a:hover{border-color:var(--accent2);}
+</style>
+</head>
+<body>
+
+<nav class="float-nav">
+  <div class="fn-title">P4 · Lists &amp; Tuples</div>
+  <a href="#s41" data-target="s41"><span class="fn-num">P4.1</span><span class="fn-name">Creating &amp; indexing</span></a>
+  <a href="#s42" data-target="s42"><span class="fn-num">P4.2</span><span class="fn-name">Slicing &amp; changing</span></a>
+  <a href="#s43" data-target="s43"><span class="fn-num">P4.3</span><span class="fn-name">Looping over lists</span></a>
+  <a href="#s44" data-target="s44"><span class="fn-num">P4.4</span><span class="fn-name">List methods</span></a>
+  <a href="#s45" data-target="s45"><span class="fn-num">P4.5</span><span class="fn-name">Tuples &amp; unpacking</span></a>
+  <a href="#s46" data-target="s46"><span class="fn-num">P4.6</span><span class="fn-name">References vs copies</span></a>
+  <a href="#quiz" data-target="quiz"><span class="fn-num">QUIZ</span><span class="fn-name">Self-check quiz</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">Key-term flashcards</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">Cheat sheet</span></a>
+  <a href="#top" class="fn-top" title="Back to top"><span class="fn-num">↑ TOP</span></a>
+</nav>
+
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="chapter-tag">PREREQUISITE P4 · SUPPLEMENTARY · NOT GRADED</div>
+    <h1>Sequences: <span class="orange">Lists</span> &amp; <span class="blue">Tuples</span></h1>
+    <div class="subtitle">Ordered collections you can index, slice, and grow — and the reference picture that explains Python's sharpest surprise: two names attached to one list.</div>
+    <div class="big-formula">[1, 2, 3] ｜ index · slice ｜ append ｜ (im)mutability ｜ references</div>
+    <div class="scroll-hint">Scroll down to start<span>↓</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="prereq-banner">
+  <div class="pb-title">📌 SUPPLEMENTARY PREREQUISITE — NOT PART OF THE ASSIGNMENTS</div>
+  <p>The prerequisite pages (P1–P8) review the basic Python that Modules 1–5 assume you already know. They are <strong>optional background material for self-study: nothing on these pages is graded, and none of it will appear in the course assignments</strong>（補充先備知識，不列入作業範圍）. Use them to warm up before Module 1, or to look things up whenever a module uses a Python idiom you have forgotten.</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · A REFRESHER, NOT A LECTURE — READ AT YOUR OWN PACE</div>
+  <div class="toc-grid">
+    <a href="#s41"><span class="toc-num">P4.1</span>Lists: creating &amp; indexing</a>
+    <a href="#s42"><span class="toc-num">P4.2</span>Slicing, changing &amp; combining</a>
+    <a href="#s43"><span class="toc-num">P4.3</span>Looping over lists</a>
+    <a href="#s44"><span class="toc-num">P4.4</span>List methods</a>
+    <a href="#s45"><span class="toc-num">P4.5</span>Tuples &amp; unpacking</a>
+    <a href="#s46"><span class="toc-num">P4.6</span>References vs copies</a>
+    <a href="#quiz"><span class="toc-num">QUIZ</span>Self-check quiz (7 questions)</a>
+    <a href="#cards"><span class="toc-num">CARD</span>Key-term flashcards (16 cards)</a>
+    <a href="#reference"><span class="toc-num">REF</span>Lists &amp; tuples cheat sheet</a>
+  </div>
+</div>
+
+<div class="info-box green">
+  <div class="info-label">📖 HOW TO USE THE P-PAGES</div>
+  <p style="margin-bottom:.4rem;">Unlike the module pages, there are no course videos here — the source is a Jupyter notebook you can run yourself:</p>
+  <p style="margin-bottom:0;">① <strong>Read</strong> each digest section below → ② <strong>Run</strong> the matching notebook cells (one click on the Colab badge — predict each output <em>before</em> you run it) → ③ <strong>Quiz</strong> yourself and flip the <a href="#cards">flashcards</a>. If everything feels obvious, you are ready — move on.</p>
+</div>
+
+<div class="mat-map">
+  <span class="mm-title">SOURCE NOTEBOOK ▸</span>
+  <a href="https://colab.research.google.com/github/phonchi/nsysu-math106A/blob/master/static_files/presentations/04_Lists_tuples.ipynb" target="_blank" rel="noopener">🚀 Open 04_Lists_tuples.ipynb in Colab</a>
+  <a href="https://github.com/phonchi/nsysu-math106A/blob/master/static_files/presentations/04_Lists_tuples.ipynb" target="_blank" rel="noopener">📓 View on GitHub</a>
+</div>
+
+<!-- ============================================================ -->
+<section id="s41">
+  <div class="section-number">PREREQ P4.1 · LISTS: CREATING &amp; INDEXING</div>
+  <h2>P4.1 Lists: creating &amp; indexing</h2>
+
+  <p>Numbers and strings hold one value at a time; a <strong>list</strong> holds many. Lists (and their cousins, tuples) are <strong>containers</strong> — objects that "contain" other objects — and more precisely <strong>sequences</strong>: <em>ordered</em> collections of items. Strings and the objects returned by <code>range()</code> are sequences too, so most of what you learn on this page transfers to them for free. The values inside a list are called its <strong>elements</strong> (or items). The simplest way to create a list is to write the elements between square brackets, separated by commas:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">type</span>([])                <span class="com"># list — [] is the empty list</span></span>
+<span class="line">[<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>]        <span class="com"># a list of four integers</span></span>
+<span class="line">subjects = [<span class="str">'calculus'</span>, <span class="str">'introduction to mathematics'</span>, <span class="str">'computer programming'</span>, <span class="str">'linear algebra'</span>]</span></div>
+  <p>You reach one element by writing the list's name followed by the element's <strong>index</strong> — its position number — in square brackets (the <strong>subscript operator</strong>). <strong>Indices start at 0</strong>, so a list of four items has 3 as its last index; asking for an index that doesn't exist raises an <code>IndexError</code>, a runtime error:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(subjects[<span class="num">0</span>])    <span class="com"># calculus — the first element is index 0</span></span>
+<span class="line"><span class="fn">print</span>(subjects[<span class="num">3</span>])    <span class="com"># linear algebra — the last index is len − 1</span></span>
+<span class="line"><span class="fn">print</span>(subjects[<span class="num">4</span>])    <span class="com"># IndexError — there is no index 4 in a 4-item list</span></span></div>
+  <p>Elements don't have to share a type. A list can hold a string, a float, an integer — even another list. With a nested list, the first index picks an item of the outer list, and a second index reaches inside it:</p>
+  <div class="pseudo-code">
+<span class="line">spam = [<span class="str">'spam'</span>, <span class="num">2.0</span>, <span class="num">5</span>, [<span class="num">10</span>, <span class="num">20</span>]]</span>
+<span class="line">spam[<span class="num">3</span>]       <span class="com"># [10, 20] — one index gives you the whole inner list</span></span>
+<span class="line">spam[<span class="num">3</span>][<span class="num">1</span>]    <span class="com"># 20 — outer index first, then inner</span></span></div>
+  <p><strong>Negative indices</strong> count from the end — <code>-1</code> is the last element, <code>-2</code> the second-to-last — and <code>len()</code> returns the number of elements, just as it counts the characters of a string:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(subjects[-<span class="num">1</span>])    <span class="com"># linear algebra</span></span>
+<span class="line"><span class="fn">print</span>(subjects[-<span class="num">2</span>])    <span class="com"># computer programming</span></span>
+<span class="line"><span class="fn">len</span>(subjects)          <span class="com"># 4</span></span></div>
+
+  <div class="info-box">
+    <div class="info-label">📌 ONE PAIR OF BRACKETS, TWO JOBS</div>
+    <p style="margin-bottom:0;">Square brackets are used in quite a few ways in Python, and at first glance <em>creating</em> and <em>indexing</em> look alike. The tell: indexing needs an <strong>already-created list to its left</strong> (<code>subjects[0]</code>), while creating does not (<code>[10, 20]</code>). So <code>w = [a]</code> builds a new one-element list, but <code>t = a[0]</code> indexes into <code>a</code>.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s42">
+  <div class="section-number">PREREQ P4.2 · SLICING, CHANGING &amp; COMBINING</div>
+  <h2>P4.2 Slicing, changing &amp; combining lists</h2>
+
+  <p>An index gets a single value; a <strong>slice</strong> gets several — as a <strong>new list</strong>. A slice looks like an index with a colon in it: <code>subjects[n:m]</code> returns the part starting at index <code>n</code> and going <em>up to but not including</em> index <code>m</code>. Leave an index out and Python fills in the obvious default — the beginning, or the end:</p>
+  <div class="pseudo-code">
+<span class="line">subjects[<span class="num">0</span>:<span class="num">3</span>]    <span class="com"># first three items — index 3 NOT included</span></span>
+<span class="line">subjects[<span class="num">1</span>:-<span class="num">1</span>]   <span class="com"># drops the first AND the last item</span></span>
+<span class="line">subjects[:<span class="num">3</span>]     <span class="com"># same as subjects[0:3]</span></span>
+<span class="line">subjects[<span class="num">1</span>:]     <span class="com"># same as subjects[1:len(subjects)]</span></span>
+<span class="line">subjects[:]      <span class="com"># the whole list, as a NEW list — a copy (see P4.6!)</span></span></div>
+  <p>Just like <code>range()</code>, a slice takes an optional third number — the <strong>step</strong>:</p>
+  <div class="pseudo-code">
+<span class="line">subjects[::<span class="num">2</span>]     <span class="com"># every second item (default step is 1)</span></span>
+<span class="line">subjects[::-<span class="num">1</span>]    <span class="com"># the list in reverse order</span></span></div>
+
+  <h3>Item assignment: lists are mutable</h3>
+  <p>Unlike strings, lists are <span class="pill pill-green">mutable</span> — you can reassign an element in place. When the bracket operator appears on the <em>left</em> of an assignment, it names the element that will be replaced. This is called <strong>item assignment</strong>:</p>
+  <div class="pseudo-code">
+<span class="line">numbers = [<span class="num">17</span>, <span class="num">123</span>, <span class="num">42</span>, <span class="num">7</span>]</span>
+<span class="line">numbers[<span class="num">1</span>] = <span class="num">5</span>       <span class="com"># item assignment — 123 is replaced</span></span>
+<span class="line"><span class="fn">print</span>(numbers)       <span class="com"># [17, 5, 42, 7]</span></span></div>
+  <p>All in all, you can think of a list as a relationship between indices and elements — a <em>mapping</em>: each index "maps to" one of the elements. (Hold that thought for P5, where dictionaries let you map <em>any</em> key, not just 0, 1, 2, …)</p>
+
+  <h3>Concatenation, replication &amp; del</h3>
+  <p>The <code>+</code> operator <strong>concatenates</strong> two lists into a new list, and <code>*</code> with an integer <strong>replicates</strong> one — exactly as they do for strings. The <code>del</code> statement deletes by index (or by slice), and everything after the deleted value moves up toward the front:</p>
+  <div class="pseudo-code">
+<span class="line">[<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>] + [<span class="str">'A'</span>, <span class="str">'B'</span>, <span class="str">'C'</span>]   <span class="com"># [1, 2, 3, 'A', 'B', 'C'] — a new list</span></span>
+<span class="line">[<span class="str">'X'</span>, <span class="str">'Y'</span>, <span class="str">'Z'</span>] * <span class="num">3</span>            <span class="com"># ['X','Y','Z','X','Y','Z','X','Y','Z']</span></span>
+<span class="line">t = [<span class="str">'a'</span>, <span class="str">'b'</span>, <span class="str">'c'</span>, <span class="str">'d'</span>, <span class="str">'e'</span>]</span>
+<span class="line"><span class="kw">del</span> t[<span class="num">1</span>]      <span class="com"># ['a', 'c', 'd', 'e'] — delete by index</span></span>
+<span class="line"><span class="kw">del</span> t[<span class="num">1</span>:<span class="num">3</span>]    <span class="com"># ['a', 'e'] — delete a whole slice</span></span></div>
+
+  <div class="info-box warm">
+    <div class="info-label">⚠️ SLICE TRAPS</div>
+    <ul style="margin-bottom:0;">
+      <li><code>[n:m]</code> stops <em>before</em> <code>m</code> — <code>subjects[1:3]</code> holds exactly two items, and <code>alist[4:]</code> runs from index 4 <em>through the last item</em>.</li>
+      <li>A slice always builds a <strong>new list</strong> — <code>subjects[1:3]</code> is a list even if it holds one element, and <code>subjects[:]</code> is the idiomatic full copy.</li>
+      <li>After <code>del t[1]</code>, every later element shifts up one slot — indexes you noted beforehand may now point at different items.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s43">
+  <div class="section-number">PREREQ P4.3 · LOOPING OVER LISTS</div>
+  <h2>P4.3 Looping over lists</h2>
+
+  <p>Technically, a <code>for</code> loop repeats its block <strong>once for each item in a sequence</strong> — <em>iteration by item</em>. That is what <code>for i in range(4)</code> was doing all along: <code>range(4)</code> is a sequence that Python treats like <code>[0, 1, 2, 3]</code> (wrap it in <code>list()</code> to see), so looping over your own list works exactly the same way:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">list</span>(<span class="fn">range</span>(<span class="num">4</span>))          <span class="com"># [0, 1, 2, 3] — any sequence → list</span></span>
+<span class="line"><span class="kw">for</span> subject <span class="kw">in</span> subjects:   <span class="com"># iteration by item — no indexes needed</span></span>
+<span class="line">    <span class="fn">print</span>(subject)</span></div>
+  <p>Reading by item is perfect — until you need to <em>write</em> to the elements. Then you need the indexes, and a common Python technique is <code>range(len(someList))</code>. Better still, <code>enumerate()</code> hands you <strong>the index and the item at the same time</strong>:</p>
+  <div class="pseudo-code">
+<span class="line">numbers = [<span class="num">17</span>, <span class="num">5</span>, <span class="num">42</span>, <span class="num">7</span>]</span>
+<span class="line"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(numbers)):   <span class="com"># indexes 0 .. len−1</span></span>
+<span class="line">    numbers[i] = numbers[i]**<span class="num">2</span>   <span class="com"># updating needs the index</span></span>
+<span class="line"> </span>
+<span class="line"><span class="kw">for</span> i, number <span class="kw">in</span> <span class="fn">enumerate</span>(numbers):   <span class="com"># index AND item together</span></span>
+<span class="line">    <span class="fn">print</span>(i, number)</span></div>
+  <p>To ask whether a value is in a list at all, skip the loop: the <code>in</code> and <code>not in</code> operators evaluate straight to a Boolean:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="str">'howdy'</span> <span class="kw">in</span> [<span class="str">'hello'</span>, <span class="str">'hi'</span>, <span class="str">'howdy'</span>, <span class="str">'heyas'</span>])   <span class="com"># True</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">'English'</span> <span class="kw">not</span> <span class="kw">in</span> subjects)                      <span class="com"># True</span></span></div>
+  <p>And when two lists run in parallel, <code>zip()</code> pairs up the elements at the same index (optional, but handy):</p>
+  <div class="pseudo-code">
+<span class="line">names = [<span class="str">'Bob'</span>, <span class="str">'Sue'</span>, <span class="str">'Amanda'</span>]</span>
+<span class="line">grade_point_averages = [<span class="num">3.5</span>, <span class="num">4.0</span>, <span class="num">3.75</span>]</span>
+<span class="line"><span class="kw">for</span> name, gpa <span class="kw">in</span> <span class="fn">zip</span>(names, grade_point_averages):</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'Name='</span>, name, <span class="str">'GPA='</span>, gpa)</span></div>
+
+  <h3>List comprehensions: a loop in one line</h3>
+  <p>To build the first ten squares you could start from an empty list and <code>append()</code> in a loop — or let a <strong>list comprehension</strong> combine the loop and the appending into a single line. Add an <code>if</code> clause to keep only the items that pass a test:</p>
+  <div class="pseudo-code">
+<span class="line">squares = []</span>
+<span class="line"><span class="kw">for</span> value <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">11</span>):</span>
+<span class="line">    squares.<span class="fn">append</span>(value**<span class="num">2</span>)                <span class="com"># the loop way</span></span>
+<span class="line"> </span>
+<span class="line">squares = [value**<span class="num">2</span> <span class="kw">for</span> value <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">11</span>)]           <span class="com"># the one-line way</span></span>
+<span class="line">list1 = [item <span class="kw">for</span> item <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">11</span>) <span class="kw">if</span> item % <span class="num">2</span> == <span class="num">0</span>]   <span class="com"># evens only</span></span></div>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 THREE LOOP PATTERNS — PICK BY WHAT YOU NEED</div>
+    <p style="margin-bottom:0;"><strong>Just reading?</strong> <code>for item in myList</code>. <strong>Writing to elements?</strong> <code>for i in range(len(myList))</code>. <strong>Want both index and item?</strong> <code>for i, item in enumerate(myList)</code>. Predict the output of each pattern on a 3-item list before you run the notebook cells.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s44">
+  <div class="section-number">PREREQ P4.4 · LIST METHODS</div>
+  <h2>P4.4 List methods: append, insert, remove, sort, index</h2>
+
+  <p>A <strong>method</strong> is a function that is "called on" an object, written after the object with a dot: <code>spam.index('hello')</code>. Each data type has its own set of methods, and the list type ships several for finding, adding, and removing values. <code>append()</code> adds to the end; <code>insert()</code> squeezes a value in at any index; <code>extend()</code> adds <em>each element</em> of another sequence; <code>remove()</code> deletes by value (where <code>del</code> deletes by index):</p>
+  <div class="pseudo-code">
+<span class="line">t = [<span class="str">'a'</span>, <span class="str">'b'</span>, <span class="str">'c'</span>]</span>
+<span class="line">t.<span class="fn">append</span>(<span class="str">'d'</span>)       <span class="com"># ['a', 'b', 'c', 'd'] — in-place! not t = t.append('d')</span></span>
+<span class="line">t.<span class="fn">insert</span>(<span class="num">1</span>, <span class="str">'e'</span>)    <span class="com"># ['a', 'e', 'b', 'c', 'd'] — new value at index 1</span></span>
+<span class="line">color_names = [<span class="str">'orange'</span>, <span class="str">'yellow'</span>, <span class="str">'green'</span>]</span>
+<span class="line">color_names.<span class="fn">extend</span>([<span class="str">'indigo'</span>, <span class="str">'violet'</span>])   <span class="com"># adds BOTH elements to the end</span></span>
+<span class="line">spam = [<span class="str">'cat'</span>, <span class="str">'bat'</span>, <span class="str">'rat'</span>, <span class="str">'elephant'</span>]</span>
+<span class="line">spam.<span class="fn">remove</span>(<span class="str">'bat'</span>)   <span class="com"># ['cat', 'rat', 'elephant'] — remove by VALUE</span></span></div>
+
+  <div class="info-box warm">
+    <div class="info-label">⚠️ THE NONE TRAP — AND WHOSE METHOD IS IT?</div>
+    <ul style="margin-bottom:0;">
+      <li><code>append()</code>, <code>insert()</code>, and <code>sort()</code> return <code>None</code> — they modify the list <strong>in place</strong>. Write <code>t.append('d')</code>; the "obvious" <code>t = t.append('d')</code> silently replaces your list with <code>None</code>.</li>
+      <li>Methods belong to a single type: <code>'hello'.append('world')</code> fails, because <code>append()</code> is a <em>list</em> method and strings don't have it.</li>
+    </ul>
+  </div>
+
+  <h3>sort() and index()</h3>
+  <p><code>sort()</code> orders a list of numbers or strings in place, ascending by default; pass <code>reverse=True</code> for descending. Careful with strings: it sorts in "ASCII order", so every uppercase letter comes before every lowercase one. <code>index()</code> returns the position of a value — the <em>first</em> occurrence if there are duplicates — and raises a <code>ValueError</code> if the value isn't there:</p>
+  <div class="pseudo-code">
+<span class="line">spam = [<span class="num">2</span>, <span class="num">5</span>, <span class="num">3.14</span>, <span class="num">1</span>, -<span class="num">7</span>]</span>
+<span class="line">spam.<span class="fn">sort</span>()                 <span class="com"># [-7, 1, 2, 3.14, 5] — ascending, in place</span></span>
+<span class="line">spam = [<span class="str">'ants'</span>, <span class="str">'cats'</span>, <span class="str">'dogs'</span>, <span class="str">'badgers'</span>, <span class="str">'Elephants'</span>]</span>
+<span class="line">spam.<span class="fn">sort</span>()                 <span class="com"># ['Elephants', 'ants', ...] — "ASCII order"!</span></span>
+<span class="line">spam.<span class="fn">sort</span>(reverse=<span class="kw">True</span>)     <span class="com"># descending order</span></span>
+<span class="line">spam = [<span class="str">'Zophie'</span>, <span class="str">'Pooka'</span>, <span class="str">'Fat-tail'</span>, <span class="str">'Pooka'</span>]</span>
+<span class="line">spam.<span class="fn">index</span>(<span class="str">'Pooka'</span>)         <span class="com"># 1 — the FIRST appearance wins</span></span>
+<span class="line">spam.<span class="fn">index</span>(<span class="str">'world'</span>)         <span class="com"># ValueError — not in the list</span></span></div>
+  <p>A few built-in functions read a whole list at once, no loop required: <code>len(nums)</code>, <code>max(nums)</code>, <code>min(nums)</code>, and <code>sum(nums)</code> — for <code>nums = [3, 41, 12, 9, 74, 15]</code> that's <code>6</code>, <code>74</code>, <code>3</code>, and <code>154</code>.</p>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ TRY IT (OPTIONAL — NOT GRADED)</div>
+    <p style="margin-bottom:0;">The notebook's Exercise 1 is the classic <strong>Bulls and Cows (1A2B)</strong> game: the computer draws a 4-digit secret with distinct digits, and each guess scores an A for a correct digit in the correct position and a B for a correct digit in the wrong position. Everything you need is on this page — <code>enumerate()</code> to walk the indexes, <code>in</code> to test whether a digit is in the secret, and a list comprehension to turn the typed guess into a list of digits. The fill-in-the-blank cells are waiting in the notebook.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s45">
+  <div class="section-number">PREREQ P4.5 · TUPLES &amp; UNPACKING</div>
+  <h2>P4.5 Tuples: immutable sequences &amp; unpacking</h2>
+
+  <p>A <strong>tuple</strong> is a sequence of values much like a list — any types, indexed by integers, usually written in parentheses — with one important difference: tuples are <span class="pill pill-red">immutable</span>. Indexing and slicing work exactly as for lists, but assigning to an element raises a <code>TypeError</code>:</p>
+  <div class="pseudo-code">
+<span class="line">t = (<span class="str">'a'</span>, <span class="str">'b'</span>, <span class="str">'c'</span>, <span class="str">'d'</span>, <span class="str">'e'</span>)</span>
+<span class="line"><span class="fn">print</span>(t[<span class="num">0</span>])      <span class="com"># 'a' — indexing works</span></span>
+<span class="line"><span class="fn">print</span>(t[<span class="num">1</span>:<span class="num">3</span>])    <span class="com"># ('b', 'c') — slicing works</span></span>
+<span class="line">t[<span class="num">0</span>] = <span class="str">'A'</span>       <span class="com"># TypeError — tuples cannot be changed</span></span></div>
+  <p>Strings are immutable in exactly the same way — <code>name = 'Zophie a cat'</code> then <code>name[7] = 't'</code> is a <code>TypeError</code> too. Use a tuple when you want an ordered sequence of values that <strong>never changes</strong>: it tells anyone reading your code that these values are not meant to be modified. The <code>tuple()</code> and <code>list()</code> functions convert any sequence into the type you need:</p>
+  <div class="pseudo-code">
+<span class="line">t1 = (<span class="str">'a'</span>,)      <span class="com"># a one-element tuple — the comma makes it</span></span>
+<span class="line">t3 = (<span class="str">'a'</span>)       <span class="com"># just the string 'a'! parentheses alone aren't enough</span></span>
+<span class="line"><span class="fn">tuple</span>(<span class="str">'nsysu'</span>)   <span class="com"># ('n', 's', 'y', 's', 'u') — any sequence → tuple</span></span></div>
+  <p>Because tuples are immutable, they have no <code>sort()</code> or <code>reverse()</code> methods — but the built-ins <code>sorted()</code> and <code>reversed()</code> accept <em>any</em> sequence and return a new sequence with the same elements reordered, leaving the original untouched.</p>
+
+  <h3>Unpacking: many assignments in one line</h3>
+  <p>The multiple-assignment trick you met earlier is really tuple <strong>unpacking</strong>: assign any sequence to a comma-separated list of variables and Python distributes the elements. It is how functions return several values at once — and how the famous one-line swap works:</p>
+  <div class="pseudo-code">
+<span class="line">student_tuple = (<span class="str">'Amanda'</span>, [<span class="num">98</span>, <span class="num">85</span>, <span class="num">87</span>])</span>
+<span class="line">first_name, grades = student_tuple      <span class="com"># unpacking</span></span>
+<span class="line"> </span>
+<span class="line"><span class="kw">def</span> <span class="fn">total_ave</span>(grade):</span>
+<span class="line">    total = <span class="fn">sum</span>(grade)</span>
+<span class="line">    <span class="kw">return</span> total, total / <span class="fn">len</span>(grade)    <span class="com"># returns BOTH values as a tuple</span></span>
+<span class="line"> </span>
+<span class="line">total, ave = <span class="fn">total_ave</span>([<span class="num">85</span>, <span class="num">70</span>, <span class="num">100</span>, <span class="num">90</span>])   <span class="com"># 345 86.25</span></span>
+<span class="line">a, b = b, a                                 <span class="com"># the classic swap — unpacking again</span></span></div>
+
+  <div class="info-box warm">
+    <div class="info-label">⚠️ THE LONELY PARENTHESES</div>
+    <p style="margin-bottom:0;"><code>('a')</code> is <strong>not</strong> a tuple — it's the string <code>'a'</code> wearing parentheses. A one-element tuple needs the trailing comma, <code>('a',)</code>, or the <code>tuple()</code> function. Predict <code>type(('a'))</code> before you run it.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s46">
+  <div class="section-number">PREREQ P4.6 · REFERENCES VS COPIES</div>
+  <h2>P4.6 References vs copies: two labels, one list</h2>
+
+  <p>Technically, variables don't store values — they store <strong>references</strong> to the memory locations where the values live. The <code>id()</code> function shows the identity (address) behind a name. For immutable values like integers, this detail never hurts you: "changing" <code>spam</code> just re-attaches its label to a brand-new object, and <code>cheese</code> keeps pointing at the old one:</p>
+  <div class="pseudo-code">
+<span class="line">spam = <span class="num">42</span></span>
+<span class="line">cheese = spam    <span class="com"># the REFERENCE is copied — both names point at 42</span></span>
+<span class="line">spam = <span class="num">100</span>       <span class="com"># spam now refers to a completely different value</span></span>
+<span class="line">spam, cheese     <span class="com"># (100, 42) — cheese is untouched</span></span></div>
+  <p>But lists are <strong>mutable</strong>, and that changes everything. Assigning a list to a second variable copies the <em>reference</em>, not the list — so both names refer to the <strong>same list object</strong>, and a change made through either name is visible through the other:</p>
+  <div class="pseudo-code">
+<span class="line">spam = [<span class="num">0</span>, <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]</span>
+<span class="line">cheese = spam           <span class="com"># the reference is copied, NOT the list</span></span>
+<span class="line">cheese[<span class="num">1</span>] = <span class="str">'Hello!'</span>    <span class="com"># this changes THE list — there is only one</span></span>
+<span class="line">spam, cheese            <span class="com"># ([0, 'Hello!', 2, 3, 4, 5], [0, 'Hello!', 2, 3, 4, 5])</span></span></div>
+
+  <div class="info-box">
+    <div class="info-label">🏷 LABELS, NOT BOXES — THE PAYOFF</div>
+    <p style="margin-bottom:0;">P1 asked you to picture a variable as a <strong>label attached to an object</strong>, not a box containing it. Here is where the picture earns its keep: <code>cheese = spam</code> sticks a <em>second label on the same list</em>. Neither label is "the original" — mutate the object through either one and both see the change, because there is only one object. Immutable values never bite you this way: "changing" them always creates a new object and moves the label.</p>
+  </div>
+
+  <p>The same rule explains what methods do. <code>append()</code> doesn't build a new list; it <strong>modifies the object in place</strong> — the <code>id()</code> stays the same. String concatenation, by contrast, must create a new object, because strings are immutable:</p>
+  <div class="pseudo-code">
+<span class="line">eggs = [<span class="str">'Hello'</span>]</span>
+<span class="line">eggs.<span class="fn">append</span>(<span class="str">'World'</span>)         <span class="com"># in place — id(eggs) is UNCHANGED</span></span>
+<span class="line">bacon = <span class="str">'Hello'</span></span>
+<span class="line">bacon = bacon + <span class="str">'World'</span>     <span class="com"># a NEW string object — id(bacon) changes</span></span></div>
+  <p>References also decide what happens when you <strong>pass a list to a function</strong>: the parameter receives a copy of the <em>reference</em>, so the function can modify your list in place — no <code>return</code> needed (or wanted):</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">def</span> <span class="fn">eggs</span>(someParameter):</span>
+<span class="line">    someParameter.<span class="fn">append</span>(<span class="str">'Hello'</span>)   <span class="com"># modifies the caller's list!</span></span>
+<span class="line"> </span>
+<span class="line">spam = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]</span>
+<span class="line"><span class="fn">eggs</span>(spam)</span>
+<span class="line"><span class="fn">print</span>(spam)    <span class="com"># [1, 2, 3, 'Hello']</span></span></div>
+  <p>When you genuinely want an independent duplicate, ask for one: the <code>copy</code> module's <code>copy()</code> makes a new list with the same elements (a slice like <code>spam[:]</code> does too), and <code>deepcopy()</code> also copies any lists nested <em>inside</em>:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">import</span> copy</span>
+<span class="line">spam = [<span class="str">'A'</span>, <span class="str">'B'</span>, <span class="str">'C'</span>, <span class="str">'D'</span>]</span>
+<span class="line">cheese = copy.<span class="fn">copy</span>(spam)    <span class="com"># a NEW list with a different id</span></span>
+<span class="line">cheese[<span class="num">1</span>] = <span class="num">42</span></span>
+<span class="line">spam, cheese    <span class="com"># (['A', 'B', 'C', 'D'], ['A', 42, 'C', 'D']) — independent!</span></span>
+<span class="line"><span class="com"># inner lists nested inside? use copy.deepcopy() to copy those as well</span></span></div>
+  <p>One comfort: Python's automatic garbage collector deletes any value no variable refers to any more — memory management is not your job, which removes a whole family of bugs common in other languages.</p>
+
+  <div class="info-box green">
+    <div class="info-label">🎯 THE THREE-LINE RULE</div>
+    <ol style="margin-bottom:0;">
+      <li><strong>Assignment never copies a list</strong> — it copies the reference.</li>
+      <li><strong>In-place methods</strong> (<code>append()</code>, <code>remove()</code>, <code>sort()</code>, …) change the one shared list that every label sees.</li>
+      <li><strong>Want independence?</strong> Take <code>spam[:]</code> or <code>copy.copy(spam)</code> — and <code>copy.deepcopy(spam)</code> when lists are nested inside.</li>
+    </ol>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <p>References are the classic "one picture explains everything" topic — make the machine draw it for you:</p>
+    <span class="ai-prompt">Paste spam = [1, 2, 3]; cheese = spam; cheese.append(4) into pythontutor.com — then explain in your own words why print(spam) shows four items when the code never touches spam again.</span>
+    <span class="ai-prompt">Ask an AI: "When does cheese = spam[:] protect me, and when do I still need copy.deepcopy()? Show a nested-list example where the shallow copy fails."</span>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="quiz">
+  <div class="section-number">QUIZ · PREREQUISITE SELF-CHECK · NOT GRADED</div>
+  <h2>Self-check quiz: 7 questions</h2>
+  <p>Purely for your own calibration — <strong>this quiz is not graded and not part of the course assignments</strong>. Click the option you believe is right; every option explains itself, so a wrong click still teaches you something.</p>
+  <div class="quiz-progress" id="quizProgress">Solved 0 / 7</div>
+  <div id="quizContainer"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="cards">
+  <div class="section-number">FLASHCARDS · KEY TERMS</div>
+  <h2>Key-term flashcards: click to flip</h2>
+  <p>All 16 key terms from the Lists &amp; Tuples notebook. Say the definition out loud <strong>before</strong> flipping!</p>
+  <div class="card-controls">
+    <button class="btn btn-step" id="flipAll">Flip all</button>
+    <button class="btn btn-reset" id="unflipAll">Unflip all</button>
+    <button class="btn btn-play" id="shuffleCards">🔀 Shuffle</button>
+  </div>
+  <div class="flash-grid" id="flashGrid"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="reference">
+  <div class="section-number">REFERENCE · CHEAT SHEET</div>
+  <h2>P4 cheat sheet</h2>
+
+  <h3>List vs tuple</h3>
+  <table class="cmp-table">
+    <tr><th>Feature</th><th>list</th><th>tuple</th></tr>
+    <tr><td>Literal</td><td>[1, 2, 3]</td><td>(1, 2, 3)</td></tr>
+    <tr><td>One element</td><td>[1]</td><td>(1,) — comma required</td></tr>
+    <tr><td>Mutable?</td><td class="best">yes — item assignment, append…</td><td class="worst">no — TypeError on assignment</td></tr>
+    <tr><td>Index &amp; slice</td><td>t[0] · t[1:3]</td><td>t[0] · t[1:3]</td></tr>
+    <tr><td>Modifying methods</td><td>append · insert · remove · sort…</td><td>none — use sorted() / reversed()</td></tr>
+    <tr><td>Convert</td><td>list(seq)</td><td>tuple(seq)</td></tr>
+    <tr><td>Use when…</td><td class="tl">the contents will change as the program runs</td><td class="tl">the sequence of values should never change</td></tr>
+  </table>
+
+  <h3>Slicing forms (s = a list)</h3>
+  <table class="cmp-table">
+    <tr><th>Expression</th><th>You get</th><th>Note</th></tr>
+    <tr><td>s[2] · s[-1]</td><td>one element</td><td class="tl">indexing, not slicing; -1 counts from the end</td></tr>
+    <tr><td>s[1:3]</td><td>items 1 and 2</td><td class="tl">up to but NOT including index 3 — always a new list</td></tr>
+    <tr><td>s[:3] · s[3:]</td><td>first three · from index 3 on</td><td class="tl">a missing index means "the beginning" / "the end"</td></tr>
+    <tr><td>s[:]</td><td>the whole list</td><td class="tl">idiomatic full (shallow) copy</td></tr>
+    <tr><td>s[::2]</td><td>every second item</td><td class="tl">the optional third number is the step</td></tr>
+    <tr><td>s[::-1]</td><td>reversed copy</td><td class="tl">step -1 walks backwards</td></tr>
+  </table>
+
+  <h3>Common list operations</h3>
+  <table class="cmp-table">
+    <tr><th>Call</th><th>Effect</th><th>Watch out for</th></tr>
+    <tr><td>t.append(x)</td><td>add x at the end</td><td class="tl">returns None — in place; append([4,5]) nests the whole list</td></tr>
+    <tr><td>t.insert(i, x)</td><td>insert x at index i</td><td class="tl">returns None — in place</td></tr>
+    <tr><td>t.extend(seq)</td><td>add each element of seq</td><td class="tl">equivalent to t += seq</td></tr>
+    <tr><td>t.remove(x)</td><td>delete first x, by value</td><td class="tl">del t[i] deletes by index instead</td></tr>
+    <tr><td>t.sort()</td><td>sort in place, ascending</td><td class="tl">"ASCII order": Z before a; reverse=True for descending</td></tr>
+    <tr><td>t.index(x)</td><td>position of first x</td><td class="tl">ValueError if x is absent</td></tr>
+    <tr><td>x in t · x not in t</td><td>membership test → bool</td><td class="tl">no loop needed</td></tr>
+    <tr><td>len · max · min · sum</td><td>whole-list built-ins</td><td class="tl">functions, not methods — len(t), not t.len()</td></tr>
+  </table>
+
+  <h3>Copy vs reference</h3>
+  <table class="cmp-table">
+    <tr><th>Code</th><th>What you get</th><th>Changes affect the original?</th></tr>
+    <tr><td>cheese = spam</td><td>a second label on the SAME list</td><td class="worst">yes — one shared object</td></tr>
+    <tr><td>cheese = spam[:]</td><td>new list, same elements (shallow)</td><td class="tl">no — but inner nested lists are still shared</td></tr>
+    <tr><td>copy.copy(spam)</td><td>new list, same elements (shallow)</td><td class="tl">no — but inner nested lists are still shared</td></tr>
+    <tr><td>copy.deepcopy(spam)</td><td>copies inner lists too</td><td class="best">no — fully independent</td></tr>
+  </table>
+
+  <h3>Further reading</h3>
+  <ul>
+    <li><a href="https://automatetheboringstuff.com/" target="_blank" rel="noopener">Automate the Boring Stuff with Python</a> — chapter 4 covers lists, tuples, and references with the same box diagrams</li>
+    <li><a href="https://pythontutor.com/" target="_blank" rel="noopener">Python Tutor</a> — paste any snippet from P4.6 and watch the reference arrows move, step by step</li>
+  </ul>
+
+  <div class="bridge-box">
+    <div class="bb-title">🎓 AFTER THIS REFRESHER, YOU CAN…</div>
+    <ul>
+      <li>Create, index (including negative indexes), and slice lists — and predict exactly which elements a slice grabs</li>
+      <li>Modify a list with item assignment, del, and in-place methods like append() and sort() — knowing they return None</li>
+      <li>Loop over a list by item, by index with range(len(…)), or both at once with enumerate(), and test membership with in</li>
+      <li>Choose between a list and a tuple, and unpack a sequence into several variables — including the one-line swap</li>
+      <li>Draw the reference picture for cheese = spam, and know when you need [:], copy.copy(), or copy.deepcopy()</li>
+    </ul>
+    <p class="bb-next">NEXT ▸ P5 · Dictionaries &amp; Sets — containers that look things up by key instead of by position.</p>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="p3_functions.html"><div class="nav-dir">◂ PREVIOUS PREREQ</div><div class="nav-title">P3 · Functions</div></a>
+    <a href="p5_dicts_sets.html" class="next"><div class="nav-dir">NEXT PREREQ ▸</div><div class="nav-title">P5 · Dictionaries &amp; Sets</div></a>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Scientific Computing with Python · Prerequisite P4: Lists &amp; Tuples · supplementary self-study — not graded, not part of the assignments<br>
+  Digest of <code>04_Lists_tuples.ipynb</code> · quiz &amp; flashcards from the notebook's own question bank
+</footer>
+<script>
+/* ============================================================
+   Shared engines: Quiz / Flashcards
+   (buildQuiz extended for the P-pages: answers flagged isCode
+   render monospace with newlines preserved)
+   ============================================================ */
+function buildQuiz(containerId, progressId, data) {
+  const container = document.getElementById(containerId);
+  const progress  = document.getElementById(progressId);
+  const solved = new Set();
+  const LETTERS = 'ABCDEFGH';
+
+  data.forEach((q, qi) => {
+    const box = document.createElement('div');
+    box.className = 'quiz-box';
+    box.innerHTML =
+      `<div class="quiz-label">Q${qi+1} / ${data.length}${q.multi ? ' <span class="multi-badge">MULTI</span>' : ''}</div>` +
+      `<div class="quiz-q">${q.question}</div>` +
+      (q.code ? `<div class="quiz-code">${q.code.replace(/</g,'&lt;')}</div>` : '') +
+      `<div class="quiz-options">` +
+      q.answers.map((a, ai) =>
+        `<div class="quiz-opt" data-q="${qi}" data-a="${ai}">
+           <div class="opt-head"><span class="opt-letter">${LETTERS[ai]}</span><span${a.isCode ? ' class="opt-code"' : ''}>${String(a.answer).replace(/</g,'&lt;')}</span></div>
+           <div class="opt-fb"></div>
+         </div>`
+      ).join('') + `</div>`;
+    container.appendChild(box);
+  });
+
+  container.addEventListener('click', e => {
+    const opt = e.target.closest('.quiz-opt');
+    if (!opt || opt.classList.contains('revealed')) return;
+    const q = data[+opt.dataset.q], a = q.answers[+opt.dataset.a];
+    opt.classList.add('revealed', a.correct ? 'correct' : 'wrong');
+    opt.querySelector('.opt-fb').textContent = (a.correct ? '✔ Correct: ' : '✘ Not quite: ') + a.feedback;
+    if (a.correct) {
+      solved.add(+opt.dataset.q);
+      progress.textContent = `Solved ${solved.size} / ${data.length}`;
+    }
+  });
+}
+
+function buildFlashcards(gridId, data) {
+  const grid = document.getElementById(gridId);
+  function render(cards) {
+    grid.innerHTML = cards.map(c =>
+      `<div class="flashcard">
+         <div class="fc-inner">
+           <div class="fc-face fc-front"><div>${c.front}</div><div class="fc-hint">CLICK TO FLIP</div></div>
+           <div class="fc-face fc-back">${c.back}</div>
+         </div>
+       </div>`).join('');
+  }
+  render(data);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.flashcard');
+    if (card) card.classList.toggle('flipped');
+  });
+  document.getElementById('flipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.add('flipped')));
+  document.getElementById('unflipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.remove('flipped')));
+  document.getElementById('shuffleCards').addEventListener('click', ()=>{
+    const shuffled = [...data].sort(()=>Math.random()-.5);
+    render(shuffled);
+  });
+}
+
+/* ============================================================
+   QUIZ — questions/ch4 of the prerequisite notebook
+   (answers and feedback carried over verbatim)
+   ============================================================ */
+const QUIZ_DATA = [
+  { question:"What is printed by the following statements?", code:"my_list = [1, 2, 3]\nmy_list.append([4, 5])\nmy_list.extend([6, 7])\nprint(my_list)", answers:[
+    { answer:"[1, 2, 3, [4, 5], 6, 7]", correct:true, feedback:"Correct! The append method adds the entire list [4, 5] as a single element, whereas extend iterates over its argument, adding 6 and 7 individually." },
+    { answer:"[1, 2, 3, 4, 5, 6, 7]", correct:false, feedback:"Incorrect. While extend adds each element individually, append adds its argument as a single item, resulting in a nested list." },
+    { answer:"[1, 2, 3, [4, 5, 6, 7]]", correct:false, feedback:"Incorrect. Only the append method adds a list as a single element, not extend." },
+    { answer:"[1, 2, 3, 4, 5, [6, 7]]", correct:false, feedback:"Incorrect. The extend method does not add its list argument as a single nested element." } ] },
+  { question:"What is printed by the following statements?", code:"alist = [1,3,5]\nblist = [2,4,6]\nprint(alist + blist)", answers:[
+    { answer:"6", correct:false, feedback:"Concatenation does not add the lengths of the lists." },
+    { answer:"[1,2,3,4,5,6]", correct:false, feedback:"Concatenation does not reorder the items." },
+    { answer:"[1,3,5,2,4,6]", correct:true, feedback:"Yes, a new list with all the items of the first list followed by all those from the second." },
+    { answer:"[3,7,11]", correct:false, feedback:"Concatenation does not add the individual items." } ] },
+  { question:"What is printed by the following statements?", code:"alist = [3, 67, \"cat\", [56, 57, \"dog\"], [ ], 3.14, False]\nprint(alist[5])", answers:[
+    { answer:"[ ]", correct:false, feedback:"The empty list is at index 4." },
+    { answer:"3.14", correct:true, feedback:"Yes, 3.14 is at index 5 since we start counting at 0 and sublists count as one item." },
+    { answer:"False", correct:false, feedback:"False is at index 6." },
+    { answer:"dog", correct:false, feedback:"The element at index 3 is another inner list. This list only counts as one element for outer list." } ] },
+  { question:"Which of the following correctly uses indexing? Assume that a is a list or string.", answers:[
+    { answer:"w = [a]", correct:false, feedback:"No, due to the way the code was written it creates a list. This list would have one element which is the value assigned to the variable a." },
+    { answer:"a[]", correct:false, feedback:"Though this tries to use indexing, it does not specify what element should be taken from a." },
+    { answer:"x = [8]", correct:false, feedback:"No, this is an example of creating a list that contains single element 8" },
+    { answer:"t = a[0]", correct:true, feedback:"Yes, this will using indexing to get the value of the first element of a." } ] },
+  { question:"What is printed by the following statements?", code:"my_list = [10, 20, 30, 40, 20]\ndel my_list[1]\nmy_list.remove(20)\nprint(my_list)", answers:[
+    { answer:"[10, 30, 40]", correct:true, feedback:"Correct! 'del' removes the element at index 1 (20), then 'remove' deletes the first occurrence of 20 from the updated list." },
+    { answer:"[10, 20, 30, 40]", correct:false, feedback:"Incorrect. Both 'del' and 'remove' modify the list, so the original list is not retained." },
+    { answer:"[10, 30, 40, 20]", correct:false, feedback:"Incorrect. Although 'del' removes the first 20, 'remove' then deletes the remaining first occurrence of 20." },
+    { answer:"[10, 40, 20]", correct:false, feedback:"Incorrect. The modifications lead to a different list order than this option." } ] },
+  { question:"What is printed by the following statements?", code:"alist = [3, 67, \"cat\", [56, 57, \"dog\"], 2.5, 3.14, False]\nprint(alist[4:])", answers:[
+    { answer:"[2.5, 3.14, False]", correct:true, feedback:"Yes, the slice starts at index 4 and goes up to and including the last item." },
+    { answer:"[2.5, 3.14]", correct:false, feedback:"By leaving out the upper bound on the slice, we go up to and including the last item." },
+    { answer:"[[56, 57, \"dog\"], 2.5, 3.14, False]", correct:false, feedback:"index values start at 0." },
+    { answer:"2.5", correct:false, feedback:"The slicing operator will create a new list containing the elements." } ] },
+  { question:"Which of the following statements about lists and tuples in Python are true? (Select all that apply)", multi:true, answers:[
+    { answer:"Tuples are mutable, meaning their elements can be modified after creation.", correct:false, feedback:"Incorrect. Tuples are immutable; once they are created, their elements cannot be changed." },
+    { answer:"Both lists and tuples support indexing and slicing operations.", correct:true, feedback:"Correct! Both data types allow accessing elements via indexing and slicing." },
+    { answer:"Lists have methods like append() and extend(), while tuples do not support these methods.", correct:true, feedback:"Correct! Lists include methods such as append() and extend() for modification, which tuples lack since it is immutable." },
+    { answer:"The size of a tuple can be changed after it is created.", correct:false, feedback:"Incorrect. Tuples are immutable, so their size and contents remain fixed after creation." },
+    { answer:"Lists can store elements of different data types.", correct:true, feedback:"Correct! Lists can contain elements of various data types, such as integers, strings, and even other lists." } ] },
+];
+buildQuiz('quizContainer', 'quizProgress', QUIZ_DATA);
+
+/* ============================================================
+   FLASHCARDS — Key terms from the Lists & Tuples notebook
+   ============================================================ */
+const CARD_DATA = [
+  {front:"containers", back:"Structures that hold or organize multiple values, such as lists, tuples, and dictionaries."},
+  {front:"methods", back:"Functions that are associated with an object and can be called on that object."},
+  {front:"sequence", back:"An ordered collection of items, where each item can be accessed by its position."},
+  {front:"list", back:"A mutable sequence type in Python that can store a collection of items."},
+  {front:"tuple", back:"An immutable sequence type in Python that can store a collection of items."},
+  {front:"elements", back:"The individual items or values contained within a container like a list or tuple."},
+  {front:"index", back:"The numerical position of an element within a sequence, starting from 0."},
+  {front:"subscript operator", back:"The square brackets ([]) used to access elements in a container by index."},
+  {front:"slicing", back:"A method to retrieve a subset of a sequence by specifying a start, stop, and optionally a step."},
+  {front:"mutable", back:"Describes an object that can be changed after it is created, like a list."},
+  {front:"item assignment", back:"The process of changing the value of an element within a mutable container using its index."},
+  {front:"iteration by item", back:"The process of going through each element in a container one at a time."},
+  {front:"list comprehension", back:"A concise way to create lists by applying an expression to each item in a sequence."},
+  {front:"immutable", back:"Describes an object that cannot be changed after it is created, like a tuple."},
+  {front:"reference", back:"A variable in Python stores a reference, which is the memory address of an object. It points to where the object is stored rather than containing the object itself."},
+  {front:"modify in-place", back:"Changing the content of a mutable object without creating a new object."},
+];
+buildFlashcards('flashGrid', CARD_DATA);
+
+/* ============================================================
+   Floating nav active highlight
+   ============================================================ */
+(function initFloatNav(){
+  const links = document.querySelectorAll('.float-nav a[data-target]');
+  const sections = [...links].map(a => document.getElementById(a.dataset.target)).filter(Boolean);
+  function update(){
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= window.innerHeight * 0.35) active = s.id;
+    }
+    links.forEach(a => a.classList.toggle('active', a.dataset.target === active));
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>

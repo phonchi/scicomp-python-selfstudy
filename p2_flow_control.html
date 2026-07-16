@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P2 · Flow Control — Prerequisite Refresher</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:17px;}
+
+/* Hero */
+.hero{min-height:56vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2.5rem 2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:880px;}
+.hero .chapter-tag{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#f39c12;letter-spacing:.3em;margin-bottom:.8rem;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(1.9rem,4.6vw,3rem);font-weight:900;color:#fff;letter-spacing:.02em;line-height:1.25;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.15rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{font-family:'JetBrains Mono',monospace;color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.0rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+ul,ol{margin:0 0 1rem 1.4rem;}
+
+/* Prerequisite banner */
+.prereq-banner{background:#fef5e7;border:3px solid #d68910;border-radius:12px;padding:1.2rem 1.5rem;margin:0 0 2.2rem;box-shadow:0 3px 12px rgba(214,137,16,.12);}
+.prereq-banner .pb-title{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:#b9770e;font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.prereq-banner p{margin-bottom:0;font-size:.95rem;}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:40px;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box p:last-child,.info-box ul:last-child,.info-box ol:last-child{margin-bottom:0;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+.cmp-table td.tl{font-family:'Noto Sans TC',sans-serif;text-align:left;font-size:.85rem;}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.65;overflow-x:auto;margin:.8rem 0;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .str{color:#f1fa8c;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.quiz-box .quiz-label .multi-badge{background:#8e44ad;color:#fff;font-size:.68rem;padding:1px 8px;border-radius:3px;}
+.quiz-box .quiz-q{font-weight:600;margin-bottom:.6rem;}
+.quiz-box .quiz-code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:.6rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.84rem;margin-bottom:.8rem;white-space:pre-wrap;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0 0;}
+.quiz-opt{display:flex;flex-direction:column;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.9rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-head{display:flex;align-items:baseline;gap:.6rem;}
+.quiz-opt .opt-letter{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt .opt-code{white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.quiz-opt .opt-fb{display:none;font-size:.82rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--card-border);color:#555;}
+.quiz-opt.revealed .opt-fb{display:block;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.correct .opt-fb{color:#14532d;}
+.quiz-opt.wrong{background:#fef5e7;border-color:#d68910;}
+.quiz-opt.wrong .opt-letter{color:#d68910;}
+.quiz-progress{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;margin:.8rem 0;}
+
+/* Flashcards */
+.card-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.flashcard{perspective:900px;height:160px;cursor:pointer;}
+.flashcard .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+.flashcard .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.flashcard .fc-front{background:linear-gradient(150deg,#2c3e7a,#1a1a2e);color:#fff;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.flashcard .fc-front .fc-hint{font-size:.66rem;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.flashcard .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:34px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+/* Chapter nav */
+.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin:2rem 0 0;flex-wrap:wrap;}
+.chapter-nav a{flex:1;min-width:220px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.3rem;text-decoration:none;color:var(--ink);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.chapter-nav a:hover{border-color:var(--accent2);transform:translateY(-2px);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+footer a{color:var(--accent2);}
+
+/* 🤖 Ask-AI / discussion box */
+.ai-box{background:var(--card);border:2px dashed #8e44ad;border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.ai-box .ai-label{position:absolute;top:-11px;left:14px;background:#8e44ad;color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.ai-box p:last-child{margin-bottom:0;}
+.ai-box .ai-prompt{font-family:'JetBrains Mono',monospace;font-size:.85rem;background:rgba(142,68,173,.08);border-radius:6px;padding:.4rem .8rem;display:block;margin:.4rem 0;color:#6c3485;}
+
+/* 🎓 Chapter-end bridge */
+.bridge-box{background:#eafaf1;border:2px solid var(--accent3);border-radius:12px;padding:1.3rem 1.5rem;margin:2rem 0 0;}
+.bridge-box .bb-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent3);font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.bridge-box ul{margin:.3rem 0 .8rem 1.3rem;font-size:.92rem;}
+.bridge-box .bb-next{font-size:.9rem;color:var(--accent2);border-top:1px dashed var(--accent3);padding-top:.6rem;margin-bottom:0;}
+
+/* Materials map */
+.mat-map{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.9rem 0;padding:.7rem 1rem;background:var(--card);border:1px solid var(--card-border);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.mat-map .mm-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.12em;margin-right:.3rem;}
+.mat-map a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;text-decoration:none;border:2px solid var(--card-border);color:var(--accent2);transition:all .2s;background:var(--paper);}
+.mat-map a:hover{border-color:var(--accent2);}
+</style>
+</head>
+<body>
+
+<nav class="float-nav">
+  <div class="fn-title">P2 · Flow Control</div>
+  <a href="#s21" data-target="s21"><span class="fn-num">P2.1</span><span class="fn-name">Booleans &amp; comparisons</span></a>
+  <a href="#s22" data-target="s22"><span class="fn-num">P2.2</span><span class="fn-name">Logical operators</span></a>
+  <a href="#s23" data-target="s23"><span class="fn-num">P2.3</span><span class="fn-name">Blocks &amp; if / elif / else</span></a>
+  <a href="#s24" data-target="s24"><span class="fn-num">P2.4</span><span class="fn-name">while · break · continue</span></a>
+  <a href="#s25" data-target="s25"><span class="fn-num">P2.5</span><span class="fn-name">for loops &amp; range()</span></a>
+  <a href="#s26" data-target="s26"><span class="fn-num">P2.6</span><span class="fn-name">Importing modules</span></a>
+  <a href="#quiz" data-target="quiz"><span class="fn-num">QUIZ</span><span class="fn-name">Self-check quiz</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">Key-term flashcards</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">Cheat sheet</span></a>
+  <a href="#top" class="fn-top" title="Back to top"><span class="fn-num">↑ TOP</span></a>
+</nav>
+
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="chapter-tag">PREREQUISITE P2 · SUPPLEMENTARY · NOT GRADED</div>
+    <h1>Flow <span class="blue">Control</span></h1>
+    <div class="subtitle">Booleans, if/elif/else, while and for — the statements that let a program decide and repeat instead of marching straight down the page. Skim what you know; slow down where you hesitate.</div>
+    <div class="big-formula">if / elif / else ｜ while ｜ for ｜ break · continue ｜ import</div>
+    <div class="scroll-hint">Scroll down to start<span>↓</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="prereq-banner">
+  <div class="pb-title">📌 SUPPLEMENTARY PREREQUISITE — NOT PART OF THE ASSIGNMENTS</div>
+  <p>The prerequisite pages (P1–P8) review the basic Python that Modules 1–5 assume you already know. They are <strong>optional background material for self-study: nothing on these pages is graded, and none of it will appear in the course assignments</strong>（補充先備知識，不列入作業範圍）. Use them to warm up before Module 1, or to look things up whenever a module uses a Python idiom you have forgotten.</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · A REFRESHER, NOT A LECTURE — READ AT YOUR OWN PACE</div>
+  <div class="toc-grid">
+    <a href="#s21"><span class="toc-num">P2.1</span>Booleans &amp; comparison operators</a>
+    <a href="#s22"><span class="toc-num">P2.2</span>Logical operators &amp; precedence</a>
+    <a href="#s23"><span class="toc-num">P2.3</span>Blocks &amp; if / elif / else</a>
+    <a href="#s24"><span class="toc-num">P2.4</span>while loops, break &amp; continue</a>
+    <a href="#s25"><span class="toc-num">P2.5</span>for loops &amp; range()</a>
+    <a href="#s26"><span class="toc-num">P2.6</span>Importing modules</a>
+    <a href="#quiz"><span class="toc-num">QUIZ</span>Self-check quiz (6 questions)</a>
+    <a href="#cards"><span class="toc-num">CARD</span>Key-term flashcards (25 cards)</a>
+    <a href="#reference"><span class="toc-num">REF</span>Flow control cheat sheet</a>
+  </div>
+</div>
+
+<div class="info-box green">
+  <div class="info-label">📖 HOW TO USE THE P-PAGES</div>
+  <p style="margin-bottom:.4rem;">Unlike the module pages, there are no course videos here — the source is a Jupyter notebook you can run yourself:</p>
+  <p style="margin-bottom:0;">① <strong>Read</strong> each digest section below → ② <strong>Run</strong> the matching notebook cells (one click on the Colab badge — predict each output <em>before</em> you run it) → ③ <strong>Quiz</strong> yourself and flip the <a href="#cards">flashcards</a>. If everything feels obvious, you are ready — move on.</p>
+</div>
+
+<div class="mat-map">
+  <span class="mm-title">SOURCE NOTEBOOK ▸</span>
+  <a href="https://colab.research.google.com/github/phonchi/nsysu-math106A/blob/master/static_files/presentations/02_Flow_control.ipynb" target="_blank" rel="noopener">🚀 Open 02_Flow_control.ipynb in Colab</a>
+  <a href="https://github.com/phonchi/nsysu-math106A/blob/master/static_files/presentations/02_Flow_control.ipynb" target="_blank" rel="noopener">📓 View on GitHub</a>
+</div>
+
+<!-- ============================================================ -->
+<section id="s21">
+  <div class="section-number">PREREQ P2.1 · BOOLEAN VALUES &amp; COMPARISON OPERATORS</div>
+  <h2>P2.1 Boolean values &amp; comparison operators</h2>
+
+  <p>In P1 you learned that a program is a series of instructions. But programming's real strength isn't just running one instruction after another — a program can <strong>skip</strong> instructions, <strong>repeat</strong> them, or <strong>choose</strong> one of several to run. <strong>Flow control statements</strong> decide which Python instructions execute under which conditions, and they correspond directly to the symbols in a flowchart: diamonds are the branching points, rectangles are the ordinary steps, and rounded rectangles mark start and end.</p>
+  <p>Before you can write a branching point, you need a way to represent the <em>yes</em> and <em>no</em> options. A <strong>Boolean expression</strong> is an expression that is either <code>True</code> or <code>False</code>. The <code>==</code> operator compares two operands and produces <code>True</code> if they are equal:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="num">5</span> == <span class="num">5</span>)   <span class="com"># True</span></span>
+<span class="line"><span class="fn">print</span>(<span class="num">5</span> == <span class="num">6</span>)   <span class="com"># False</span></span></div>
+  <p><code>True</code> and <code>False</code> are special <strong>Boolean values</strong> that belong to the class <code>bool</code> — they are values in their own right, not strings. <code>==</code> is one of the <strong>comparison operators</strong> (also called relational operators):</p>
+  <table class="cmp-table">
+    <tr><th>Expression</th><th>Meaning</th></tr>
+    <tr><td>x == y</td><td class="tl">x is equal to y (compares the <em>values</em>)</td></tr>
+    <tr><td>x != y</td><td class="tl">x is not equal to y</td></tr>
+    <tr><td>x &gt; y · x &lt; y</td><td class="tl">x is greater / less than y</td></tr>
+    <tr><td>x &gt;= y · x &lt;= y</td><td class="tl">x is greater / less than or equal to y</td></tr>
+    <tr><td>x is y · x is not y</td><td class="tl">identity — do x and y refer to the exact <em>same object</em> in memory?</td></tr>
+  </table>
+  <p>These operators evaluate to <code>True</code> or <code>False</code> depending on the values you give them — which is exactly what a decision point needs as its condition. Predict each line, then run the cell:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="num">42</span> == <span class="num">42</span>)            <span class="com"># True</span></span>
+<span class="line"><span class="fn">print</span>(<span class="num">42</span> == <span class="num">42.0</span>)          <span class="com"># True  — it compares the value!</span></span>
+<span class="line"><span class="fn">print</span>(<span class="num">42</span> == <span class="str">'42'</span>)          <span class="com"># False — int/float are always different from a string</span></span>
+<span class="line"><span class="fn">print</span>(<span class="num">2</span> != <span class="num">3</span>)              <span class="com"># True</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">'hello'</span> == <span class="str">'Hello'</span>)  <span class="com"># False — Python is case-sensitive</span></span>
+<span class="line"><span class="fn">print</span>(<span class="num">42</span> &lt; <span class="num">100</span>)            <span class="com"># True</span></span>
+<span class="line"><span class="fn">print</span>(<span class="num">42</span> &gt;= <span class="num">100</span>)           <span class="com"># False</span></span></div>
+  <div class="info-box warm">
+    <div class="info-label">⚠️ = IS NOT ==</div>
+    <p style="margin-bottom:0;">Python's symbols differ from the math symbols you grew up with. A single <code>=</code> is the <strong>assignment</strong> statement; the double <code>==</code> is the <strong>comparison</strong> operator — mixing them up is one of the most common beginner errors. And there is no such thing as <code>=&lt;</code> or <code>=&gt;</code>: the equal sign always comes second (<code>&lt;=</code>, <code>&gt;=</code>).</p>
+  </div>
+  <p>One more distinction worth filing away: <code>==</code> asks "are the <strong>values</strong> equal?", while <code>is</code> asks "are these the <strong>same object</strong> in memory?". For this refresher, <code>==</code> is almost always the one you want.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="s22">
+  <div class="section-number">PREREQ P2.2 · LOGICAL OPERATORS &amp; PRECEDENCE</div>
+  <h2>P2.2 Logical operators &amp; precedence</h2>
+
+  <p>The three <strong>Boolean operators</strong> — <code>and</code>, <code>or</code>, and <code>not</code> — operate on Boolean values and, like comparison operators, evaluate their expressions down to a single <code>True</code> or <code>False</code>. Python evaluates the left expression first, then the right one:</p>
+  <table class="cmp-table">
+    <tr><th>A</th><th>B</th><th>A and B</th><th>A or B</th></tr>
+    <tr><td>True</td><td>True</td><td class="best">True</td><td class="best">True</td></tr>
+    <tr><td>True</td><td>False</td><td>False</td><td class="best">True</td></tr>
+    <tr><td>False</td><td>True</td><td>False</td><td class="best">True</td></tr>
+    <tr><td>False</td><td>False</td><td>False</td><td>False</td></tr>
+  </table>
+  <p>In words: <code>and</code> needs <strong>both</strong> sides <code>True</code>; <code>or</code> needs <strong>at least one</strong>. The third operator, <code>not</code>, simply flips its value: <code>not True</code> → <code>False</code>, <code>not False</code> → <code>True</code>.</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>((<span class="num">4</span> &lt; <span class="num">5</span>) <span class="kw">and</span> (<span class="num">5</span> &lt; <span class="num">6</span>))        <span class="com"># True  — both sides are True</span></span>
+<span class="line"><span class="fn">print</span>((<span class="num">6</span> &lt; <span class="num">5</span>) <span class="kw">or</span> (<span class="num">9</span> &lt; <span class="num">6</span>))         <span class="com"># False — neither side is True</span></span>
+<span class="line"><span class="fn">print</span>((<span class="num">1</span> == <span class="num">2</span>) <span class="kw">or</span> (<span class="num">2</span> == <span class="num">2</span>))       <span class="com"># True  — the right side is True</span></span>
+<span class="line"><span class="fn">print</span>(<span class="kw">not</span> (<span class="num">1</span> == <span class="num">3</span>) <span class="kw">and</span> (<span class="num">3</span> == <span class="num">4</span>))  <span class="com"># False — True and False</span></span></div>
+  <p>Like the math operators, the Boolean operators have an order of operations. Arithmetic evaluates first, then the relational (comparison) operators, and the logical operators come last — <code>not</code> before <code>and</code> before <code>or</code>:</p>
+  <table class="cmp-table">
+    <tr><th>Level</th><th>Category</th><th>Operators</th></tr>
+    <tr><td>7 (high)</td><td class="tl">exponent</td><td>**</td></tr>
+    <tr><td>6</td><td class="tl">multiplication</td><td>*, /, //, %</td></tr>
+    <tr><td>5</td><td class="tl">addition</td><td>+, -</td></tr>
+    <tr><td>4</td><td class="tl">relational</td><td>==, !=, &lt;=, &gt;=, &gt;, &lt;</td></tr>
+    <tr><td>3</td><td class="tl">logical</td><td>not</td></tr>
+    <tr><td>2</td><td class="tl">logical</td><td>and</td></tr>
+    <tr><td>1 (low)</td><td class="tl">logical</td><td>or</td></tr>
+  </table>
+  <div class="info-box">
+    <div class="info-label">🔍 CHAINED COMPARISONS</div>
+    <p style="margin-bottom:.4rem;">Python lets you chain comparisons the way mathematicians write them:</p>
+    <div class="pseudo-code" style="margin-bottom:.4rem;">
+<span class="line">x = <span class="num">3</span></span>
+<span class="line"><span class="num">0</span> &lt; x &lt; <span class="num">5</span>    <span class="com"># True — equivalent to (x &gt; 0) and (x &lt; 5), just more concise</span></span></div>
+    <p style="margin-bottom:0;">Beware the near-miss versions: <code>x &gt; 0 and &lt; 5</code> is a syntax error (each comparison needs two operands), and <code>x &gt; 0 or x &lt; 5</code> is <em>always</em> <code>True</code> — every number satisfies at least one side.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s23">
+  <div class="section-number">PREREQ P2.3 · BLOCKS &amp; IF / ELIF / ELSE</div>
+  <h2>P2.3 Blocks &amp; if / elif / else</h2>
+
+  <p>A classic result of computer science says every program can be written with just three forms of control: <strong>sequential execution</strong>, the <strong>selection statement</strong>, and the <strong>repetition statement</strong> — the idea behind <strong>structured programming</strong>. Flow control statements start with a <strong>condition</strong> (a Boolean expression, in this context given a more specific name) and are followed by a block of code called the <strong>clause</strong> or body.</p>
+
+  <h3>Blocks of code</h3>
+  <p>Python groups lines into <strong>blocks</strong>, and you can tell where a block begins and ends from the <strong>indentation</strong>. Three rules: ① a block begins when the indentation increases, ② blocks can contain other blocks, ③ a block ends when the indentation decreases back to zero or to the containing block's level. Find the three blocks in this fragment of a small game:</p>
+  <div class="pseudo-code">
+<span class="line">name = <span class="str">'Mary'</span></span>
+<span class="line">password = <span class="str">'swordfish'</span></span>
+<span class="line"><span class="kw">if</span> name == <span class="str">'Mary'</span>:</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'Hello, Mary'</span>)               <span class="com"># block 1 starts here…</span></span>
+<span class="line">    <span class="kw">if</span> password == <span class="str">'swordfish'</span>:</span>
+<span class="line">        <span class="fn">print</span>(<span class="str">'Access granted.'</span>)       <span class="com"># block 2 — one line, nested inside block 1</span></span>
+<span class="line">    <span class="kw">else</span>:</span>
+<span class="line">        <span class="fn">print</span>(<span class="str">'Wrong password.'</span>)       <span class="com"># block 3 — also one line</span></span></div>
+  <div class="info-box warm">
+    <div class="info-label">⚠️ INDENTATION IS GRAMMAR</div>
+    <p style="margin-bottom:0;">If the statements in one block do not share the same indentation, Python raises an <code>IndentationError</code> before anything runs. The convention: use <strong>four spaces</strong> per level of indentation, consistently.</p>
+  </div>
+
+  <h3>Conditional execution: if, else, elif</h3>
+  <p>The <strong>if-statement</strong> is a <strong>compound statement</strong> made of the <code>if</code> keyword, a condition, a colon, and an indented block (the <code>if</code> body). The body executes if the condition is <code>True</code> and is skipped if it is <code>False</code>. Adding <code>else</code> gives <em>alternative execution</em>: exactly one of the two <strong>branches</strong> runs.</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">if</span> name == <span class="str">'Alice'</span>:</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'Hi, Alice.'</span>)</span>
+<span class="line"><span class="kw">else</span>:</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'Hello, stranger.'</span>)</span>
+<span class="line"></span>
+<span class="line"><span class="com"># the same choice on one line — the ternary conditional operator (note: no colon!)</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">'Hi, Alice.'</span>) <span class="kw">if</span> name == <span class="str">'Alice'</span> <span class="kw">else</span> <span class="fn">print</span>(<span class="str">'Hello, stranger.'</span>)</span></div>
+  <p>When there are more than two possibilities, chain conditions with <code>elif</code> ("else, if…"). Python checks each condition in order and runs the body of the <em>first</em> one that is <code>True</code>; the final <code>else</code> catches everything left over:</p>
+  <div class="pseudo-code">
+<span class="line">name = <span class="str">'Carol'</span></span>
+<span class="line">age = <span class="num">3000</span></span>
+<span class="line"><span class="kw">if</span> name == <span class="str">'Alice'</span>:</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'Hi, Alice.'</span>)</span>
+<span class="line"><span class="kw">elif</span> age &lt; <span class="num">12</span>:</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'You are not Alice, kidd.'</span>)</span>
+<span class="line"><span class="kw">else</span>:</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'You are neither Alice nor a little kid.'</span>)   <span class="com"># ← this branch runs</span></span></div>
+  <div class="info-box">
+    <div class="info-label">📌 READ IT ALOUD</div>
+    <p style="margin-bottom:0;">In plain English an <code>if/elif/else</code> chain reads: "<em>If</em> the first condition is true, do this. <em>Else, if</em> the second condition is true, do that. <em>Otherwise</em>, do the last thing." Trace the Carol example above with your finger: which conditions are checked, and which are never even looked at?</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s24">
+  <div class="section-number">PREREQ P2.4 · WHILE LOOPS, BREAK &amp; CONTINUE</div>
+  <h2>P2.4 while loops, break &amp; continue</h2>
+
+  <p>To execute a block over and over, use a <strong>while statement</strong>: the <code>while</code> keyword, a condition, a colon, and an indented body. The body repeats as long as the condition is <code>True</code>:</p>
+  <div class="pseudo-code">
+<span class="line">spam = <span class="num">0</span></span>
+<span class="line"><span class="kw">while</span> spam &lt; <span class="num">5</span>:</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'Hello, world.'</span>)</span>
+<span class="line">    spam += <span class="num">1</span>    <span class="com"># augmented assignment — shorthand for spam = spam + 1</span></span></div>
+  <div class="info-box green">
+    <div class="info-label">🎯 THE WHILE CYCLE</div>
+    <ol style="margin-bottom:0;">
+      <li>Evaluate the condition, yielding <code>True</code> or <code>False</code>.</li>
+      <li>If it is <code>False</code>, exit the loop and continue at the next statement after the body.</li>
+      <li>If it is <code>True</code>, execute the body — then go back to step 1.</li>
+    </ol>
+  </div>
+  <p>The condition is checked at the start of every <strong>iteration</strong>, never in the middle. A common pattern keeps a program running as long as the user wants by defining a quit value:</p>
+  <div class="pseudo-code">
+<span class="line">prompt = <span class="str">"\nTell me something, and I will repeat it back to you:"</span></span>
+<span class="line">prompt += <span class="str">"\nEnter 'quit' to end the program. "</span></span>
+<span class="line">message = <span class="str">""</span>                 <span class="com"># empty, so Python has something to check the first time</span></span>
+<span class="line"><span class="kw">while</span> message != <span class="str">'quit'</span>:</span>
+<span class="line">    message = <span class="fn">input</span>(prompt)</span>
+<span class="line">    <span class="fn">print</span>(message)</span></div>
+
+  <h3>Using break to exit a loop early</h3>
+  <p>The program above works, except it prints the word <code>quit</code> as if it were a real message. The shortcut out is the <strong><code>break</code> statement</strong>: when execution reaches it, it immediately exits the loop's body:</p>
+  <div class="pseudo-code">
+<span class="line">message = <span class="str">""</span></span>
+<span class="line"><span class="kw">while</span> <span class="kw">True</span>:                  <span class="com"># an infinite loop — the condition is always True</span></span>
+<span class="line">    message = <span class="fn">input</span>(prompt)</span>
+<span class="line">    <span class="kw">if</span> message == <span class="str">'quit'</span>:</span>
+<span class="line">        <span class="kw">break</span>                <span class="com"># the only way out</span></span>
+<span class="line">    <span class="kw">else</span>:</span>
+<span class="line">        <span class="fn">print</span>(message)</span></div>
+  <div class="info-box warm">
+    <div class="info-label">⚠️ INFINITE LOOPS</div>
+    <p style="margin-bottom:0;">A <code>while True:</code> loop with a reachable <code>break</code> is a deliberate idiom — but an infinite loop that <em>never</em> exits is a common bug (typically the body forgets to move the condition toward <code>False</code>). If your program gets stuck, press <strong>CTRL-C</strong>: it sends a <code>KeyboardInterrupt</code> and stops the program immediately.</p>
+  </div>
+
+  <h3>continue: back to the top</h3>
+  <p>Rather than leaving the loop entirely, the <strong><code>continue</code> statement</strong> skips the rest of the current iteration and jumps back to the beginning of the loop. Here is a loop that counts from 1 to 10 but prints only the odd numbers:</p>
+  <div class="pseudo-code">
+<span class="line">current_number = <span class="num">0</span></span>
+<span class="line"><span class="kw">while</span> current_number &lt; <span class="num">10</span>:</span>
+<span class="line">    current_number += <span class="num">1</span></span>
+<span class="line">    <span class="kw">if</span> current_number % <span class="num">2</span> == <span class="num">0</span>:</span>
+<span class="line">        <span class="kw">continue</span>                          <span class="com"># even → skip the print, back to the top</span></span>
+<span class="line">    <span class="kw">else</span>:</span>
+<span class="line">        <span class="fn">print</span>(current_number, end=<span class="str">' '</span>)    <span class="com"># → 1 3 5 7 9</span></span></div>
+  <p>By default <code>print()</code> moves to the next line after printing; the <code>end</code> argument changes that — here each value is followed by a single space instead.</p>
+
+  <h3>"Truthy" and "falsy" values</h3>
+  <p>Python considers <code>0</code>, <code>None</code>, the empty string <code>""</code>, and empty containers as <code>False</code> in a condition — everything else counts as <code>True</code>:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">bool</span>(<span class="str">""</span>), <span class="fn">bool</span>(<span class="num">0</span>), <span class="fn">bool</span>(<span class="kw">None</span>), <span class="fn">bool</span>(prompt), <span class="fn">bool</span>(<span class="num">12</span>)</span>
+<span class="line"><span class="com"># (False, False, False, True, True)</span></span></div>
+  <div class="info-box">
+    <div class="info-label">🔍 TRUTHY CONDITIONS READ BETTER</div>
+    <p style="margin-bottom:.4rem;">That is why <code>while not name:</code> keeps asking until the user types a non-empty name, and <code>if numOfGuests:</code> only prints its reminder when the count is non-zero:</p>
+    <div class="pseudo-code" style="margin-bottom:.4rem;">
+<span class="line">name = <span class="str">''</span></span>
+<span class="line"><span class="kw">while</span> <span class="kw">not</span> name:              <span class="com"># same as: while not name != ''</span></span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'Enter your name:'</span>)</span>
+<span class="line">    name = <span class="fn">input</span>()</span>
+<span class="line"></span>
+<span class="line">numOfGuests = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">'How many guests will you have?'</span>))</span>
+<span class="line"><span class="kw">if</span> numOfGuests:              <span class="com"># same as: if numOfGuests != 0</span></span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'Be sure to have enough room for all your guests.'</span>)</span></div>
+    <p style="margin-bottom:0;">You <em>could</em> write the explicit comparisons instead — the truthy/falsy forms are simply easier to read once you know the convention.</p>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <p>Loops are where beginners' predictions go wrong most often — let an AI check your trace, not do it for you:</p>
+    <span class="ai-prompt">Paste a while loop and ask: "Trace the loop variables for the first three iterations in a table — then tell me whether this loop terminates, and why."</span>
+    <span class="ai-prompt">When should I write `while True:` with a break inside, instead of putting the real condition on the while line? Show both versions of the same loop and compare their readability.</span>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s25">
+  <div class="section-number">PREREQ P2.5 · FOR LOOPS &amp; RANGE()</div>
+  <h2>P2.5 for loops &amp; range()</h2>
+
+  <p>A <code>while</code> loop repeats as long as its condition holds — but what if you want a block to run <strong>a certain number of times</strong>? That is the <strong>for loop statement</strong> with the <code>range()</code> function. A <code>for</code> statement has: the <code>for</code> keyword, a variable name, the <strong><code>in</code> keyword</strong>, a call to <code>range()</code> (or any <strong>sequence</strong> — a <code>for</code> loop can iterate item by item), a colon, and an indented body:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="str">'My name is'</span>)</span>
+<span class="line"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>):</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'Jimmy Five Times ('</span> + <span class="fn">str</span>(i) + <span class="str">')'</span>)</span>
+<span class="line"><span class="com"># Jimmy Five Times (0) … Jimmy Five Times (4) — five iterations</span></span></div>
+  <div class="info-box">
+    <div class="info-label">📌 UP TO, BUT NOT INCLUDING</div>
+    <p style="margin-bottom:0;">The loop variable <code>i</code> starts at <code>0</code> and goes up to — <strong>but never includes</strong> — the integer passed to <code>range()</code>. That is why <code>range(5)</code> gives five iterations with <code>i</code> = 0, 1, 2, 3, 4. Off-by-one predictions almost always die on this rule.</p>
+  </div>
+  <p>You can always rewrite a <code>for</code> loop as a <code>while</code> loop — <code>for</code> is just more concise:</p>
+  <div class="pseudo-code">
+<span class="line">i = <span class="num">0</span></span>
+<span class="line"><span class="kw">while</span> i &lt; <span class="num">5</span>:</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'Jimmy Five Times ('</span> + <span class="fn">str</span>(i) + <span class="str">')'</span>)</span>
+<span class="line">    i = i + <span class="num">1</span></span></div>
+
+  <h3>The starting, stopping, and stepping arguments to range()</h3>
+  <p><code>range()</code> accepts up to three integers: a start, a stop, and a step — the amount the variable increases by after each iteration. A negative step makes the loop count <em>down</em>:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">12</span>, <span class="num">16</span>):     <span class="com"># start, stop        → 12 13 14 15</span></span>
+<span class="line">    <span class="fn">print</span>(i)</span>
+<span class="line"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">0</span>, <span class="num">10</span>, <span class="num">2</span>):   <span class="com"># start, stop, step  → 0 2 4 6 8</span></span>
+<span class="line">    <span class="fn">print</span>(i)</span>
+<span class="line"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>, -<span class="num">1</span>, -<span class="num">1</span>):  <span class="com"># negative step      → 5 4 3 2 1 0 (counts down)</span></span>
+<span class="line">    <span class="fn">print</span>(i)</span></div>
+  <p>(Since Python 3.10 the language also has a <a href="https://learnpython.com/blog/python-match-case-statement/" target="_blank" rel="noopener">match statement</a> — a switch-like control statement you may meet in newer code.)</p>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ TRY IT (OPTIONAL — NOT GRADED)</div>
+    <p style="margin-bottom:.4rem;">Use nested <code>for</code> loops to print a triangle of asterisks: row 1 has one <code>*</code>, row 2 has two, … up to row 10. Let the outer loop handle each <em>row</em> and the inner loop print each <em>column</em>:</p>
+    <div class="pseudo-code" style="margin-bottom:.4rem;">
+<span class="line"><span class="kw">for</span> row <span class="kw">in</span> <span class="fn">range</span>(__, __):</span>
+<span class="line">    <span class="kw">for</span> column <span class="kw">in</span> <span class="fn">range</span>(__, __):</span>
+<span class="line">        <span class="fn">print</span>(<span class="str">'*'</span>, end=<span class="str">''</span>)</span>
+<span class="line">    <span class="fn">print</span>()</span></div>
+    <p style="margin-bottom:0;">Predict what the two blanks must be before you try — then check yourself in the notebook, where the exercise cell is waiting.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s26">
+  <div class="section-number">PREREQ P2.6 · IMPORTING MODULES</div>
+  <h2>P2.6 Importing modules</h2>
+
+  <p>Every Python program can call the <strong>built-in functions</strong> — <code>print()</code>, <code>input()</code>, <code>len()</code>, <code>range()</code>, and friends. Python also ships with the <strong>standard library</strong>: a set of <strong>modules</strong>, each a Python program containing a related group of functions you can embed in your own programs — <code>math</code> for mathematics, <code>random</code> for random numbers, and so on.</p>
+  <p>Before using a module's functions you must <strong>import</strong> it: the <code>import</code> keyword, the module's name, and optionally more module names separated by commas. Once imported, you call its functions with the <code>module.</code> prefix so Python knows where to look:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">import</span> random</span>
+<span class="line"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>):</span>
+<span class="line">    <span class="fn">print</span>(random.<span class="fn">randint</span>(<span class="num">1</span>, <span class="num">10</span>))   <span class="com"># five random integers between 1 and 10</span></span></div>
+  <p>Browse what else ships with Python in the <a href="https://docs.python.org/3/library/index.html" target="_blank" rel="noopener">standard library index</a> — a surprising amount of scientific-computing plumbing is already there.</p>
+
+  <h3>Ending a program early with sys.exit()</h3>
+  <p>Programs normally terminate when execution reaches the bottom of the instructions. To terminate <em>before</em> that, call <code>sys.exit()</code> — it lives in the <code>sys</code> module, so <code>import sys</code> first:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">import</span> sys</span>
+<span class="line"></span>
+<span class="line"><span class="kw">while</span> <span class="kw">True</span>:</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'Type exit to exit.'</span>)</span>
+<span class="line">    response = <span class="fn">input</span>()</span>
+<span class="line">    <span class="kw">if</span> response == <span class="str">'exit'</span>:</span>
+<span class="line">        sys.<span class="fn">exit</span>()                        <span class="com"># the program ends right here</span></span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'You typed '</span> + response + <span class="str">'.'</span>)</span>
+<span class="line"><span class="fn">print</span>(<span class="str">'This line will not be printed'</span>)</span></div>
+  <div class="info-box green">
+    <div class="info-label">🎯 WHERE THIS IS GOING</div>
+    <p style="margin-bottom:0;">With conditions, your programs can decide what to execute and what to skip; with loops, they can repeat work while a condition holds. There is one more kind of flow control left: <strong>writing your own functions</strong> — jumping into a named block of code and back. That is exactly the topic of the next prerequisite page.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="quiz">
+  <div class="section-number">QUIZ · PREREQUISITE SELF-CHECK · NOT GRADED</div>
+  <h2>Self-check quiz: 6 questions</h2>
+  <p>Purely for your own calibration — <strong>this quiz is not graded and not part of the course assignments</strong>. Click the option you believe is right; every option explains itself, so a wrong click still teaches you something.</p>
+  <div class="quiz-progress" id="quizProgress">Solved 0 / 6</div>
+  <div id="quizContainer"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="cards">
+  <div class="section-number">FLASHCARDS · KEY TERMS</div>
+  <h2>Key-term flashcards: click to flip</h2>
+  <p>All 25 key terms from the Flow Control notebook. Say the definition out loud <strong>before</strong> flipping!</p>
+  <div class="card-controls">
+    <button class="btn btn-step" id="flipAll">Flip all</button>
+    <button class="btn btn-reset" id="unflipAll">Unflip all</button>
+    <button class="btn btn-play" id="shuffleCards">🔀 Shuffle</button>
+  </div>
+  <div class="flash-grid" id="flashGrid"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="reference">
+  <div class="section-number">REFERENCE · CHEAT SHEET</div>
+  <h2>P2 cheat sheet</h2>
+
+  <h3>Comparison &amp; logical operators</h3>
+  <table class="cmp-table">
+    <tr><th>Expression</th><th>Value</th><th>Watch out for</th></tr>
+    <tr><td>42 == 42.0</td><td>True</td><td class="tl">== compares values; a single = assigns — and there is no =&lt; or =&gt;</td></tr>
+    <tr><td>42 == '42'</td><td>False</td><td class="tl">an int/float is always different from a string</td></tr>
+    <tr><td>'hello' == 'Hello'</td><td>False</td><td class="tl">string comparison is case-sensitive</td></tr>
+    <tr><td>(4 &lt; 5) and (5 &lt; 6)</td><td>True</td><td class="tl">and needs both sides True; or needs at least one</td></tr>
+    <tr><td>not (1 == 3) and (3 == 4)</td><td>False</td><td class="tl">precedence: not first, then and, then or</td></tr>
+    <tr><td>0 &lt; x &lt; 5</td><td>chained</td><td class="tl">same as (x &gt; 0) and (x &lt; 5) — more concise</td></tr>
+    <tr><td>bool('') · bool(0) · bool(None)</td><td>False</td><td class="tl">falsy values — everything else is truthy</td></tr>
+  </table>
+
+  <h3>Loop &amp; exit keywords</h3>
+  <table class="cmp-table">
+    <tr><th>Keyword</th><th>What it does</th><th>Note</th></tr>
+    <tr><td>while</td><td class="tl">repeats its body as long as the condition is True</td><td class="tl">condition checked at the start of every iteration</td></tr>
+    <tr><td>for … in …</td><td class="tl">iterates over a sequence item by item</td><td class="tl">works with range() or any sequence (e.g. a string)</td></tr>
+    <tr><td>break</td><td class="tl">exits the loop immediately</td><td class="tl">the only way out of a while True: loop</td></tr>
+    <tr><td>continue</td><td class="tl">skips the rest of this iteration, back to the top</td><td class="tl">the loop condition is re-checked as usual</td></tr>
+    <tr><td>import</td><td class="tl">loads a module from the standard library</td><td class="tl">then call functions as module.function()</td></tr>
+    <tr><td>sys.exit()</td><td class="tl">ends the whole program early</td><td class="tl">needs import sys first; CTRL-C rescues a stuck loop</td></tr>
+  </table>
+
+  <h3>The three forms of range()</h3>
+  <table class="cmp-table">
+    <tr><th>Call</th><th>Produces</th><th>Note</th></tr>
+    <tr><td>range(5)</td><td>0 1 2 3 4</td><td class="tl">stop only — starts at 0, never includes the stop value</td></tr>
+    <tr><td>range(12, 16)</td><td>12 13 14 15</td><td class="tl">start, stop</td></tr>
+    <tr><td>range(0, 10, 2)</td><td>0 2 4 6 8</td><td class="tl">start, stop, step — step is added after each iteration</td></tr>
+    <tr><td>range(5, -1, -1)</td><td>5 4 3 2 1 0</td><td class="tl">a negative step counts down</td></tr>
+  </table>
+
+  <h3>Further reading</h3>
+  <ul>
+    <li><a href="https://automatetheboringstuff.com/" target="_blank" rel="noopener">Automate the Boring Stuff with Python</a> — chapter 2 covers this same ground, free online</li>
+    <li><a href="https://www.py4e.com/" target="_blank" rel="noopener">Python for Everybody</a> — gentle videos + exercises if you want more repetition</li>
+  </ul>
+
+  <div class="bridge-box">
+    <div class="bb-title">🎓 AFTER THIS REFRESHER, YOU CAN…</div>
+    <ul>
+      <li>Evaluate any condition by hand — comparisons combined with and/or/not, respecting the precedence ladder</li>
+      <li>Trace an if/elif/else chain and say exactly which branch runs, and why the others are skipped</li>
+      <li>Predict the output of while and for loops — including what break, continue, and range(start, stop, step) do to the flow</li>
+      <li>Spot an infinite loop, explain truthy/falsy conditions like <code>while not name:</code>, and stop a stuck program with CTRL-C</li>
+      <li>Import a standard-library module and call its functions with the <code>module.</code> prefix</li>
+    </ul>
+    <p class="bb-next">NEXT ▸ P3 · Functions — the next kind of flow control: def, arguments, and return values, so a block of code gets a name you can reuse.</p>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="p1_python_basics.html"><div class="nav-dir">◂ PREVIOUS PREREQ</div><div class="nav-title">P1 · Python Basics</div></a>
+    <a href="p3_functions.html" class="next"><div class="nav-dir">NEXT PREREQ ▸</div><div class="nav-title">P3 · Functions</div></a>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Scientific Computing with Python · Prerequisite P2: Flow Control · supplementary self-study — not graded, not part of the assignments<br>
+  Digest of <code>02_Flow_control.ipynb</code> · quiz &amp; flashcards from the notebook's own question bank
+</footer>
+<script>
+/* ============================================================
+   Shared engines: Quiz / Flashcards
+   (buildQuiz extended for the P-pages: answers flagged isCode
+   render monospace with newlines preserved)
+   ============================================================ */
+function buildQuiz(containerId, progressId, data) {
+  const container = document.getElementById(containerId);
+  const progress  = document.getElementById(progressId);
+  const solved = new Set();
+  const LETTERS = 'ABCDEFGH';
+
+  data.forEach((q, qi) => {
+    const box = document.createElement('div');
+    box.className = 'quiz-box';
+    box.innerHTML =
+      `<div class="quiz-label">Q${qi+1} / ${data.length}${q.multi ? ' <span class="multi-badge">MULTI</span>' : ''}</div>` +
+      `<div class="quiz-q">${q.question}</div>` +
+      (q.code ? `<div class="quiz-code">${q.code.replace(/</g,'&lt;')}</div>` : '') +
+      `<div class="quiz-options">` +
+      q.answers.map((a, ai) =>
+        `<div class="quiz-opt" data-q="${qi}" data-a="${ai}">
+           <div class="opt-head"><span class="opt-letter">${LETTERS[ai]}</span><span${a.isCode ? ' class="opt-code"' : ''}>${String(a.answer).replace(/</g,'&lt;')}</span></div>
+           <div class="opt-fb"></div>
+         </div>`
+      ).join('') + `</div>`;
+    container.appendChild(box);
+  });
+
+  container.addEventListener('click', e => {
+    const opt = e.target.closest('.quiz-opt');
+    if (!opt || opt.classList.contains('revealed')) return;
+    const q = data[+opt.dataset.q], a = q.answers[+opt.dataset.a];
+    opt.classList.add('revealed', a.correct ? 'correct' : 'wrong');
+    opt.querySelector('.opt-fb').textContent = (a.correct ? '✔ Correct: ' : '✘ Not quite: ') + a.feedback;
+    if (a.correct) {
+      solved.add(+opt.dataset.q);
+      progress.textContent = `Solved ${solved.size} / ${data.length}`;
+    }
+  });
+}
+
+function buildFlashcards(gridId, data) {
+  const grid = document.getElementById(gridId);
+  function render(cards) {
+    grid.innerHTML = cards.map(c =>
+      `<div class="flashcard">
+         <div class="fc-inner">
+           <div class="fc-face fc-front"><div>${c.front}</div><div class="fc-hint">CLICK TO FLIP</div></div>
+           <div class="fc-face fc-back">${c.back}</div>
+         </div>
+       </div>`).join('');
+  }
+  render(data);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.flashcard');
+    if (card) card.classList.toggle('flipped');
+  });
+  document.getElementById('flipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.add('flipped')));
+  document.getElementById('unflipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.remove('flipped')));
+  document.getElementById('shuffleCards').addEventListener('click', ()=>{
+    const shuffled = [...data].sort(()=>Math.random()-.5);
+    render(shuffled);
+  });
+}
+
+/* ============================================================
+   QUIZ — questions/ch2 of the prerequisite notebook
+   (answers and feedback carried over verbatim)
+   ============================================================ */
+const QUIZ_DATA = [
+  { question:"How many lines of code (statement) can appear in the indented code block below the if and else lines?", answers:[
+    { answer:" Just one.", correct:false, feedback:"Each block may also contain more than one." },
+    { answer:"Zero or more.", correct:false, feedback:"Each block must contain at least one statement." },
+    { answer:"One or more.", correct:true, feedback:"Yes, a block must contain at least one statement and can have many statements." },
+    { answer:"One or more, and each must contain the same number.", correct:false, feedback:"The blocks may contain different numbers of statements!" } ] },
+  { question:"Which of the following is a Boolean expression? Select all that apply.", multi:true, answers:[
+    { answer:"True", correct:true, feedback:"A boolean expression is an expression that evaluates to a boolean value. True and False itsself are also expression!" },
+    { answer:"3 == 4", correct:true, feedback:"The comparison between two numbers via == results in either True or False." },
+    { answer:"3 + 4", correct:false, feedback:"3+4 evaluates to 7, which is a number, not a Boolean value. So it is an expression but not Boolean expression!" },
+    { answer:"3 + 4 == 7", correct:true, feedback:"3+4 evaluates to 7. 7 == 7 then evaluates to True, which is a Boolean value." },
+    { answer:"\"False\"", correct:false, feedback:"With the double quotes surrounding it, False is interpreted as a string, not a Boolean value. If the quotes had not been included, False alone is in fact a Boolean value and thus a Boolean expression." } ] },
+  { question:"What will the following code print if x = 3, y = 5, and z = 2?", code:"if x < y and x < z: \n    print(\"a\") \nelif y < x and y < z:\n    print(\"b\") \nelse:\n    print(\"c\")", answers:[
+    { answer:"a", correct:false, feedback:"While the value in x is less than the value in y (3 is less than 5) it is not less than the value in z (3 is not less than 2)." },
+    { answer:"b", correct:false, feedback:"The value in y is not less than the value in x (5 is not less than 3)." },
+    { answer:"c", correct:true, feedback:"Since the first two Boolean expressions are false the else will be executed." } ] },
+  { question:"How many times is the word HELLO printed by the following statements?", code:"s = \"python rocks\"\nfor ch in s:\n    print(\"HELLO\")", answers:[
+    { answer:"10", correct:false, feedback:"Iteration by item will process once for each item in the sequence." },
+    { answer:"11", correct:false, feedback:"The blank is part of the sequence." },
+    { answer:"12", correct:true, feedback:"Yes, there are 12 characters, including the blank." },
+    { answer:"Error, the for statement needs to use the range() function.", correct:false, feedback:"The for statement can iterate over a sequence item by item." } ] },
+  { question:"What is the correct Python expression for checking to see if a number stored in a variable x is between 0 and 5.", multi:true, answers:[
+    { answer:"x > 0 and < 5", correct:false, feedback:"Each comparison must be between exactly two values. In this case the right-hand expression < 5 lacks a value on its left." },
+    { answer:"0 < x < 5", correct:true, feedback:"The expression is equivalent to writing ``x > 0 and x < 5``, but this chained comparison is even more concise!" },
+    { answer:"x > 0 or x < 5", correct:false, feedback:"It will evaluate to true for all numbers that are either greater than 0 or less than 5. Because all numbers are either greater than 0 or less than 5, this expression will always be True!" },
+    { answer:"x > 0 and x < 5", correct:true, feedback:"Yes, with an ``and`` keyword both expressions must be true so the number must be greater than 0 an less than 5 for this expression to be true." } ] },
+  { question:"The following code contains an infinite loop. Which is the best explanation for why the loop does not terminate?", code:"n = 10 \nanswer = 1 \nwhile ( n > 0 ):\n    answer = answer + n\n    n = n + 1\nprint(answer)", answers:[
+    { answer:"n starts at 10 and is incremented by 1 each time through the loop, so it will always be positive", correct:true, feedback:"The loop will run as long as n is positive. In this case, we can see that n will never become non-positive." },
+    { answer:"answer starts at 1 and is incremented by n each time, so it will always be positive", correct:false, feedback:"While it is true that answer will always be positive, answer is not considered in the loop condition." },
+    { answer:"You cannot compare n to 0 in while loop. You must compare it to another variable.", correct:false, feedback:"It is valid to compare n to 0. Though indirectly, this is what causes the infinite loop." },
+    { answer:"In the while loop body, we must set n to False, and this code does not do that.", correct:false, feedback:"The loop condition must become False for the loop to terminate, but n by itself is not the condition in this case." } ] },
+];
+buildQuiz('quizContainer', 'quizProgress', QUIZ_DATA);
+
+/* ============================================================
+   FLASHCARDS — Key terms from the Flow Control notebook
+   ============================================================ */
+const CARD_DATA = [
+  {front:"Flow control statements", back:"Instructions that determine the order in which code is executed."},
+  {front:"boolean expression", back:"An expression that evaluates to either True or False."},
+  {front:"Boolean values", back:"The two truth values in Python: True and False."},
+  {front:"comparison operators", back:"Operators like ==, !=, <, >, <=, and >= that compare values."},
+  {front:"Boolean operators", back:"Operators such as and, or, and not used to combine or invert boolean expressions."},
+  {front:"sequential execution", back:"The process where code runs one statement after the other in order."},
+  {front:"selection statement", back:"A statement that lets the program choose between different paths based on conditions (e.g., if statements)."},
+  {front:"repetition statement", back:"A loop that repeats a block of code until a condition is met (e.g., for or while loops)."},
+  {front:"structured programming", back:"A style of programming that uses blocks, loops, and functions to create clear, logical code."},
+  {front:"condition", back:"A boolean expression used to decide which code path to take."},
+  {front:"clause", back:"A part of a control structure, such as the condition part of an if-statement."},
+  {front:"block of code", back:"A group of statements that are executed together, usually defined by indentation."},
+  {front:"indentation", back:"Spaces at the beginning of a line that define blocks of code in Python."},
+  {front:"control structures", back:"Constructs like loops and conditional statements that control the flow of execution."},
+  {front:"if-statement", back:"A conditional statement that executes code only if a specified condition is True."},
+  {front:"ternary conditional operator", back:"A compact way to write an if-else statement that returns one of two values based on a condition."},
+  {front:"while statement", back:"A loop that repeats a block of code as long as a condition remains True."},
+  {front:"Augmented assignments", back:"Shorthand operators (like +=, -=, *=) that update a variable's value in place."},
+  {front:"break statement", back:"A command that immediately exits a loop."},
+  {front:"infinite loop", back:"A loop that never stops running on its own unless interrupted."},
+  {front:"continue statement", back:"A command that skips the rest of the current loop iteration and moves to the next one."},
+  {front:"for loop statement", back:"A loop that iterates over each item in a sequence, executing a block of code for each item."},
+  {front:"`in`", back:"A keyword used to check if a value exists in a sequence or to iterate over items in that sequence."},
+  {front:"sequence type", back:"Data types that store ordered collections of items, such as lists, tuples, and strings."},
+  {front:"standard library", back:"A collection of modules and functions that come with Python to help perform many common tasks."},
+];
+buildFlashcards('flashGrid', CARD_DATA);
+
+/* ============================================================
+   Floating nav active highlight
+   ============================================================ */
+(function initFloatNav(){
+  const links = document.querySelectorAll('.float-nav a[data-target]');
+  const sections = [...links].map(a => document.getElementById(a.dataset.target)).filter(Boolean);
+  function update(){
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= window.innerHeight * 0.35) active = s.id;
+    }
+    links.forEach(a => a.classList.toggle('active', a.dataset.target === active));
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>

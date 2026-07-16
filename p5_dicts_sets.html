@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P5 · Dictionaries &amp; Sets — Prerequisite Refresher</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:17px;}
+
+/* Hero */
+.hero{min-height:56vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2.5rem 2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:880px;}
+.hero .chapter-tag{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#f39c12;letter-spacing:.3em;margin-bottom:.8rem;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(1.9rem,4.6vw,3rem);font-weight:900;color:#fff;letter-spacing:.02em;line-height:1.25;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.15rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{font-family:'JetBrains Mono',monospace;color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.0rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+ul,ol{margin:0 0 1rem 1.4rem;}
+
+/* Prerequisite banner */
+.prereq-banner{background:#fef5e7;border:3px solid #d68910;border-radius:12px;padding:1.2rem 1.5rem;margin:0 0 2.2rem;box-shadow:0 3px 12px rgba(214,137,16,.12);}
+.prereq-banner .pb-title{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:#b9770e;font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.prereq-banner p{margin-bottom:0;font-size:.95rem;}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:40px;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box p:last-child,.info-box ul:last-child,.info-box ol:last-child{margin-bottom:0;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+.cmp-table td.tl{font-family:'Noto Sans TC',sans-serif;text-align:left;font-size:.85rem;}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.65;overflow-x:auto;margin:.8rem 0;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .str{color:#f1fa8c;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.quiz-box .quiz-label .multi-badge{background:#8e44ad;color:#fff;font-size:.68rem;padding:1px 8px;border-radius:3px;}
+.quiz-box .quiz-q{font-weight:600;margin-bottom:.6rem;}
+.quiz-box .quiz-code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:.6rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.84rem;margin-bottom:.8rem;white-space:pre-wrap;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0 0;}
+.quiz-opt{display:flex;flex-direction:column;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.9rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-head{display:flex;align-items:baseline;gap:.6rem;}
+.quiz-opt .opt-letter{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt .opt-code{white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.quiz-opt .opt-fb{display:none;font-size:.82rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--card-border);color:#555;}
+.quiz-opt.revealed .opt-fb{display:block;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.correct .opt-fb{color:#14532d;}
+.quiz-opt.wrong{background:#fef5e7;border-color:#d68910;}
+.quiz-opt.wrong .opt-letter{color:#d68910;}
+.quiz-progress{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;margin:.8rem 0;}
+
+/* Flashcards */
+.card-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.flashcard{perspective:900px;height:160px;cursor:pointer;}
+.flashcard .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+.flashcard .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.flashcard .fc-front{background:linear-gradient(150deg,#2c3e7a,#1a1a2e);color:#fff;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.flashcard .fc-front .fc-hint{font-size:.66rem;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.flashcard .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:34px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+/* Chapter nav */
+.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin:2rem 0 0;flex-wrap:wrap;}
+.chapter-nav a{flex:1;min-width:220px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.3rem;text-decoration:none;color:var(--ink);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.chapter-nav a:hover{border-color:var(--accent2);transform:translateY(-2px);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+footer a{color:var(--accent2);}
+
+/* 🤖 Ask-AI / discussion box */
+.ai-box{background:var(--card);border:2px dashed #8e44ad;border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.ai-box .ai-label{position:absolute;top:-11px;left:14px;background:#8e44ad;color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.ai-box p:last-child{margin-bottom:0;}
+.ai-box .ai-prompt{font-family:'JetBrains Mono',monospace;font-size:.85rem;background:rgba(142,68,173,.08);border-radius:6px;padding:.4rem .8rem;display:block;margin:.4rem 0;color:#6c3485;}
+
+/* 🎓 Chapter-end bridge */
+.bridge-box{background:#eafaf1;border:2px solid var(--accent3);border-radius:12px;padding:1.3rem 1.5rem;margin:2rem 0 0;}
+.bridge-box .bb-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent3);font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.bridge-box ul{margin:.3rem 0 .8rem 1.3rem;font-size:.92rem;}
+.bridge-box .bb-next{font-size:.9rem;color:var(--accent2);border-top:1px dashed var(--accent3);padding-top:.6rem;margin-bottom:0;}
+
+/* Materials map */
+.mat-map{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.9rem 0;padding:.7rem 1rem;background:var(--card);border:1px solid var(--card-border);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.mat-map .mm-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.12em;margin-right:.3rem;}
+.mat-map a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;text-decoration:none;border:2px solid var(--card-border);color:var(--accent2);transition:all .2s;background:var(--paper);}
+.mat-map a:hover{border-color:var(--accent2);}
+</style>
+</head>
+<body>
+
+<nav class="float-nav">
+  <div class="fn-title">P5 · Dicts &amp; Sets</div>
+  <a href="#s51" data-target="s51"><span class="fn-num">P5.1</span><span class="fn-name">Dictionaries: key–value pairs</span></a>
+  <a href="#s52" data-target="s52"><span class="fn-num">P5.2</span><span class="fn-name">keys(), values() &amp; items()</span></a>
+  <a href="#s53" data-target="s53"><span class="fn-num">P5.3</span><span class="fn-name">Missing keys: get() &amp; setdefault()</span></a>
+  <a href="#s54" data-target="s54"><span class="fn-num">P5.4</span><span class="fn-name">Nested data &amp; comprehensions</span></a>
+  <a href="#s55" data-target="s55"><span class="fn-num">P5.5</span><span class="fn-name">Sets &amp; set operations</span></a>
+  <a href="#quiz" data-target="quiz"><span class="fn-num">QUIZ</span><span class="fn-name">Self-check quiz</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">Key-term flashcards</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">Cheat sheet</span></a>
+  <a href="#top" class="fn-top" title="Back to top"><span class="fn-num">↑ TOP</span></a>
+</nav>
+
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="chapter-tag">PREREQUISITE P5 · SUPPLEMENTARY · NOT GRADED</div>
+    <h1><span class="green">Dictionaries</span> &amp; <span class="orange">Sets</span></h1>
+    <div class="subtitle">Look things up by name instead of position, and let a collection refuse duplicates for you — the two non-sequence containers behind every lookup table and membership test. Skim what you know; slow down where you hesitate.</div>
+    <div class="big-formula">{key: value} ｜ get() ｜ items() ｜ {1, 2, 3} ｜ union · intersection</div>
+    <div class="scroll-hint">Scroll down to start<span>↓</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="prereq-banner">
+  <div class="pb-title">📌 SUPPLEMENTARY PREREQUISITE — NOT PART OF THE ASSIGNMENTS</div>
+  <p>The prerequisite pages (P1–P8) review the basic Python that Modules 1–5 assume you already know. They are <strong>optional background material for self-study: nothing on these pages is graded, and none of it will appear in the course assignments</strong>（補充先備知識，不列入作業範圍）. Use them to warm up before Module 1, or to look things up whenever a module uses a Python idiom you have forgotten.</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · A REFRESHER, NOT A LECTURE — READ AT YOUR OWN PACE</div>
+  <div class="toc-grid">
+    <a href="#s51"><span class="toc-num">P5.1</span>Dictionaries: key–value pairs</a>
+    <a href="#s52"><span class="toc-num">P5.2</span>keys(), values(), items() &amp; in</a>
+    <a href="#s53"><span class="toc-num">P5.3</span>Missing keys: get() &amp; setdefault()</a>
+    <a href="#s54"><span class="toc-num">P5.4</span>Nested data &amp; comprehensions</a>
+    <a href="#s55"><span class="toc-num">P5.5</span>Sets &amp; set operations</a>
+    <a href="#quiz"><span class="toc-num">QUIZ</span>Self-check quiz (5 questions)</a>
+    <a href="#cards"><span class="toc-num">CARD</span>Key-term flashcards (7 cards)</a>
+    <a href="#reference"><span class="toc-num">REF</span>P5 cheat sheet</a>
+  </div>
+</div>
+
+<div class="info-box green">
+  <div class="info-label">📖 HOW TO USE THE P-PAGES</div>
+  <p style="margin-bottom:.4rem;">Unlike the module pages, there are no course videos here — the source is a Jupyter notebook you can run yourself:</p>
+  <p style="margin-bottom:0;">① <strong>Read</strong> each digest section below → ② <strong>Run</strong> the matching notebook cells (one click on the Colab badge — predict each output <em>before</em> you run it) → ③ <strong>Quiz</strong> yourself and flip the <a href="#cards">flashcards</a>. If everything feels obvious, you are ready — move on.</p>
+</div>
+
+<div class="mat-map">
+  <span class="mm-title">SOURCE NOTEBOOK ▸</span>
+  <a href="https://colab.research.google.com/github/phonchi/nsysu-math106A/blob/master/static_files/presentations/05_Dictionaries_sets.ipynb" target="_blank" rel="noopener">🚀 Open 05_Dictionaries_sets.ipynb in Colab</a>
+  <a href="https://github.com/phonchi/nsysu-math106A/blob/master/static_files/presentations/05_Dictionaries_sets.ipynb" target="_blank" rel="noopener">📓 View on GitHub</a>
+</div>
+
+<!-- ============================================================ -->
+<section id="s51">
+  <div class="section-number">PREREQ P5.1 · DICTIONARIES: KEY–VALUE PAIRS</div>
+  <h2>P5.1 Dictionaries: key–value pairs</h2>
+
+  <p>Strings, lists, and tuples are <strong>sequences</strong> — you reach into them by integer position. This page covers Python's two built-in <strong>non-sequence</strong> collections. A <strong>dictionary</strong> is an unordered collection that stores <strong>key–value pairs</strong>, mapping immutable keys to values just as a paper dictionary maps words to definitions. A <strong>set</strong> is an unordered collection of unique immutable elements.</p>
+  <p>Like a list, a dictionary is a <em>mutable</em> collection of many values — but more general. In a list the index positions have to be integers; in a dictionary the indices (called <strong>keys</strong>) can be any immutable type, such as strings, integers, or tuples. Each key maps to a <strong>value</strong>, and the pairing of the two is called a key–value pair or an <strong>item</strong>. Keys must be unique — no duplicates — but multiple keys may map to the same value.</p>
+  <p>Here is a dictionary that maps subjects to grades — string keys, integer values:</p>
+  <div class="pseudo-code">
+<span class="line">grade = <span class="fn">dict</span>()               <span class="com"># a new, empty dictionary — type({}) is dict too</span></span>
+<span class="line">grade[<span class="str">'calculus'</span>] = <span class="num">85</span>       <span class="com"># add an item: key 'calculus', value 85 (colon in output)</span></span>
+<span class="line"></span>
+<span class="line"><span class="com"># or build the whole thing at once with a {key: value, …} literal:</span></span>
+<span class="line">grade = {<span class="str">'calculus'</span>: <span class="num">85</span>, <span class="str">'introduction to mathematics'</span>: <span class="num">80</span>,</span>
+<span class="line">         <span class="str">'computer programming'</span>: <span class="num">90</span>, <span class="str">'linear algebra'</span>: <span class="num">95</span>}</span>
+<span class="line"></span>
+<span class="line"><span class="fn">print</span>(grade[<span class="str">'computer programming'</span>])   <span class="com"># 90 — look a value up by its key</span></span>
+<span class="line"><span class="fn">len</span>(grade)                              <span class="com"># 4 — the number of items</span></span></div>
+  <p>You <em>could</em> store the same data as two parallel lists, <code>subjects</code> and <code>score</code> — but keeping them lined up as you update and maintain the data quickly becomes tedious. A dictionary keeps each subject glued to its score.</p>
+  <p>Adding, updating, and deleting entries all look like their list counterparts — assignment through the subscript operator adds or overwrites, and <code>del</code> removes:</p>
+  <div class="pseudo-code">
+<span class="line">grade[<span class="str">'English'</span>]         <span class="com"># KeyError! — this key does not exist (yet)</span></span>
+<span class="line">grade[<span class="str">'English'</span>] = <span class="num">100</span>   <span class="com"># add a new key–value pair</span></span>
+<span class="line"><span class="kw">del</span> grade[<span class="str">'English'</span>]     <span class="com"># delete it again</span></span></div>
+  <div class="info-box warm">
+    <div class="info-label">⚠️ A DICTIONARY IS NOT A SEQUENCE</div>
+    <ul style="margin-bottom:0;">
+      <li><code>grade[0]</code> does not mean "the first item" — dictionaries are unordered, so there is no integer indexing and no slicing. (Imagine a dictionary whose keys happen to be <code>4, 2, 1, 0</code>…)</li>
+      <li>Accessing a key that does not exist raises <code>KeyError</code> — the dictionary cousin of a list's out-of-range <code>IndexError</code>.</li>
+      <li>Since Python 3.7 dictionaries <em>remember insertion order</em>, but treat them as unordered anyway: never write code that depends on the order of the key–value pairs.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s52">
+  <div class="section-number">PREREQ P5.2 · KEYS, VALUES &amp; ITEMS</div>
+  <h2>P5.2 keys(), values(), items() — and the in operator</h2>
+
+  <p>Three dictionary methods hand you list-like values of the dictionary's contents: <code>keys()</code>, <code>values()</code>, and <code>items()</code>. What they return are not true lists (their types are <code>dict_keys</code>, <code>dict_values</code>, and <code>dict_items</code>), but — just like a <code>range</code> object — they can be used directly in <code>for</code> loops. When you want a real list, pass the result to <code>list()</code>:</p>
+  <div class="pseudo-code">
+<span class="line">subject = <span class="fn">list</span>(grade.<span class="fn">keys</span>())     <span class="com"># ['calculus', 'introduction to mathematics', …]</span></span>
+<span class="line">score   = <span class="fn">list</span>(grade.<span class="fn">values</span>())   <span class="com"># [85, 80, 90, 95]</span></span>
+<span class="line"><span class="fn">list</span>(grade.<span class="fn">items</span>())              <span class="com"># [('calculus', 85), ('introduction to mathematics', 80), …]</span></span></div>
+  <p><code>items()</code> returns each key–value pair as a <strong>tuple</strong> — and combined with multiple assignment in a <code>for</code> loop, that gives the classic pattern for traversing keys and values together:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">for</span> v <span class="kw">in</span> grade.<span class="fn">values</span>():   <span class="com"># loop over the values only</span></span>
+<span class="line">    <span class="fn">print</span>(v)</span>
+<span class="line"></span>
+<span class="line"><span class="kw">for</span> k <span class="kw">in</span> grade:            <span class="com"># same as: for k in grade.keys()</span></span>
+<span class="line">    <span class="fn">print</span>(k)</span>
+<span class="line"></span>
+<span class="line"><span class="kw">for</span> key, val <span class="kw">in</span> grade.<span class="fn">items</span>():   <span class="com"># the nicest pattern: keys AND values in one loop</span></span>
+<span class="line">    <span class="fn">print</span>(key, val)</span></div>
+  <p>The <code>in</code> and <code>not in</code> operators you know from lists also work here — for keys <em>or</em> values, depending on what you ask:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="str">'calculus'</span> <span class="kw">in</span> grade, <span class="str">'English'</span> <span class="kw">in</span> grade.<span class="fn">keys</span>(), <span class="num">85</span> <span class="kw">in</span> grade.<span class="fn">values</span>()</span>
+<span class="line"><span class="com"># (True, False, True)</span></span></div>
+  <div class="info-box">
+    <div class="info-label">🔍 IN CHECKS KEYS BY DEFAULT</div>
+    <p style="margin-bottom:0;">Both a bare <code>for k in grade:</code> loop and a bare <code>'calculus' in grade</code> test look at the <strong>keys</strong> — <code>'calculus' in grade</code> is just a shorter way of writing <code>'calculus' in grade.keys()</code>. Whenever you want to check whether a value is (or isn't) a key in the dictionary, use <code>in</code> (or <code>not in</code>) with the dictionary itself.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s53">
+  <div class="section-number">PREREQ P5.3 · MISSING KEYS: GET &amp; SETDEFAULT</div>
+  <h2>P5.3 Missing keys: get() and setdefault()</h2>
+
+  <p>It's tedious to check whether a key exists before every access (<code>if 'English' in grade: …</code>). The <code>get()</code> method does it for you: it takes the key to retrieve <em>and</em> a fallback value to return if that key does not exist:</p>
+  <div class="pseudo-code">
+<span class="line">picnicItems = {<span class="str">'apples'</span>: <span class="num">5</span>, <span class="str">'cups'</span>: <span class="num">2</span>}</span>
+<span class="line"><span class="fn">print</span>(<span class="str">'I am bringing '</span> + <span class="fn">str</span>(picnicItems.<span class="fn">get</span>(<span class="str">'cups'</span>, <span class="num">0</span>)) + <span class="str">' cups.'</span>)   <span class="com"># 2 cups.</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">'I am bringing '</span> + <span class="fn">str</span>(picnicItems.<span class="fn">get</span>(<span class="str">'eggs'</span>, <span class="num">0</span>)) + <span class="str">' eggs.'</span>)   <span class="com"># 0 eggs. — no crash</span></span>
+<span class="line"></span>
+<span class="line">picnicItems[<span class="str">'eggs'</span>]      <span class="com"># without get(): KeyError!</span></span></div>
+  <p>The mirror problem: set a value for a key <em>only if</em> the key has no value yet. <code>setdefault(key, default)</code> does that in one line — the first argument is the key to check for, the second is the value to store there if the key does not exist. It's a tidy way to guarantee a key exists, and it powers this little program that counts how often each character appears in a string:</p>
+  <div class="pseudo-code">
+<span class="line">message = <span class="str">'It was a bright cold day in April, and the clocks were striking thirteen.'</span></span>
+<span class="line">count = {}</span>
+<span class="line"></span>
+<span class="line"><span class="kw">for</span> character <span class="kw">in</span> message:</span>
+<span class="line">    count.<span class="fn">setdefault</span>(character, <span class="num">0</span>)   <span class="com"># make sure the key exists (default 0)…</span></span>
+<span class="line">    count[character] = count[character] + <span class="num">1</span>   <span class="com"># …so this line never raises KeyError</span></span>
+<span class="line"></span>
+<span class="line"><span class="fn">print</span>(count)   <span class="com"># lowercase 'c' appears 3 times, ' ' 13 times, 'A' once…</span></span></div>
+  <p>Without <code>setdefault()</code> you would need an explicit <code>if character not in count: count[character] = 0</code> inside the loop — same effect, two lines instead of one. For a cleaner display of a big dictionary like <code>count</code>, <code>import pprint</code> and call <code>pprint.pprint(count)</code>: it prints the items with the keys sorted, which is especially helpful when the dictionary contains nested lists or dictionaries.</p>
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <p>Missing-key behavior is where dictionary bugs hide — make an AI explain it, not just patch it:</p>
+    <span class="ai-prompt">Paste the character-count loop and ask: "Why would count[character] = count[character] + 1 raise KeyError without the setdefault() line? Walk me through the first two iterations."</span>
+    <span class="ai-prompt">Ask: "When should I use d[key], d.get(key, default), or d.setdefault(key, default)? Show one tiny example where each is the right choice."</span>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s54">
+  <div class="section-number">PREREQ P5.4 · NESTED DATA &amp; COMPREHENSIONS</div>
+  <h2>P5.4 Nested data &amp; dictionary comprehensions</h2>
+
+  <p>A <strong>dictionary comprehension</strong> generates a dictionary from an iterable, just as a list comprehension generates a list — curly braces around a <code>key:value</code> expression and a <code>for</code>. Two classics: reversing key–value pairs, and mapping values to new values:</p>
+  <div class="pseudo-code">
+<span class="line">months = {<span class="str">'January'</span>: <span class="num">1</span>, <span class="str">'February'</span>: <span class="num">2</span>, <span class="str">'March'</span>: <span class="num">3</span>}</span>
+<span class="line">months2 = {number: name <span class="kw">for</span> name, number <span class="kw">in</span> months.<span class="fn">items</span>()}</span>
+<span class="line"><span class="com"># {1: 'January', 2: 'February', 3: 'March'} — keys and values swapped</span></span>
+<span class="line"></span>
+<span class="line">grades = {<span class="str">'Sue'</span>: [<span class="num">98</span>, <span class="num">87</span>, <span class="num">94</span>], <span class="str">'Bob'</span>: [<span class="num">84</span>, <span class="num">95</span>, <span class="num">91</span>]}   <span class="com"># a list inside a dictionary!</span></span>
+<span class="line">grades2 = {k: <span class="fn">sum</span>(v)/<span class="fn">len</span>(v) <span class="kw">for</span> k, v <span class="kw">in</span> grades.<span class="fn">items</span>()}</span>
+<span class="line"><span class="com"># {'Sue': 93.0, 'Bob': 90.0} — names mapped to grade-point averages</span></span></div>
+  <p>Nesting also runs the other way: a <strong>list of dictionaries</strong>. In a game full of aliens, one dictionary describes one alien — and a list holds the whole fleet. Because each dictionary is a separate object, you can modify each alien individually:</p>
+  <div class="pseudo-code">
+<span class="line">aliens = []</span>
+<span class="line"><span class="kw">for</span> alien_number <span class="kw">in</span> <span class="fn">range</span>(<span class="num">30</span>):   <span class="com"># make 30 green aliens</span></span>
+<span class="line">    new_alien = {<span class="str">'color'</span>: <span class="str">'green'</span>, <span class="str">'points'</span>: <span class="num">5</span>, <span class="str">'speed'</span>: <span class="str">'slow'</span>}</span>
+<span class="line">    aliens.<span class="fn">append</span>(new_alien)</span>
+<span class="line"></span>
+<span class="line"><span class="kw">for</span> alien <span class="kw">in</span> aliens[:<span class="num">3</span>]:          <span class="com"># upgrade the first three as the game speeds up</span></span>
+<span class="line">    <span class="kw">if</span> alien[<span class="str">'color'</span>] == <span class="str">'green'</span>:</span>
+<span class="line">        alien[<span class="str">'color'</span>] = <span class="str">'yellow'</span></span>
+<span class="line">        alien[<span class="str">'speed'</span>] = <span class="str">'medium'</span></span>
+<span class="line">        alien[<span class="str">'points'</span>] = <span class="num">10</span></span></div>
+  <p>Dictionaries can model real-world things, too. A tic-tac-toe board is nine slots — so give each slot a key <code>'1'</code> through <code>'9'</code> and store <code>'X'</code>, <code>'O'</code>, or a space as its value. A board where player O has won across the top looks like this:</p>
+  <div class="pseudo-code">
+<span class="line">board = {<span class="str">'1'</span>: <span class="str">'O'</span>, <span class="str">'2'</span>: <span class="str">'O'</span>, <span class="str">'3'</span>: <span class="str">'O'</span>,</span>
+<span class="line">         <span class="str">'4'</span>: <span class="str">'X'</span>, <span class="str">'5'</span>: <span class="str">'X'</span>, <span class="str">'6'</span>: <span class="str">' '</span>,</span>
+<span class="line">         <span class="str">'7'</span>: <span class="str">' '</span>, <span class="str">'8'</span>: <span class="str">' '</span>, <span class="str">'9'</span>: <span class="str">'X'</span>}</span></div>
+  <div class="info-box green">
+    <div class="info-label">🎯 DATA STRUCTURE FIRST, FUNCTIONS SECOND</div>
+    <p style="margin-bottom:0;">Once the board lives in a dictionary, a <code>printBoard(board)</code> function can draw <em>any</em> board you pass it, and a win-check is just chained comparisons like <code>board['1'] == board['2'] == board['3'] == p</code> for each row, column, and diagonal. The notebook builds the full game — <code>getBlankBoard()</code>, <code>isValidSpace()</code>, <code>isBoardFull()</code> — as its Exercise 1, if you want to try it.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s55">
+  <div class="section-number">PREREQ P5.5 · SETS &amp; SET OPERATIONS</div>
+  <h2>P5.5 Sets &amp; set operations</h2>
+
+  <p>A <strong>set</strong> is an unordered collection of <strong>unique</strong> values — just like a set in math. Sets may contain only immutable objects (strings, ints, floats, tuples of immutables). Curly braces create one, and duplicates are silently dropped:</p>
+  <div class="pseudo-code">
+<span class="line">colors = {<span class="str">'red'</span>, <span class="str">'orange'</span>, <span class="str">'yellow'</span>, <span class="str">'green'</span>, <span class="str">'red'</span>, <span class="str">'blue'</span>}</span>
+<span class="line">colors        <span class="com"># {'blue', 'green', 'orange', 'red', 'yellow'} — the duplicate 'red' was ignored</span></span>
+<span class="line"></span>
+<span class="line">colors[<span class="num">0</span>]     <span class="com"># TypeError — sets are not sequences: no indexing, no slicing</span></span>
+<span class="line"><span class="fn">len</span>(colors), <span class="str">'red'</span> <span class="kw">in</span> colors, <span class="str">'purple'</span> <span class="kw">not</span> <span class="kw">in</span> colors   <span class="com"># (5, True, True)</span></span></div>
+  <p>That automatic <strong>duplicate elimination</strong> is the most common reason to reach for a set. Sets are iterable — a <code>for</code> loop visits every element — but they are unordered, so there is no significance to the iteration order, and you should never write code that depends on it.</p>
+
+  <h3>Creating sets with set() — and the empty-set trap</h3>
+  <div class="pseudo-code">
+<span class="line">numbers = <span class="fn">list</span>(<span class="fn">range</span>(<span class="num">10</span>)) + <span class="fn">list</span>(<span class="fn">range</span>(<span class="num">5</span>))   <span class="com"># [0, 1, …, 9, 0, 1, 2, 3, 4]</span></span>
+<span class="line"><span class="fn">set</span>(numbers)   <span class="com"># {0, 1, 2, 3, 4, 5, 6, 7, 8, 9} — duplicates gone</span></span>
+<span class="line"><span class="fn">set</span>()          <span class="com"># the ONLY way to write an empty set</span></span></div>
+  <div class="info-box warm">
+    <div class="info-label">⚠️ {} IS AN EMPTY DICTIONARY, NOT AN EMPTY SET</div>
+    <p style="margin-bottom:0;">Empty braces <code>{}</code> mean an empty <em>dictionary</em> — for an empty set you must call <code>set()</code>, and Python displays an empty set as <code>set()</code> for exactly the same reason. One more constraint: set <em>elements</em> must be immutable, so <code>{7, 3, {3, 5, 7}}</code> fails — a set cannot contain another set.</p>
+  </div>
+
+  <h3>Adding &amp; removing elements</h3>
+  <p>Sets themselves are mutable. Three methods modify a set in place:</p>
+  <div class="pseudo-code">
+<span class="line">numbers = {<span class="num">1</span>, <span class="num">3</span>, <span class="num">5</span>}</span>
+<span class="line">numbers.<span class="fn">update</span>(<span class="fn">range</span>(<span class="num">10</span>))   <span class="com"># in-place union — the argument can be any iterable</span></span>
+<span class="line">numbers.<span class="fn">add</span>(<span class="num">17</span>)             <span class="com"># insert 17 (if already present, nothing changes)</span></span>
+<span class="line">numbers.<span class="fn">remove</span>(<span class="num">3</span>)           <span class="com"># remove 3 — KeyError if the value is not in the set</span></span></div>
+
+  <h3>Union, intersection, difference</h3>
+  <p>The mathematical set operations each produce a <em>new</em> set. Every one comes in two spellings — an operator (both operands must be sets) and a method (which accepts <em>any</em> iterable, converting it to a set first):</p>
+  <div class="pseudo-code">
+<span class="line">{<span class="num">1</span>, <span class="num">3</span>, <span class="num">5</span>} | {<span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>}    <span class="com"># {1, 2, 3, 4, 5}  union — everything from both</span></span>
+<span class="line">{<span class="num">1</span>, <span class="num">3</span>, <span class="num">5</span>} &amp; {<span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>}    <span class="com"># {3}              intersection — in common</span></span>
+<span class="line">{<span class="num">1</span>, <span class="num">3</span>, <span class="num">5</span>} - {<span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>}    <span class="com"># {1, 5}           difference — in the left, not the right</span></span>
+<span class="line">{<span class="num">1</span>, <span class="num">3</span>, <span class="num">5</span>} ^ {<span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>}    <span class="com"># {1, 2, 4, 5}     symmetric difference — not in common</span></span>
+<span class="line"></span>
+<span class="line">{<span class="num">1</span>, <span class="num">3</span>, <span class="num">5</span>}.<span class="fn">union</span>([<span class="num">20</span>, <span class="num">20</span>, <span class="num">3</span>, <span class="num">40</span>, <span class="num">40</span>])   <span class="com"># methods take any iterable — here a list</span></span>
+<span class="line">{<span class="num">1</span>, <span class="num">3</span>, <span class="num">5</span>}.<span class="fn">isdisjoint</span>({<span class="num">2</span>, <span class="num">4</span>, <span class="num">6</span>})        <span class="com"># True — no elements in common</span></span></div>
+  <p>And like dictionaries, sets have their own comprehension syntax — curly braces without the colon. Here we keep only the unique even values from a list:</p>
+  <div class="pseudo-code">
+<span class="line">numbers = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>, <span class="num">6</span>, <span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>, <span class="num">10</span>, <span class="num">10</span>]</span>
+<span class="line">evens = {item <span class="kw">for</span> item <span class="kw">in</span> numbers <span class="kw">if</span> item % <span class="num">2</span> == <span class="num">0</span>}   <span class="com"># {2, 4, 6, 8, 10}</span></span></div>
+
+  <h3>Sorting sets and dictionaries</h3>
+  <p>Sets and dictionaries have no <code>sort()</code> method — but the built-in <code>sorted()</code> takes any collection and returns a new <strong>list</strong> with the same elements in order. A <code>key=</code> function customizes the order: each element is replaced by the key function's output before comparing:</p>
+  <div class="pseudo-code">
+<span class="line">RANKS = [<span class="str">"A"</span>, <span class="str">"2"</span>, <span class="str">"3"</span>, <span class="str">"4"</span>, <span class="str">"5"</span>, <span class="str">"6"</span>, <span class="str">"7"</span>, <span class="str">"8"</span>, <span class="str">"9"</span>, <span class="str">"10"</span>, <span class="str">"J"</span>, <span class="str">"Q"</span>, <span class="str">"K"</span>]</span>
+<span class="line"><span class="kw">def</span> <span class="fn">rank_key</span>(card):</span>
+<span class="line">    <span class="kw">return</span> RANKS.<span class="fn">index</span>(card)</span>
+<span class="line"></span>
+<span class="line">ori_set = {<span class="str">"A"</span>, <span class="str">"2"</span>, <span class="str">"7"</span>, <span class="str">"4"</span>, <span class="str">"Q"</span>}</span>
+<span class="line"><span class="fn">print</span>(<span class="fn">sorted</span>(ori_set))                 <span class="com"># ['2', '4', '7', 'A', 'Q'] — a list, string order</span></span>
+<span class="line"><span class="fn">print</span>(<span class="fn">sorted</span>(ori_set, key=rank_key))   <span class="com"># ['A', '2', '4', '7', 'Q'] — card order</span></span></div>
+  <p>To sort a dictionary you must sort its <code>items()</code> (otherwise you get only the keys back). Sorting by <em>value</em> just means a key function that picks element <code>[1]</code> of each (key, value) tuple:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="kw">def</span> <span class="fn">value_key</span>(x):</span>
+<span class="line">    <span class="kw">return</span> x[<span class="num">1</span>]                          <span class="com"># the value part of a (key, value) tuple</span></span>
+<span class="line"></span>
+<span class="line"><span class="fn">sorted</span>(grade.<span class="fn">items</span>())                    <span class="com"># list of (key, value) tuples, sorted by key</span></span>
+<span class="line"><span class="fn">sorted</span>(grade.<span class="fn">items</span>(), key=value_key)     <span class="com"># sorted by value: [('introduction to mathematics', 80), …]</span></span></div>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ TRY IT (OPTIONAL — NOT GRADED)</div>
+    <p style="margin-bottom:0;">Starting from <code>numbers = list(range(10)) + list(range(5))</code>, produce the sorted list of unique even values: <code>[0, 2, 4, 6, 8]</code>. Hint: a set comprehension eliminates the duplicates, and <code>sorted()</code> turns the set back into a list. Predict your result before you run it in the notebook.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="quiz">
+  <div class="section-number">QUIZ · PREREQUISITE SELF-CHECK · NOT GRADED</div>
+  <h2>Self-check quiz: 5 questions</h2>
+  <p>Purely for your own calibration — <strong>this quiz is not graded and not part of the course assignments</strong>. Click the option you believe is right; every option explains itself, so a wrong click still teaches you something.</p>
+  <div class="quiz-progress" id="quizProgress">Solved 0 / 5</div>
+  <div id="quizContainer"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="cards">
+  <div class="section-number">FLASHCARDS · KEY TERMS</div>
+  <h2>Key-term flashcards: click to flip</h2>
+  <p>All 7 key terms from the Dictionaries &amp; Sets notebook. Say the definition out loud <strong>before</strong> flipping!</p>
+  <div class="card-controls">
+    <button class="btn btn-step" id="flipAll">Flip all</button>
+    <button class="btn btn-reset" id="unflipAll">Unflip all</button>
+    <button class="btn btn-play" id="shuffleCards">🔀 Shuffle</button>
+  </div>
+  <div class="flash-grid" id="flashGrid"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="reference">
+  <div class="section-number">REFERENCE · CHEAT SHEET</div>
+  <h2>P5 cheat sheet</h2>
+
+  <h3>The four containers at a glance</h3>
+  <table class="cmp-table">
+    <tr><th>Feature</th><th>List</th><th>Tuple</th><th>Dictionary</th><th>Set</th></tr>
+    <tr><td>Mutable (modified in place)</td><td>Yes</td><td>No</td><td class="tl">Yes (keys are immutable)</td><td>Yes</td></tr>
+    <tr><td>Iterable (usable in a for loop)</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td>Ordered (indexing &amp; slicing)</td><td>Yes</td><td>Yes</td><td class="worst">No</td><td class="worst">No</td></tr>
+    <tr><td>Duplicate values</td><td>Allowed</td><td>Allowed</td><td class="tl">Not in keys</td><td class="worst">Not allowed</td></tr>
+  </table>
+
+  <h3>Reaching into a dictionary — missing-key behavior</h3>
+  <table class="cmp-table">
+    <tr><th>You write</th><th>Key exists</th><th>Key missing</th></tr>
+    <tr><td>d[key]</td><td class="tl">returns the value</td><td class="worst">KeyError</td></tr>
+    <tr><td>d.get(key, default)</td><td class="tl">returns the value</td><td class="tl">returns default — dictionary unchanged</td></tr>
+    <tr><td>d.setdefault(key, default)</td><td class="tl">existing value kept</td><td class="best">inserts key with default</td></tr>
+    <tr><td>key in d</td><td>True</td><td>False</td></tr>
+    <tr><td>del d[key]</td><td class="tl">removes the pair</td><td class="worst">KeyError</td></tr>
+  </table>
+
+  <h3>Set operations</h3>
+  <table class="cmp-table">
+    <tr><th>Operation</th><th>Operator</th><th>Method</th><th>Example → result</th></tr>
+    <tr><td>Union</td><td>|</td><td>union()</td><td>{1,3,5} | {2,3,4} → {1,2,3,4,5}</td></tr>
+    <tr><td>Intersection</td><td>&amp;</td><td>intersection()</td><td>{1,3,5} &amp; {2,3,4} → {3}</td></tr>
+    <tr><td>Difference</td><td>-</td><td>difference()</td><td>{1,3,5} - {2,3,4} → {1,5}</td></tr>
+    <tr><td>Symmetric difference</td><td>^</td><td>symmetric_difference()</td><td>{1,3,5} ^ {2,3,4} → {1,2,4,5}</td></tr>
+    <tr><td>Disjoint test</td><td>—</td><td>isdisjoint()</td><td>{1,3,5}.isdisjoint({2,4,6}) → True</td></tr>
+    <tr><td>In-place: grow / insert / remove</td><td>—</td><td>update() · add() · remove()</td><td class="tl">operators need two sets; methods accept any iterable</td></tr>
+  </table>
+
+  <h3>Further reading</h3>
+  <ul>
+    <li><a href="https://automatetheboringstuff.com/" target="_blank" rel="noopener">Automate the Boring Stuff with Python</a> — chapter 5 covers dictionaries and structuring data, free online</li>
+    <li><a href="https://docs.python.org/3/tutorial/datastructures.html#dictionaries" target="_blank" rel="noopener">The Python Tutorial — Dictionaries</a> — the official reference for dict (and set) behavior</li>
+  </ul>
+
+  <div class="bridge-box">
+    <div class="bb-title">🎓 AFTER THIS REFRESHER, YOU CAN…</div>
+    <ul>
+      <li>Build a dictionary with {key: value} literals, look values up by key, and add, update, or delete entries</li>
+      <li>Traverse keys, values, and (key, value) pairs with keys(), values(), and items() — knowing that in and a bare for loop check keys</li>
+      <li>Predict what a missing key does under [], get(), and setdefault() — and pick the right tool</li>
+      <li>Use a set to eliminate duplicates, and combine sets with union, intersection, and difference</li>
+      <li>Read nested structures — a list of dictionaries, a dictionary of lists — and write simple dict and set comprehensions</li>
+    </ul>
+    <p class="bb-next">NEXT ▸ P6 · Manipulating Strings — indexing, slicing, and the string methods that turn raw text into data.</p>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="p4_lists_tuples.html"><div class="nav-dir">◂ PREVIOUS PREREQ</div><div class="nav-title">P4 · Lists &amp; Tuples</div></a>
+    <a href="p6_strings.html" class="next"><div class="nav-dir">NEXT PREREQ ▸</div><div class="nav-title">P6 · Manipulating Strings</div></a>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Scientific Computing with Python · Prerequisite P5: Dictionaries &amp; Sets · supplementary self-study — not graded, not part of the assignments<br>
+  Digest of <code>05_Dictionaries_sets.ipynb</code> · quiz &amp; flashcards from the notebook's own question bank
+</footer>
+<script>
+/* ============================================================
+   Shared engines: Quiz / Flashcards
+   (buildQuiz extended for the P-pages: answers flagged isCode
+   render monospace with newlines preserved)
+   ============================================================ */
+function buildQuiz(containerId, progressId, data) {
+  const container = document.getElementById(containerId);
+  const progress  = document.getElementById(progressId);
+  const solved = new Set();
+  const LETTERS = 'ABCDEFGH';
+
+  data.forEach((q, qi) => {
+    const box = document.createElement('div');
+    box.className = 'quiz-box';
+    box.innerHTML =
+      `<div class="quiz-label">Q${qi+1} / ${data.length}${q.multi ? ' <span class="multi-badge">MULTI</span>' : ''}</div>` +
+      `<div class="quiz-q">${q.question}</div>` +
+      (q.code ? `<div class="quiz-code">${q.code.replace(/</g,'&lt;')}</div>` : '') +
+      `<div class="quiz-options">` +
+      q.answers.map((a, ai) =>
+        `<div class="quiz-opt" data-q="${qi}" data-a="${ai}">
+           <div class="opt-head"><span class="opt-letter">${LETTERS[ai]}</span><span${a.isCode ? ' class="opt-code"' : ''}>${String(a.answer).replace(/</g,'&lt;')}</span></div>
+           <div class="opt-fb"></div>
+         </div>`
+      ).join('') + `</div>`;
+    container.appendChild(box);
+  });
+
+  container.addEventListener('click', e => {
+    const opt = e.target.closest('.quiz-opt');
+    if (!opt || opt.classList.contains('revealed')) return;
+    const q = data[+opt.dataset.q], a = q.answers[+opt.dataset.a];
+    opt.classList.add('revealed', a.correct ? 'correct' : 'wrong');
+    opt.querySelector('.opt-fb').textContent = (a.correct ? '✔ Correct: ' : '✘ Not quite: ') + a.feedback;
+    if (a.correct) {
+      solved.add(+opt.dataset.q);
+      progress.textContent = `Solved ${solved.size} / ${data.length}`;
+    }
+  });
+}
+
+function buildFlashcards(gridId, data) {
+  const grid = document.getElementById(gridId);
+  function render(cards) {
+    grid.innerHTML = cards.map(c =>
+      `<div class="flashcard">
+         <div class="fc-inner">
+           <div class="fc-face fc-front"><div>${c.front}</div><div class="fc-hint">CLICK TO FLIP</div></div>
+           <div class="fc-face fc-back">${c.back}</div>
+         </div>
+       </div>`).join('');
+  }
+  render(data);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.flashcard');
+    if (card) card.classList.toggle('flipped');
+  });
+  document.getElementById('flipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.add('flipped')));
+  document.getElementById('unflipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.remove('flipped')));
+  document.getElementById('shuffleCards').addEventListener('click', ()=>{
+    const shuffled = [...data].sort(()=>Math.random()-.5);
+    render(shuffled);
+  });
+}
+
+/* ============================================================
+   QUIZ — questions/ch5 of the prerequisite notebook
+   (answers and feedback carried over verbatim)
+   ============================================================ */
+const QUIZ_DATA = [
+  { question:"What is printed by the following statements?", code:"d1 = {\"a\": 1, \"b\": 2}\nd2 = d1\nd2[\"a\"] = 99\nprint(d1)", answers:[
+    { answer:"{\"a\": 99, \"b\": 2}", correct:true, feedback:"Correct! Since d2 is just a reference to d1, modifying d2 also changes d1." },
+    { answer:"{\"a\": 1, \"b\": 2}", correct:false, feedback:"Incorrect. d2 is not a separate copy; it refers to the same dictionary as d1." },
+    { answer:"{\"a\": 99, \"b\": 2, \"a\": 1}", correct:false, feedback:"Incorrect. Dictionaries cannot have duplicate keys; the key 'a' is overwritten." },
+    { answer:"An error occurs due to reassignment.", correct:false, feedback:"Incorrect. The code runs without error because assignment simply creates another reference to the same dictionary." } ] },
+  { question:"What is printed by the following statements?", code:"d = {\"fruit\": \"apple\", \"quantity\": 10, \"price\": 2.5}\nprint(list(d.keys()))\nprint(list(d.values()))\nprint(list(d.items()))", answers:[
+    { answer:"[\"fruit\", \"quantity\", \"price\"]\n[\"apple\", 10, 2.5]\n[(\"fruit\", \"apple\"), (\"quantity\", 10), (\"price\", 2.5)]", isCode:true, correct:true, feedback:"Correct! Converting the keys, values, and items to lists returns the expected results in the order of insertion." },
+    { answer:"[\"fruit\", \"quantity\", \"price\"]\n[(\"fruit\", \"apple\"), (\"quantity\", 10), (\"price\", 2.5)]\n[\"apple\", 10, 2.5]", isCode:true, correct:false, feedback:"Incorrect. The output order should be keys first, then values, and finally key-value pairs." },
+    { answer:"[\"fruit\", \"quantity\", \"price\"]\n[\"apple\", 10, 2.5]\n[\"fruit\", \"apple\", \"quantity\", 10, \"price\", 2.5]", isCode:true, correct:false, feedback:"Incorrect. The items() method returns a list of tuples, not a flattened list of values." },
+    { answer:"It prints the dictionary’s keys, values, and items without converting them to lists.", isCode:true, correct:false, feedback:"Incorrect. Since list() is used, the view objects are converted into lists, which formats the output as shown in the correct answer." } ] },
+  { question:"What is printed by the following statements?", code:"d = {\"name\": \"Alice\", \"age\": 25}\nprint(d.get(\"name\"))\nprint(d.get(\"gender\", \"Not Specified\"))", answers:[
+    { answer:"Alice\nNot Specified", isCode:true, correct:true, feedback:"Correct! The get() method returns the value for 'name' which is 'Alice' and returns the default 'Not Specified' for the missing key 'gender'." },
+    { answer:"Alice\nNone", isCode:true, correct:false, feedback:"Incorrect. Since a default value is provided for the 'gender' key, get() returns 'Not Specified' instead of None." },
+    { answer:"None\nNot Specified", isCode:true, correct:false, feedback:"Incorrect. The key 'name' exists in the dictionary, so it returns 'Alice', not None." },
+    { answer:"Error", isCode:true, correct:false, feedback:"Incorrect. The get() method safely returns a default value for missing keys instead of raising an error." } ] },
+  { question:"Which of the following sets is equal to the set 's' after executing the following statements? (Remember that sets are unordered.)", code:"s = {1, 2, 3, 4}\ns.add(5)\ns.update([3, 6, 7])\ns.remove(4)", answers:[
+    { answer:"{1, 2, 3, 5, 6, 7}", correct:true, feedback:"Correct! After adding 5 and updating with 6 and 7 (while 3 is already present) and then removing 4, the set contains 1, 2, 3, 5, 6, and 7. The printed order may vary since sets are unordered." },
+    { answer:"{1, 2, 3, 4, 5, 6, 7}", correct:false, feedback:"Incorrect. Although the update added 6 and 7, the remove() call deletes 4 from the set." },
+    { answer:"{1, 2, 3, 4, 5}", correct:false, feedback:"Incorrect. This answer ignores the elements 6 and 7 that are added by the update() method." },
+    { answer:"A KeyError is raised.", correct:false, feedback:"Incorrect. The operations are valid for sets, and no error is raised." } ] },
+  { question:"What is the final state of the dictionary 'd' after executing the following statements?", code:"d = {\"a\": \"alpha\"}\nd.setdefault(\"a\", \"ALPHA\")\nd.setdefault(\"b\", \"beta\")\nd.setdefault(\"c\", \"gamma\")\nprint(d)", answers:[
+    { answer:"{\"a\": \"alpha\", \"b\": \"beta\", \"c\": \"gamma\"}", correct:true, feedback:"Correct! The key 'a' already exists, so its value remains \"alpha\". The keys 'b' and 'c' are added with the values \"beta\" and \"gamma\" respectively." },
+    { answer:"{\"a\": \"ALPHA\", \"b\": \"beta\", \"c\": \"gamma\"}", correct:false, feedback:"Incorrect. The setdefault() method does not change the value of an existing key; therefore, 'a' remains \"alpha\"." },
+    { answer:"{\"a\": \"alpha\", \"b\": \"beta\"}", correct:false, feedback:"Incorrect. While key 'a' is unchanged, key 'c' is also added to the dictionary with its default value." },
+    { answer:"{\"a\": \"ALPHA\", \"b\": \"beta\"}", correct:false, feedback:"Incorrect. The final dictionary should include the key 'c' with its default value, and the value for 'a' remains unchanged." } ] },
+];
+buildQuiz('quizContainer', 'quizProgress', QUIZ_DATA);
+
+/* ============================================================
+   FLASHCARDS — Key terms from the Dictionaries & Sets notebook
+   ============================================================ */
+const CARD_DATA = [
+  {front:"key-value", back:"A pair consisting of a key and its associated value, as used in dictionaries."},
+  {front:"key", back:"An immutable identifier used to access a corresponding value in a dictionary."},
+  {front:"value", back:"The data associated with a key in a dictionary."},
+  {front:"dictionary", back:"A collection of key-value pairs where each key is unique."},
+  {front:"set", back:"An unordered collection of unique elements."},
+  {front:"dictionary comprehension", back:"A concise way to create dictionaries from iterables using a single expression."},
+  {front:"set comprehension", back:"A concise way to create sets from iterables using a single expression."},
+];
+buildFlashcards('flashGrid', CARD_DATA);
+
+/* ============================================================
+   Floating nav active highlight
+   ============================================================ */
+(function initFloatNav(){
+  const links = document.querySelectorAll('.float-nav a[data-target]');
+  const sections = [...links].map(a => document.getElementById(a.dataset.target)).filter(Boolean);
+  function update(){
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= window.innerHeight * 0.35) active = s.id;
+    }
+    links.forEach(a => a.classList.toggle('active', a.dataset.target === active));
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>

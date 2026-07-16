@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P6 · Manipulating Strings — Prerequisite Refresher</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:17px;}
+
+/* Hero */
+.hero{min-height:56vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2.5rem 2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:880px;}
+.hero .chapter-tag{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#f39c12;letter-spacing:.3em;margin-bottom:.8rem;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(1.9rem,4.6vw,3rem);font-weight:900;color:#fff;letter-spacing:.02em;line-height:1.25;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.15rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{font-family:'JetBrains Mono',monospace;color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.0rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+ul,ol{margin:0 0 1rem 1.4rem;}
+
+/* Prerequisite banner */
+.prereq-banner{background:#fef5e7;border:3px solid #d68910;border-radius:12px;padding:1.2rem 1.5rem;margin:0 0 2.2rem;box-shadow:0 3px 12px rgba(214,137,16,.12);}
+.prereq-banner .pb-title{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:#b9770e;font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.prereq-banner p{margin-bottom:0;font-size:.95rem;}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:40px;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box p:last-child,.info-box ul:last-child,.info-box ol:last-child{margin-bottom:0;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+.cmp-table td.tl{font-family:'Noto Sans TC',sans-serif;text-align:left;font-size:.85rem;}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.65;overflow-x:auto;margin:.8rem 0;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .str{color:#f1fa8c;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.quiz-box .quiz-label .multi-badge{background:#8e44ad;color:#fff;font-size:.68rem;padding:1px 8px;border-radius:3px;}
+.quiz-box .quiz-q{font-weight:600;margin-bottom:.6rem;}
+.quiz-box .quiz-code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:.6rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.84rem;margin-bottom:.8rem;white-space:pre-wrap;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0 0;}
+.quiz-opt{display:flex;flex-direction:column;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.9rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-head{display:flex;align-items:baseline;gap:.6rem;}
+.quiz-opt .opt-letter{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt .opt-code{white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.quiz-opt .opt-fb{display:none;font-size:.82rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--card-border);color:#555;}
+.quiz-opt.revealed .opt-fb{display:block;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.correct .opt-fb{color:#14532d;}
+.quiz-opt.wrong{background:#fef5e7;border-color:#d68910;}
+.quiz-opt.wrong .opt-letter{color:#d68910;}
+.quiz-progress{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;margin:.8rem 0;}
+
+/* Flashcards */
+.card-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.flashcard{perspective:900px;height:160px;cursor:pointer;}
+.flashcard .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+.flashcard .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.flashcard .fc-front{background:linear-gradient(150deg,#2c3e7a,#1a1a2e);color:#fff;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.flashcard .fc-front .fc-hint{font-size:.66rem;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.flashcard .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:34px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+/* Chapter nav */
+.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin:2rem 0 0;flex-wrap:wrap;}
+.chapter-nav a{flex:1;min-width:220px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.3rem;text-decoration:none;color:var(--ink);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.chapter-nav a:hover{border-color:var(--accent2);transform:translateY(-2px);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+footer a{color:var(--accent2);}
+
+/* 🤖 Ask-AI / discussion box */
+.ai-box{background:var(--card);border:2px dashed #8e44ad;border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.ai-box .ai-label{position:absolute;top:-11px;left:14px;background:#8e44ad;color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.ai-box p:last-child{margin-bottom:0;}
+.ai-box .ai-prompt{font-family:'JetBrains Mono',monospace;font-size:.85rem;background:rgba(142,68,173,.08);border-radius:6px;padding:.4rem .8rem;display:block;margin:.4rem 0;color:#6c3485;}
+
+/* 🎓 Chapter-end bridge */
+.bridge-box{background:#eafaf1;border:2px solid var(--accent3);border-radius:12px;padding:1.3rem 1.5rem;margin:2rem 0 0;}
+.bridge-box .bb-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent3);font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.bridge-box ul{margin:.3rem 0 .8rem 1.3rem;font-size:.92rem;}
+.bridge-box .bb-next{font-size:.9rem;color:var(--accent2);border-top:1px dashed var(--accent3);padding-top:.6rem;margin-bottom:0;}
+
+/* Materials map */
+.mat-map{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.9rem 0;padding:.7rem 1rem;background:var(--card);border:1px solid var(--card-border);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.mat-map .mm-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.12em;margin-right:.3rem;}
+.mat-map a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;text-decoration:none;border:2px solid var(--card-border);color:var(--accent2);transition:all .2s;background:var(--paper);}
+.mat-map a:hover{border-color:var(--accent2);}
+</style>
+</head>
+<body>
+
+<nav class="float-nav">
+  <div class="fn-title">P6 · Strings</div>
+  <a href="#s61" data-target="s61"><span class="fn-num">P6.1</span><span class="fn-name">Strings are sequences</span></a>
+  <a href="#s62" data-target="s62"><span class="fn-num">P6.2</span><span class="fn-name">Escapes &amp; raw strings</span></a>
+  <a href="#s63" data-target="s63"><span class="fn-num">P6.3</span><span class="fn-name">f-strings &amp; formatting</span></a>
+  <a href="#s64" data-target="s64"><span class="fn-num">P6.4</span><span class="fn-name">The string-method toolbox</span></a>
+  <a href="#quiz" data-target="quiz"><span class="fn-num">QUIZ</span><span class="fn-name">Self-check quiz</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">Key-term flashcards</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">Cheat sheet</span></a>
+  <a href="#top" class="fn-top" title="Back to top"><span class="fn-num">↑ TOP</span></a>
+</nav>
+
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="chapter-tag">PREREQUISITE P6 · SUPPLEMENTARY · NOT GRADED</div>
+    <h1>Manipulating <span class="blue">Strings</span></h1>
+    <div class="subtitle">Text is data too — index it, slice it, search it, and format it. Skim what you know; slow down where you hesitate.</div>
+    <div class="big-formula">'text' ｜ \n · r'raw' ｜ slice ｜ split · join ｜ f'{value}'</div>
+    <div class="scroll-hint">Scroll down to start<span>↓</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="prereq-banner">
+  <div class="pb-title">📌 SUPPLEMENTARY PREREQUISITE — NOT PART OF THE ASSIGNMENTS</div>
+  <p>The prerequisite pages (P1–P8) review the basic Python that Modules 1–5 assume you already know. They are <strong>optional background material for self-study: nothing on these pages is graded, and none of it will appear in the course assignments</strong>（補充先備知識，不列入作業範圍）. Use them to warm up before Module 1, or to look things up whenever a module uses a Python idiom you have forgotten.</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · A REFRESHER, NOT A LECTURE — READ AT YOUR OWN PACE</div>
+  <div class="toc-grid">
+    <a href="#s61"><span class="toc-num">P6.1</span>Strings are sequences</a>
+    <a href="#s62"><span class="toc-num">P6.2</span>Escape characters &amp; raw strings</a>
+    <a href="#s63"><span class="toc-num">P6.3</span>Putting strings inside strings</a>
+    <a href="#s64"><span class="toc-num">P6.4</span>The string-method toolbox</a>
+    <a href="#quiz"><span class="toc-num">QUIZ</span>Self-check quiz (5 questions)</a>
+    <a href="#cards"><span class="toc-num">CARD</span>Key-term flashcards (7 cards)</a>
+    <a href="#reference"><span class="toc-num">REF</span>P6 cheat sheet</a>
+  </div>
+</div>
+
+<div class="info-box green">
+  <div class="info-label">📖 HOW TO USE THE P-PAGES</div>
+  <p style="margin-bottom:.4rem;">Unlike the module pages, there are no course videos here — the source is a Jupyter notebook you can run yourself:</p>
+  <p style="margin-bottom:0;">① <strong>Read</strong> each digest section below → ② <strong>Run</strong> the matching notebook cells (one click on the Colab badge — predict each output <em>before</em> you run it) → ③ <strong>Quiz</strong> yourself and flip the <a href="#cards">flashcards</a>. If everything feels obvious, you are ready — move on.</p>
+</div>
+
+<div class="mat-map">
+  <span class="mm-title">SOURCE NOTEBOOK ▸</span>
+  <a href="https://colab.research.google.com/github/phonchi/nsysu-math106A/blob/master/static_files/presentations/06_Manipulating_string.ipynb" target="_blank" rel="noopener">🚀 Open 06_Manipulating_string.ipynb in Colab</a>
+  <a href="https://github.com/phonchi/nsysu-math106A/blob/master/static_files/presentations/06_Manipulating_string.ipynb" target="_blank" rel="noopener">📓 View on GitHub</a>
+</div>
+
+<!-- ============================================================ -->
+<section id="s61">
+  <div class="section-number">PREREQ P6.1 · STRINGS ARE SEQUENCES</div>
+  <h2>P6.1 Strings are sequences</h2>
+
+  <p>Text is one of the most common forms of data your programs will handle. You already know how to concatenate two strings with <code>+</code> — but you can do much more: extract partial strings, add or remove spacing, convert letters to lowercase or uppercase, and check that strings are formatted correctly. First, the basics: the simplest way to create a <strong>string</strong> is to enclose the characters in single, double, or triple quotes:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">type</span>(<span class="str">''</span>), <span class="fn">type</span>(<span class="str">""</span>), <span class="fn">type</span>(<span class="str">""""""</span>)   <span class="com"># (str, str, str) — all three quote styles work</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">"I'am fine"</span>)   <span class="com"># a benefit of double quotes: a single quote can live inside</span></span></div>
+  <p>A string is a <strong>sequence that maps an index to case-sensitive characters</strong> — so everything you can do to a sequence, you can do to a string. Access one character at a time with the bracket operator, count characters with <code>len()</code>, and count backward from the end with negative indices:</p>
+  <div class="pseudo-code">
+<span class="line">fruit = <span class="str">'banana'</span></span>
+<span class="line">fruit[<span class="num">1</span>]               <span class="com"># 'a' — "b" is the 0th letter, "a" the 1st, "n" the 2nd</span></span>
+<span class="line"><span class="fn">len</span>(fruit)             <span class="com"># 6</span></span>
+<span class="line">fruit[-<span class="num">1</span>], fruit[-<span class="num">2</span>]   <span class="com"># ('a', 'n') — negative indices count from the end</span></span></div>
+  <p>Slicing works too, with the familiar <code>[start:stop:step]</code> pattern: you get the characters from <code>start</code> up to but <em>not</em> including <code>stop</code>. Omit the first index and the slice starts at the beginning; omit the second and it runs to the end. Predict each line before you run it:</p>
+  <div class="pseudo-code">
+<span class="line">s = <span class="str">'Cool-Python'</span></span>
+<span class="line"><span class="fn">print</span>(s[:<span class="num">5</span>])     <span class="com"># same as s[0:5]  → 'Cool-'</span></span>
+<span class="line"><span class="fn">print</span>(s[<span class="num">5</span>:])     <span class="com"># same as s[5:len(s)]  → 'Python'</span></span>
+<span class="line"><span class="fn">print</span>(s[::<span class="num">2</span>])    <span class="com"># same as s[0:len(s):2]  → every 2nd character</span></span>
+<span class="line"><span class="fn">print</span>(s[::])     <span class="com"># same as s[:]  → copy the string</span></span>
+<span class="line"><span class="fn">print</span>(s[::-<span class="num">1</span>])   <span class="com"># same as s[-1:-(len(s)+1):-1]  → reverse the string</span></span></div>
+  <div class="info-box">
+    <div class="info-label">📌 ONE MENTAL MODEL, MANY TYPES</div>
+    <p style="margin-bottom:0;">Index, negative index, slice, <code>len()</code>, <code>in</code>, and the <code>for</code> loop all work on a string exactly as they work on a list — a string <strong>is</strong> a sequence, just one whose elements are characters. (Internally, strings are stored as contiguous blocks of memory representing the character sequence — a very memory-efficient layout.)</p>
+  </div>
+
+  <h3>Immutable — you build new strings, you never edit old ones</h3>
+  <div class="pseudo-code">
+<span class="line">s = <span class="str">"hello"</span></span>
+<span class="line">s[<span class="num">0</span>] = <span class="str">'y'</span>     <span class="com"># TypeError — strings are immutable and cannot be modified</span></span></div>
+  <p>The best you can do is create a <em>new</em> string that is a variation on the original — and <code>id()</code> proves it really is a different object:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="fn">id</span>(s))            <span class="com"># the object's address…</span></span>
+<span class="line">s = <span class="str">'y'</span> + s[<span class="num">1</span>:<span class="fn">len</span>(s)]   <span class="com"># build a NEW string from pieces</span></span>
+<span class="line"><span class="fn">print</span>(<span class="fn">id</span>(s))            <span class="com"># …a different address: a different object</span></span>
+<span class="line"><span class="fn">print</span>(s)                <span class="com"># 'yello'</span></span></div>
+  <div class="info-box warm">
+    <div class="info-label">⚠️ IMMUTABLE MEANS IMMUTABLE</div>
+    <p style="margin-bottom:0;"><code>s[0] = 'y'</code> raises a <code>TypeError</code> — you cannot assign into a string the way you assign into a list. This same fact returns in P6.4: methods like <code>upper()</code> <em>return</em> a new string; they never change the original in place.</p>
+  </div>
+
+  <h3>Traversal and the in operator</h3>
+  <p>A lot of computations process a string one character at a time: start at the beginning, select each character in turn, do something to it, continue until the end. The traversal loop is exactly the one you know:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="com"># Test if s contains 'o'</span></span>
+<span class="line">b = <span class="kw">False</span></span>
+<span class="line"><span class="kw">for</span> char <span class="kw">in</span> s:        <span class="com"># retrieve characters one by one</span></span>
+<span class="line">    <span class="kw">if</span> char == <span class="str">'o'</span>:</span>
+<span class="line">        b = <span class="kw">True</span></span>
+<span class="line">        <span class="kw">break</span></span>
+<span class="line"><span class="fn">print</span>(b)</span></div>
+  <p>For a simple membership test, though, <code>in</code> and <code>not in</code> do the whole loop for you and evaluate to a Boolean:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="str">'o'</span> <span class="kw">in</span> <span class="str">'Hello'</span>)                  <span class="com"># True</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">'cats'</span> <span class="kw">not in</span> <span class="str">'cats and dogs'</span>)    <span class="com"># False</span></span></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s62">
+  <div class="section-number">PREREQ P6.2 · ESCAPES &amp; RAW STRINGS</div>
+  <h2>P6.2 Escape characters &amp; raw strings</h2>
+
+  <p>An <strong>escape character</strong> lets you use characters that are otherwise impossible to put into a string: a backslash (<code>\</code>) followed by the character you want to add. (Despite consisting of two characters, it is commonly referred to as a <em>singular</em> escape character.) The escape for a single quote is <code>\'</code> — so a single quote can sit inside a single-quoted string without ending it:</p>
+  <div class="pseudo-code">
+<span class="line">spam = <span class="str">'Say hi to Bob\'s mother.'</span>   <span class="com"># the \ tells Python: this quote is not the end</span></span></div>
+  <p>The full starter kit: <code>\'</code> single quote, <code>\"</code> double quote, <code>\\</code> a literal backslash, <code>\t</code> tab, and <code>\n</code> newline (line break). One print statement can exercise them all — predict the output first:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="str">"Hello there!\nHow are you?\n\tI\'m doing fine."</span>)</span>
+<span class="line"><span class="com"># Hello there!</span></span>
+<span class="line"><span class="com"># How are you?</span></span>
+<span class="line"><span class="com">#     I'm doing fine.</span></span></div>
+  <p>Triple-quoted strings are the third quoting style from P6.1 — a string written with <code>'''</code> or <code>"""</code> can span several lines, which is handy for longer text (you will see a multiline letter get <code>split('\n')</code> into lines in P6.4).</p>
+
+  <h3>Raw strings: when the backslash is the point</h3>
+  <p>Place an <code>r</code> before the opening quote to make a <strong>raw string</strong>. A raw string <strong>completely ignores all escape characters</strong> and prints any backslash that appears in it:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="str">r'That is Carol\'s cat.'</span>)   <span class="com"># That is Carol\'s cat. — the backslash survives</span></span>
+<span class="line">path = <span class="str">r'C:\Users\Al\Desktop'</span>     <span class="com"># raw strings shine for Windows file paths</span></span></div>
+  <p>Because the string is raw, Python treats the backslash as part of the string, not as the start of an escape character — a lifesaver whenever a string naturally contains many backslashes.</p>
+
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <p>The notebook's Exercise 1 literally asks you to interview an AI about this section — try these:</p>
+    <span class="ai-prompt">Explain the concept of an escape character and list five escape sequences beyond \n and \t — with a one-line example of each.</span>
+    <span class="ai-prompt">Predict the outputs of print('That is Carol\'s cat.') and print(r'That is Carol\'s cat.') — then explain exactly why they differ.</span>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s63">
+  <div class="section-number">PREREQ P6.3 · STRING FORMATTING</div>
+  <h2>P6.3 Putting strings inside other strings</h2>
+
+  <p>Putting strings inside other strings is a common operation in programming. So far you have done it with <code>+</code> and string concatenation — which works, but requires a lot of tedious typing (and a <code>str()</code> call for every number):</p>
+  <div class="pseudo-code">
+<span class="line">name = <span class="str">'AI'</span></span>
+<span class="line">age = <span class="num">33</span></span>
+<span class="line">language = <span class="str">'Python'</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">"Hey! I'm "</span> + name + <span class="str">", "</span> + <span class="fn">str</span>(age) + <span class="str">" old and I love "</span> + language + <span class="str">" Programing"</span>)</span></div>
+  <p>A simpler approach is <strong>string interpolation</strong>. The first tool is the format operator <code>%</code>: the first operand is the <strong>format string</strong>, which contains one or more <strong>format specifiers</strong> saying how the second operand should be formatted — <code>%s</code> for a string, <code>%d</code> for an integer ("d" for decimal). One benefit: no <code>str()</code> calls needed.</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="str">"\nHey! I'm %s, %d years old and I love %s Programing"</span> % (name, age, language))   <span class="com"># like printf in C</span></span></div>
+  <div class="info-box">
+    <div class="info-label">🔍 ONE SYMBOL, TWO JOBS</div>
+    <p style="margin-bottom:0;">Applied to integers, <code>%</code> is the modulus operator (<code>45 % 4</code> → <code>1</code>). But when the <strong>first operand is a string</strong>, <code>%</code> is the format operator, and the result is again a string. Same symbol, completely different meaning — the type on the left decides.</p>
+  </div>
+  <p>Format specifiers also control layout: the numbers after <code>%</code> give the total field width and (after a <code>.</code>) the width of the decimal part. Values shorter than the field are padded with spaces — by default Python right-aligns numbers and left-aligns other values such as strings. <code>%f</code> formats floating points, and note that <code>b</code> gets <em>rounded</em>:</p>
+  <div class="pseudo-code">
+<span class="line">a = <span class="num">32</span></span>
+<span class="line">b = <span class="num">32.145</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">'a=%4d, b=%6.2f'</span> % (a, b))   <span class="com"># a=  32, b= 32.15</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">f'a={a:4d}, b={b:6.2f}'</span>)     <span class="com"># a=  32, b= 32.15 — same result, f-string style</span></span></div>
+
+  <h3>f-strings: the modern default</h3>
+  <p>Python 3.6 introduced <strong>f-strings</strong> (the <code>f</code> is for <em>format</em>): like string interpolation, but braces replace <code>%</code>, and the variables — or whole expressions — go directly inside the braces. Like raw strings, f-strings take a one-letter prefix before the opening quote:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="str">f"\nHey! I'm {name}, {age+2} years old and I love {language} Programing"</span>)   <span class="com"># inline arithmetic works!</span></span></div>
+  <table class="cmp-table">
+    <tr><th>Approach</th><th>Example</th><th>Notes</th></tr>
+    <tr><td>+ concatenation</td><td>"I'm " + name + ", " + str(age)</td><td class="tl">every number needs str(); tedious to type and to read</td></tr>
+    <tr><td>% format operator</td><td>"%s is %d" % (name, age)</td><td class="tl">printf-style; no str() calls needed</td></tr>
+    <tr><td>f-string (3.6+)</td><td>f"{name} is {age+2}"</td><td class="tl best">expressions live right inside the braces — the modern default</td></tr>
+  </table>
+  <p>F-strings give you the same width control and more. The format specifier now sits <em>after</em> the variable, separated by a colon; <code>&lt;</code>, <code>&gt;</code>, and <code>^</code> pick left, right, and center alignment; a <code>+</code> before the width forces a sign on positive numbers (negative numbers always start with <code>-</code>); a <code>0</code> before the width (after the <code>+</code>, if any) fills the field with zeros instead of spaces:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="str">f'[{a:&lt;15d}]'</span>)    <span class="com"># [32             ] — &lt; left-aligns in a width-15 field</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">f'[{b:^9.2f}]'</span>)    <span class="com"># [  32.15  ]       — ^ centers</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">f'[{a:+10d}]'</span>)     <span class="com"># [       +32]      — + forces the sign</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">f'[{a:+010d}]'</span>)    <span class="com"># [+000000032]      — 0 pads with zeros</span></span></div>
+  <p>See the <a href="https://docs.python.org/3/library/string.html#formatspec" target="_blank" rel="noopener">format-spec mini-language</a> for every option; yet another route is the <code>format()</code> method, covered in <a href="https://realpython.com/python-string-formatting/#toc" target="_blank" rel="noopener">this Real Python guide</a>.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="s64">
+  <div class="section-number">PREREQ P6.4 · STRING METHODS</div>
+  <h2>P6.4 The string-method toolbox</h2>
+
+  <p>Strings are Python <strong>objects</strong>: they carry both data (the characters) and <strong>methods</strong> — functions built into the object, available to every string. <code>dir(s)</code> lists them all, <code>help()</code> gives quick documentation, and the best reference is the <a href="https://docs.python.org/3/library/stdtypes.html#string-methods" target="_blank" rel="noopener">official string-methods page</a>. Here is the working set, grouped by job: <span class="pill pill-blue">case</span> <span class="pill pill-green">validate</span> <span class="pill pill-orange">search</span> <span class="pill pill-purple">split / join</span>.</p>
+
+  <h3>upper() and lower() — and why reassignment matters</h3>
+  <div class="pseudo-code">
+<span class="line">spam = <span class="str">'Hello, world!'</span></span>
+<span class="line">spam = spam.<span class="fn">upper</span>()   <span class="com"># 'HELLO, WORLD!' — a NEW string, assigned back</span></span>
+<span class="line">spam = spam.<span class="fn">lower</span>()   <span class="com"># 'hello, world!'</span></span></div>
+  <p>These methods do not change the string itself — they <em>return</em> new string values. To change the original, call the method and assign the result back to the variable: <code>spam = spam.upper()</code>, never just <code>spam.upper()</code>. (Just as <code>eggs + 3</code> does not change <code>eggs</code>, but <code>eggs = eggs + 3</code> does — immutable data cannot be modified in place.) Their killer application is the <strong>case-insensitive comparison</strong>: it should not matter whether the user types <code>Great</code>, <code>GREAT</code>, or <code>grEAT</code>:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="str">'How are you?'</span>)</span>
+<span class="line">feeling = <span class="fn">input</span>()</span>
+<span class="line"><span class="kw">if</span> feeling.<span class="fn">lower</span>() == <span class="str">'great'</span>:   <span class="com"># normalize case before comparing</span></span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'I feel great too.'</span>)</span>
+<span class="line"><span class="kw">else</span>:</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'I hope the rest of your day is good.'</span>)</span></div>
+
+  <h3>The isX() family — questions about a string's nature</h3>
+  <p>Several methods whose names begin with <code>is</code> return a Boolean describing the string: <code>isupper()</code>/<code>islower()</code> (at least one letter, all upper/lowercase), <code>isalpha()</code> (letters only, not blank), <code>isalnum()</code> (letters and numbers only, not blank), <code>isdecimal()</code> (numeric characters only, not blank), <code>isspace()</code> (only spaces, tabs, and newlines, not blank), and <code>istitle()</code> (each word an uppercase letter followed by lowercase letters). Predict all seven outputs before running:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="str">'Hello, world!'</span>.<span class="fn">islower</span>())        <span class="com"># False — the H is uppercase</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">'hello, world!'</span>.<span class="fn">islower</span>())        <span class="com"># True</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">'hello'</span>.<span class="fn">isalpha</span>())                <span class="com"># True — letters only</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">'hello123'</span>.<span class="fn">isalnum</span>())             <span class="com"># True — letters and numbers</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">'hello123'</span>.<span class="fn">isdecimal</span>())           <span class="com"># False — not numeric characters only</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">' '</span>.<span class="fn">isspace</span>())                    <span class="com"># True</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">'This Is Title Case'</span>.<span class="fn">istitle</span>())   <span class="com"># True</span></span></div>
+  <div class="info-box green">
+    <div class="info-label">🎯 THE VALIDATION LOOP</div>
+    <p style="margin-bottom:.4rem;">The <code>isX()</code> methods earn their keep validating user input — keep asking until the answer has the right shape:</p>
+  <div class="pseudo-code" style="margin-bottom:0;">
+<span class="line"><span class="kw">while</span> <span class="kw">True</span>:</span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'Enter your age:'</span>)</span>
+<span class="line">    age = <span class="fn">input</span>()</span>
+<span class="line">    <span class="kw">if</span> age.<span class="fn">isdecimal</span>():   <span class="com"># a valid number? escape the loop</span></span>
+<span class="line">        <span class="kw">break</span></span>
+<span class="line">    <span class="fn">print</span>(<span class="str">'Please enter a number for your age.'</span>)</span></div>
+  </div>
+  <p>Two more Boolean questions ask about the <em>ends</em> of a string: <code>startswith()</code> and <code>endswith()</code> return <code>True</code> if the string begins or ends with the string you pass in. And <code>replace()</code> is the "search and replace" of a word processor:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="str">'Hello, world!'</span>.<span class="fn">startswith</span>(<span class="str">'Hello'</span>))   <span class="com"># True</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">'abc123'</span>.<span class="fn">endswith</span>(<span class="str">'12'</span>))               <span class="com"># False — it ends with '123'</span></span>
+<span class="line">greet = <span class="str">'Hello Bob'</span></span>
+<span class="line">nstr = greet.<span class="fn">replace</span>(<span class="str">'Bob'</span>, <span class="str">'Jane'</span>)           <span class="com"># 'Hello Jane'</span></span></div>
+
+  <h3>join() and split() — taking text apart, putting it back</h3>
+  <p><code>join()</code> turns a list of strings into a single string: it is called <em>on the separator</em>, gets passed the list, and returns the concatenation with the separator inserted between each item. <code>split()</code> is its inverse — called on a string, it returns a list of strings:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="str">', '</span>.<span class="fn">join</span>([<span class="str">'cats'</span>, <span class="str">'rats'</span>, <span class="str">'bats'</span>]))     <span class="com"># 'cats, rats, bats'</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">' '</span>.<span class="fn">join</span>([<span class="str">'My'</span>, <span class="str">'name'</span>, <span class="str">'is'</span>, <span class="str">'Simon'</span>])) <span class="com"># 'My name is Simon'</span></span>
+<span class="line"><span class="str">' and '</span>.<span class="fn">join</span>([<span class="str">'cats'</span>, <span class="str">'rats'</span>, <span class="str">'bats'</span>])          <span class="com"># 'cats and rats and bats'</span></span>
+<span class="line"><span class="str">'My name is Simon'</span>.<span class="fn">split</span>()      <span class="com"># ['My', 'name', 'is', 'Simon'] — default: any whitespace</span></span>
+<span class="line"><span class="str">'cats, rats, bats'</span>.<span class="fn">split</span>(<span class="str">','</span>)   <span class="com"># ['cats', ' rats', ' bats'] — a custom delimiter</span></span></div>
+  <div class="info-box">
+    <div class="info-label">🔍 JOIN LIVES ON THE GLUE</div>
+    <p style="margin-bottom:0;">The string <code>join()</code> is called on is what gets inserted between the list items: <code>', '.join(['cats', 'rats', 'bats'])</code> → <code>'cats, rats, bats'</code>. It is <code>separator.join(list)</code> — not <code>list.join(separator)</code>. By default <code>split()</code> splits wherever whitespace (space, tab, or newline) appears, and those whitespace characters are <em>not</em> included in the returned pieces.</p>
+  </div>
+  <p>A common use of <code>split()</code> is chopping a multiline (triple-quoted) string along its newline characters — one list item per line:</p>
+  <div class="pseudo-code">
+<span class="line">spam = <span class="str">'''Dear Alice,</span></span>
+<span class="line"><span class="str">How have you been? I am fine.</span></span>
+<span class="line"><span class="str">There is a container in the fridge</span></span>
+<span class="line"><span class="str">that is labeled "Milk Experiment."</span></span>
+<span class="line"><span class="str"></span></span>
+<span class="line"><span class="str">Please do not drink it.</span></span>
+<span class="line"><span class="str">Sincerely,</span></span>
+<span class="line"><span class="str">Bob'''</span></span>
+<span class="line">spam.<span class="fn">split</span>(<span class="str">'\n'</span>)   <span class="com"># a list in which each item is one line of the letter</span></span></div>
+
+  <h3>strip(), lstrip(), rstrip() — tidying the edges</h3>
+  <p>Sometimes you want to strip whitespace characters (space, tab, and newline) off a string's edges. <code>strip()</code> returns a new string with the whitespace removed from both ends; <code>lstrip()</code> and <code>rstrip()</code> handle the left and right ends only:</p>
+  <div class="pseudo-code">
+<span class="line">spam = <span class="str">'    Hello, World    \n'</span></span>
+<span class="line">spam.<span class="fn">strip</span>()    <span class="com"># 'Hello, World'</span></span>
+<span class="line">spam.<span class="fn">lstrip</span>()   <span class="com"># 'Hello, World    \n'</span></span>
+<span class="line">spam.<span class="fn">rstrip</span>()   <span class="com"># '    Hello, World'</span></span></div>
+  <p>You will use indexing, slicing, and string methods in almost every Python program you write. So far your text arrives through <code>input()</code> and leaves through <code>print()</code> — another way to manipulate large amounts of text is by reading and writing files directly off the hard drive, which is exactly where P7 picks up.</p>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ TRY IT (OPTIONAL — NOT GRADED)</div>
+    <p style="margin-bottom:0;">Turn a big multiline string of items (<code>Lists of resources</code>, <code>Lists of books</code>, …) into a Markdown bulleted list by putting <code>- </code> in front of every line. Recipe: <code>split('\n')</code> the text into a list of lines → loop over the indexes and add the dash to each line → <code>'\n'.join(...)</code> the lines back into one string. Predict the output, then check yourself in the notebook, where the exercise cell is waiting.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="quiz">
+  <div class="section-number">QUIZ · PREREQUISITE SELF-CHECK · NOT GRADED</div>
+  <h2>Self-check quiz: 5 questions</h2>
+  <p>Purely for your own calibration — <strong>this quiz is not graded and not part of the course assignments</strong>. Click the option you believe is right; every option explains itself, so a wrong click still teaches you something.</p>
+  <div class="quiz-progress" id="quizProgress">Solved 0 / 5</div>
+  <div id="quizContainer"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="cards">
+  <div class="section-number">FLASHCARDS · KEY TERMS</div>
+  <h2>Key-term flashcards: click to flip</h2>
+  <p>All 7 key terms from the Manipulating Strings notebook. Say the definition out loud <strong>before</strong> flipping!</p>
+  <div class="card-controls">
+    <button class="btn btn-step" id="flipAll">Flip all</button>
+    <button class="btn btn-reset" id="unflipAll">Unflip all</button>
+    <button class="btn btn-play" id="shuffleCards">🔀 Shuffle</button>
+  </div>
+  <div class="flash-grid" id="flashGrid"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="reference">
+  <div class="section-number">REFERENCE · CHEAT SHEET</div>
+  <h2>P6 cheat sheet</h2>
+
+  <h3>Escape sequences &amp; raw strings</h3>
+  <table class="cmp-table">
+    <tr><th>Write</th><th>Prints as</th><th>Note</th></tr>
+    <tr><td>\' · \"</td><td>' · "</td><td class="tl">a quote inside a string quoted with the same mark</td></tr>
+    <tr><td>\\</td><td>\</td><td class="tl">one literal backslash</td></tr>
+    <tr><td>\t</td><td>(tab)</td><td class="tl">horizontal tab</td></tr>
+    <tr><td>\n</td><td>(newline)</td><td class="tl">line break</td></tr>
+    <tr><td>r'C:\Users\Al'</td><td>C:\Users\Al</td><td class="tl">raw string — all escapes ignored, backslashes kept</td></tr>
+  </table>
+
+  <h3>Common string methods — and what they return</h3>
+  <table class="cmp-table">
+    <tr><th>Call</th><th>Returns</th><th>Note</th></tr>
+    <tr><td>s.upper() · s.lower()</td><td>new str</td><td class="tl">original unchanged — reassign: s = s.upper()</td></tr>
+    <tr><td>s.isalpha() / isalnum() / isdecimal() / isspace() / istitle()</td><td>bool</td><td class="tl">nature checks — great for validating input(); blank strings give False</td></tr>
+    <tr><td>s.startswith(x) · s.endswith(x)</td><td>bool</td><td class="tl">checks only the ends of the string</td></tr>
+    <tr><td>s.replace(old, new)</td><td>new str</td><td class="tl">search and replace, like a word processor</td></tr>
+    <tr><td>sep.join(list_of_str)</td><td>str</td><td class="tl">called on the separator: ', '.join(['a','b']) → 'a, b'</td></tr>
+    <tr><td>s.split(sep)</td><td>list</td><td class="tl">no argument: split on any whitespace; split('\n') → lines</td></tr>
+    <tr><td>s.strip() · lstrip() · rstrip()</td><td>new str</td><td class="tl">trim whitespace from both / left / right ends</td></tr>
+  </table>
+
+  <h3>Formatting options</h3>
+  <table class="cmp-table">
+    <tr><th>Write</th><th>Get</th><th>Meaning</th></tr>
+    <tr><td>'a=%4d' % 32</td><td>'a=  32'</td><td class="tl">% operator, width 4 — numbers right-align by default</td></tr>
+    <tr><td>'%6.2f' % 32.145</td><td>' 32.15'</td><td class="tl">width 6, 2 decimals — the value is rounded</td></tr>
+    <tr><td>f'{b:6.2f}'</td><td>' 32.15'</td><td class="tl">same specifier, f-string style — after the colon</td></tr>
+    <tr><td>f'{a:&lt;15d}' · f'{b:^9.2f}'</td><td>aligned fields</td><td class="tl">&lt; left · &gt; right · ^ center</td></tr>
+    <tr><td>f'{a:+010d}'</td><td>'+000000032'</td><td class="tl">+ forces a sign; 0 fills the field with zeros</td></tr>
+    <tr><td>f'{age+2}'</td><td>inline math</td><td class="tl">any expression can sit inside the braces</td></tr>
+  </table>
+
+  <h3>Further reading</h3>
+  <ul>
+    <li><a href="https://automatetheboringstuff.com/" target="_blank" rel="noopener">Automate the Boring Stuff with Python</a> — chapter 6 covers this same ground, free online</li>
+    <li><a href="https://docs.python.org/3/library/stdtypes.html#string-methods" target="_blank" rel="noopener">Python docs: string methods</a> — the authoritative list of every method</li>
+    <li><a href="https://github.com/asweigart/pythonstdiogames/" target="_blank" rel="noopener">pythonstdiogames</a> — short, simple text programs built from the basics you now know; copy one by hand, tweak it, then re-create it from scratch</li>
+  </ul>
+
+  <div class="bridge-box">
+    <div class="bb-title">🎓 AFTER THIS REFRESHER, YOU CAN…</div>
+    <ul>
+      <li>Write strings with single, double, or triple quotes — and put quotes, tabs, newlines, and backslashes inside them with escape characters or a raw string</li>
+      <li>Index, slice, and search a string like any sequence — and explain why <code>s[0] = 'y'</code> fails while <code>s = 'y' + s[1:]</code> works</li>
+      <li>Build output with f-strings, controlling width, alignment, sign, and decimal places — and read the older % style when you meet it</li>
+      <li>Pick the right method for the job: <code>upper()/lower()</code> for case, <code>isX()</code> for validation, <code>split()/join()</code> to take text apart and put it back, <code>strip()</code> to tidy the edges</li>
+    </ul>
+    <p class="bb-next">NEXT ▸ P7 · Files &amp; Exceptions — so far your text lives and dies with the program; next you read and write files on disk, and handle the errors that come with them.</p>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="p5_dicts_sets.html"><div class="nav-dir">◂ PREVIOUS PREREQ</div><div class="nav-title">P5 · Dictionaries &amp; Sets</div></a>
+    <a href="p7_files_exceptions.html" class="next"><div class="nav-dir">NEXT PREREQ ▸</div><div class="nav-title">P7 · Files &amp; Exceptions</div></a>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Scientific Computing with Python · Prerequisite P6: Manipulating Strings · supplementary self-study — not graded, not part of the assignments<br>
+  Digest of <code>06_Manipulating_string.ipynb</code> · quiz &amp; flashcards from the notebook's own question bank
+</footer>
+<script>
+/* ============================================================
+   Shared engines: Quiz / Flashcards
+   (buildQuiz extended for the P-pages: answers flagged isCode
+   render monospace with newlines preserved)
+   ============================================================ */
+function buildQuiz(containerId, progressId, data) {
+  const container = document.getElementById(containerId);
+  const progress  = document.getElementById(progressId);
+  const solved = new Set();
+  const LETTERS = 'ABCDEFGH';
+
+  data.forEach((q, qi) => {
+    const box = document.createElement('div');
+    box.className = 'quiz-box';
+    box.innerHTML =
+      `<div class="quiz-label">Q${qi+1} / ${data.length}${q.multi ? ' <span class="multi-badge">MULTI</span>' : ''}</div>` +
+      `<div class="quiz-q">${q.question}</div>` +
+      (q.code ? `<div class="quiz-code">${q.code.replace(/</g,'&lt;')}</div>` : '') +
+      `<div class="quiz-options">` +
+      q.answers.map((a, ai) =>
+        `<div class="quiz-opt" data-q="${qi}" data-a="${ai}">
+           <div class="opt-head"><span class="opt-letter">${LETTERS[ai]}</span><span${a.isCode ? ' class="opt-code"' : ''}>${String(a.answer).replace(/</g,'&lt;')}</span></div>
+           <div class="opt-fb"></div>
+         </div>`
+      ).join('') + `</div>`;
+    container.appendChild(box);
+  });
+
+  container.addEventListener('click', e => {
+    const opt = e.target.closest('.quiz-opt');
+    if (!opt || opt.classList.contains('revealed')) return;
+    const q = data[+opt.dataset.q], a = q.answers[+opt.dataset.a];
+    opt.classList.add('revealed', a.correct ? 'correct' : 'wrong');
+    opt.querySelector('.opt-fb').textContent = (a.correct ? '✔ Correct: ' : '✘ Not quite: ') + a.feedback;
+    if (a.correct) {
+      solved.add(+opt.dataset.q);
+      progress.textContent = `Solved ${solved.size} / ${data.length}`;
+    }
+  });
+}
+
+function buildFlashcards(gridId, data) {
+  const grid = document.getElementById(gridId);
+  function render(cards) {
+    grid.innerHTML = cards.map(c =>
+      `<div class="flashcard">
+         <div class="fc-inner">
+           <div class="fc-face fc-front"><div>${c.front}</div><div class="fc-hint">CLICK TO FLIP</div></div>
+           <div class="fc-face fc-back">${c.back}</div>
+         </div>
+       </div>`).join('');
+  }
+  render(data);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.flashcard');
+    if (card) card.classList.toggle('flipped');
+  });
+  document.getElementById('flipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.add('flipped')));
+  document.getElementById('unflipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.remove('flipped')));
+  document.getElementById('shuffleCards').addEventListener('click', ()=>{
+    const shuffled = [...data].sort(()=>Math.random()-.5);
+    render(shuffled);
+  });
+}
+
+/* ============================================================
+   QUIZ — questions/ch6 of the prerequisite notebook
+   (answers and feedback carried over verbatim)
+   ============================================================ */
+const QUIZ_DATA = [
+  { question:"What is printed by the following statement?", code:"print(\"Hello\\nWorld!\\tWelcome to \\\"Python\\\" programming.\\\\\")", answers:[
+    { answer:"Hello\nWorld!\tWelcome to \"Python\" programming.\\", isCode:true, correct:true, feedback:"Correct! The escape sequence \\n creates a newline, \\t creates a tab, \\\" prints a double quote, and \\\\ prints a single backslash." },
+    { answer:"Hello\\nWorld!\tWelcome to \"Python\" programming.\\", isCode:true, correct:false, feedback:"Incorrect. The \\n escape sequence is processed into a newline, not printed literally." },
+    { answer:"Hello\nWorld!\\tWelcome to \"Python\" programming.\\", isCode:true, correct:false, feedback:"Incorrect. The \\t escape sequence should create a tab, not be shown as the literal characters \\t." },
+    { answer:"Hello\\nWorld!\\tWelcome to \\\"Python\\\" programming.\\\\", isCode:true, correct:false, feedback:"Incorrect. This answer shows the literal string with escape sequences, not the processed output." } ] },
+  { question:"What is printed by the following statements?", code:"s = \"python rocks\"\nprint(s[2] + s[-4])", answers:[
+    { answer:"tr", correct:false, feedback:"Almost, t is at postion 2, counting left to right starting from 0; but r is at -5, counting right to left starting from -1." },
+    { answer:"to", correct:true, feedback:"For -4 you count from right to left, starting with -1." },
+    { answer:"ps", correct:false, feedback:"p is at location 0, not 2." },
+    { answer:"Error, you cannot use the [ ] operator with the + operator.", correct:false, feedback:"[ ] operator returns a string that can be concatenated with another string." } ] },
+  { question:"What is printed by the following statements?", code:"name = \"Alice\"\nage = 30\nbalance = 1234.5678\nprint(f\"{name} is {age} years old and has a balance of {balance:.2f}\")", answers:[
+    { answer:"Alice is 30 years old and has a balance of 1234.57", correct:true, feedback:"Correct! The f-string substitutes the variable values and formats the balance to two decimal places." },
+    { answer:"Alice is 30 years old and has a balance of 1234.5678", correct:false, feedback:"Incorrect. The balance is formatted to two decimal places, so it rounds to 1234.57." },
+    { answer:"Alice is {age} years old and has a balance of {balance:.2f}", correct:false, feedback:"Incorrect. The expressions inside the curly braces are evaluated, not printed literally." },
+    { answer:"name is 30 years old and has a balance of 1234.57", correct:false, feedback:"Incorrect. The variable 'name' should be replaced with its value, 'Alice'." } ] },
+  { question:"What is printed by the following statements:", code:"s = \"ball\"\nr = \"\"\nfor item in s:\n    r = item.upper() + r\nprint(r)", answers:[
+    { answer:"Ball", correct:false, feedback:"Each item is converted to upper case before concatenation." },
+    { answer:"BALL", correct:false, feedback:"Each character is converted to upper case but the order is wrong." },
+    { answer:"LLAB", correct:true, feedback:"Yes, the order is reversed due to the order of the concatenation." } ] },
+  { question:"What is printed by the following statements?", code:"s1 = \"HelloWorld\"\ns2 = \"Hello123\"\ns3 = \"12345\"\ns4 = \"Hello 123\"\ns5 = \"\"\n\nprint(s1.isalpha(), s2.isalnum(), s3.isdecimal(), s4.isalnum(), s5.isalpha())", answers:[
+    { answer:"True, True, True, False, False", isCode:true, correct:true, feedback:"Correct! 'HelloWorld' is all letters so isalpha() returns True. 'Hello123' has only letters and numbers so isalnum() returns True. '12345' is all numeric so isdecimal() returns True. 'Hello 123' contains a space so isalnum() returns False. An empty string returns False for isalpha()." },
+    { answer:"True, False, True, False, True", isCode:true, correct:false, feedback:"Incorrect. 'Hello123' consists of letters and numbers, so isalnum() should return True, and an empty string should return False." },
+    { answer:"False, True, False, False, False", isCode:true, correct:false, feedback:"Incorrect. 'HelloWorld' is all letters, so isalpha() should return True, and '12345' is all numeric so isdecimal() should return True." },
+    { answer:"True, True, True, True, False", isCode:true, correct:false, feedback:"Incorrect. 'Hello 123' contains a space, which causes isalnum() to return False." } ] },
+];
+buildQuiz('quizContainer', 'quizProgress', QUIZ_DATA);
+
+/* ============================================================
+   FLASHCARDS — Key terms from the Manipulating Strings notebook
+   ============================================================ */
+const CARD_DATA = [
+  {front:"string", back:"A sequence of characters used to represent text data."},
+  {front:"escape character", back:"A backslash used to introduce special character sequences in a string."},
+  {front:"raw string", back:"A string prefixed with 'r' that treats backslashes as literal characters rather than escape sequences."},
+  {front:"string interpolation", back:"The process of inserting variable values or expressions into a string placeholder."},
+  {front:"format string", back:"A string containing placeholders that can be replaced with variable values, often using the % symbol."},
+  {front:"format specifiers", back:"Special syntax within a format string that defines how a value should be formatted (e.g., .2f for two decimal places)."},
+  {front:"f-string", back:"A string literal prefixed with 'f' that allows inline expression evaluation and formatting directly within the string."},
+];
+buildFlashcards('flashGrid', CARD_DATA);
+
+/* ============================================================
+   Floating nav active highlight
+   ============================================================ */
+(function initFloatNav(){
+  const links = document.querySelectorAll('.float-nav a[data-target]');
+  const sections = [...links].map(a => document.getElementById(a.dataset.target)).filter(Boolean);
+  function update(){
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= window.innerHeight * 0.35) active = s.id;
+    }
+    links.forEach(a => a.classList.toggle('active', a.dataset.target === active));
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>

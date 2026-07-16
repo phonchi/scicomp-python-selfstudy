@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P1 · Python Basics — Prerequisite Refresher</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a2e;--paper:#f7f3eb;--accent:#c0392b;--accent2:#2c3e7a;--accent3:#1a6b4a;
+  --muted:#8a8578;--card:#fffdf7;--card-border:#e8e2d6;--highlight:#fff3cd;
+  --code-bg:#2d2d3f;--code-fg:#e8e6df;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;font-size:17px;}
+
+/* Hero */
+.hero{min-height:56vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2.5rem 2rem;position:relative;overflow:hidden;background:linear-gradient(170deg,#1a1a2e 0%,#2c3e7a 40%,#1a6b4a 100%);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.06) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.04) 0%,transparent 40%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);}
+.hero-content{position:relative;z-index:1;max-width:880px;}
+.hero .chapter-tag{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#f39c12;letter-spacing:.3em;margin-bottom:.8rem;}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:clamp(1.9rem,4.6vw,3rem);font-weight:900;color:#fff;letter-spacing:.02em;line-height:1.25;margin-bottom:1rem;}
+.hero h1 .green{color:#2ecc71;}
+.hero h1 .blue{color:#5dade2;}
+.hero h1 .orange{color:#f39c12;}
+.hero .subtitle{font-size:clamp(.95rem,2.2vw,1.15rem);color:rgba(255,255,255,.65);font-weight:300;margin-bottom:2rem;}
+.hero .big-formula{font-family:'JetBrains Mono',monospace;color:#2ecc71;background:rgba(0,0,0,.3);padding:.8rem 2rem;border-radius:12px;display:inline-block;border:1px solid rgba(255,255,255,.1);margin-bottom:2rem;backdrop-filter:blur(4px);font-size:1.0rem;}
+.scroll-hint{color:rgba(255,255,255,.4);font-size:.9rem;animation:bounce 2s infinite;}
+.scroll-hint span{display:block;font-size:1.4rem;margin-top:.3rem;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* Layout */
+.container{max-width:1180px;margin:0 auto;padding:3rem 1.5rem;}
+.section-number{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.5rem;}
+h2{font-family:'Noto Serif TC',serif;font-size:1.65rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;line-height:1.4;}
+h3{font-family:'Noto Serif TC',serif;font-size:1.15rem;font-weight:700;color:var(--accent2);margin:1.4rem 0 .8rem;}
+section{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid var(--card-border);}
+section:last-of-type{border-bottom:none;}
+p{margin-bottom:1rem;}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:rgba(44,62,122,.08);padding:1px 6px;border-radius:4px;color:var(--accent2);}
+ul,ol{margin:0 0 1rem 1.4rem;}
+
+/* Prerequisite banner */
+.prereq-banner{background:#fef5e7;border:3px solid #d68910;border-radius:12px;padding:1.2rem 1.5rem;margin:0 0 2.2rem;box-shadow:0 3px 12px rgba(214,137,16,.12);}
+.prereq-banner .pb-title{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:#b9770e;font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.prereq-banner p{margin-bottom:0;font-size:.95rem;}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1.2rem 1.5rem;margin:1rem 0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent3);font-weight:600;letter-spacing:.15em;margin-bottom:.7rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.5rem .8rem;}
+.toc-grid a{color:var(--accent2);text-decoration:none;font-size:.9rem;padding:.3rem 0;display:flex;align-items:center;gap:.4rem;transition:color .2s;}
+.toc-grid a:hover{color:var(--accent);}
+.toc-grid a .toc-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:40px;}
+
+/* Info box */
+.info-box{background:#eef2ff;border:2px solid var(--accent2);border-radius:10px;padding:1.1rem 1.4rem;margin:1.3rem 0;position:relative;}
+.info-box .info-label{position:absolute;top:-11px;left:14px;background:var(--accent2);color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.info-box.warm{background:#fef5e7;border-color:#d68910;}
+.info-box.warm .info-label{background:#d68910;}
+.info-box.green{background:#eafaf1;border-color:var(--accent3);}
+.info-box.green .info-label{background:var(--accent3);}
+.info-box p:last-child,.info-box ul:last-child,.info-box ol:last-child{margin-bottom:0;}
+
+/* Pill labels */
+.pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:4px;margin:0 .15rem;vertical-align:1px;}
+.pill-blue{background:rgba(41,128,185,.12);color:#2980b9;border:1px solid rgba(41,128,185,.3);}
+.pill-red{background:rgba(192,57,43,.12);color:var(--accent);border:1px solid rgba(192,57,43,.3);}
+.pill-green{background:rgba(39,174,96,.12);color:var(--accent3);border:1px solid rgba(39,174,96,.3);}
+.pill-orange{background:rgba(243,156,18,.12);color:#d68910;border:1px solid rgba(243,156,18,.3);}
+.pill-purple{background:rgba(142,68,173,.12);color:#8e44ad;border:1px solid rgba(142,68,173,.3);}
+
+/* Comparison table */
+.cmp-table{width:100%;border-collapse:collapse;font-size:.86rem;margin:.8rem 0;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.cmp-table th{background:var(--accent2);color:#fff;padding:.6rem .8rem;text-align:center;font-weight:600;font-size:.82rem;}
+.cmp-table td{padding:.6rem .8rem;text-align:center;border-bottom:1px solid var(--card-border);font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.cmp-table td:first-child{font-family:'Noto Sans TC',sans-serif;color:var(--accent2);font-weight:600;text-align:left;}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:nth-child(even){background:rgba(0,0,0,.015);}
+.cmp-table .best{color:var(--accent3);font-weight:700;}
+.cmp-table .worst{color:var(--accent);font-weight:700;}
+.cmp-table td.tl{font-family:'Noto Sans TC',sans-serif;text-align:left;font-size:.85rem;}
+
+/* Pseudo code */
+.pseudo-code{background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:.85rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.65;overflow-x:auto;margin:.8rem 0;}
+.pseudo-code .line{padding:1px 4px;border-radius:3px;display:block;white-space:pre;}
+.pseudo-code .kw{color:#ff79c6;}
+.pseudo-code .fn{color:#50fa7b;}
+.pseudo-code .num{color:#bd93f9;}
+.pseudo-code .str{color:#f1fa8c;}
+.pseudo-code .com{color:#6272a4;font-style:italic;}
+
+/* Quiz */
+.quiz-box{background:var(--card);border:2px solid var(--accent2);border-radius:12px;padding:1.3rem 1.5rem;margin:1.5rem 0;}
+.quiz-box .quiz-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.quiz-box .quiz-label .multi-badge{background:#8e44ad;color:#fff;font-size:.68rem;padding:1px 8px;border-radius:3px;}
+.quiz-box .quiz-q{font-weight:600;margin-bottom:.6rem;}
+.quiz-box .quiz-code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:.6rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.84rem;margin-bottom:.8rem;white-space:pre-wrap;}
+.quiz-options{display:flex;flex-direction:column;gap:.5rem;margin:.8rem 0 0;}
+.quiz-opt{display:flex;flex-direction:column;padding:.55rem .9rem;background:var(--paper);border:2px solid var(--card-border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.9rem;}
+.quiz-opt:hover{border-color:var(--accent2);}
+.quiz-opt .opt-head{display:flex;align-items:baseline;gap:.6rem;}
+.quiz-opt .opt-letter{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent2);min-width:22px;}
+.quiz-opt .opt-code{white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.quiz-opt .opt-fb{display:none;font-size:.82rem;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--card-border);color:#555;}
+.quiz-opt.revealed .opt-fb{display:block;}
+.quiz-opt.correct{background:#eafaf1;border-color:var(--accent3);}
+.quiz-opt.correct .opt-letter{color:var(--accent3);}
+.quiz-opt.correct .opt-fb{color:#14532d;}
+.quiz-opt.wrong{background:#fef5e7;border-color:#d68910;}
+.quiz-opt.wrong .opt-letter{color:#d68910;}
+.quiz-progress{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent3);font-weight:600;margin:.8rem 0;}
+
+/* Flashcards */
+.card-controls{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 1.2rem;}
+.btn{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:600;padding:.45rem 1rem;border-radius:6px;border:none;cursor:pointer;transition:all .2s;}
+.btn-play{background:var(--accent3);color:#fff;}
+.btn-play:hover{background:#22845c;}
+.btn-step{background:var(--accent2);color:#fff;}
+.btn-step:hover{background:#1f2e5f;}
+.btn-reset{background:var(--card-border);color:var(--ink);}
+.btn-reset:hover{background:#ccc;}
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:.9rem;}
+.flashcard{perspective:900px;height:160px;cursor:pointer;}
+.flashcard .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+.flashcard .fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:.9rem;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.08);}
+.flashcard .fc-front{background:linear-gradient(150deg,#2c3e7a,#1a1a2e);color:#fff;font-family:'Noto Serif TC',serif;font-size:1.05rem;font-weight:700;letter-spacing:.02em;flex-direction:column;gap:.4rem;}
+.flashcard .fc-front .fc-hint{font-size:.66rem;color:rgba(255,255,255,.45);font-family:'JetBrains Mono',monospace;font-weight:400;letter-spacing:.1em;}
+.flashcard .fc-back{background:var(--card);border:2px solid var(--accent3);color:var(--ink);font-size:.78rem;line-height:1.55;transform:rotateY(180deg);overflow-y:auto;}
+
+/* Floating sidebar navigation */
+.float-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:2px;background:rgba(255,253,250,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--card-border);border-radius:12px;padding:10px 7px;box-shadow:0 6px 24px rgba(0,0,0,.10);font-family:'JetBrains Mono',monospace;max-height:88vh;overflow-y:auto;transition:padding .25s ease;}
+.float-nav .fn-title{font-family:'Noto Serif TC',serif;font-weight:700;font-size:.68rem;color:var(--accent2);text-align:center;letter-spacing:1.5px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--card-border);max-width:0;overflow:hidden;transition:max-width .25s ease;}
+.float-nav:hover .fn-title{max-width:220px;}
+.float-nav a{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;color:var(--ink);text-decoration:none;white-space:nowrap;transition:all .2s ease;border-left:3px solid transparent;}
+.float-nav a .fn-num{font-weight:700;font-size:.66rem;color:var(--muted);letter-spacing:.4px;flex-shrink:0;width:34px;text-align:left;}
+.float-nav a .fn-name{font-family:'Noto Sans TC',sans-serif;font-size:.76rem;font-weight:500;max-width:0;overflow:hidden;transition:max-width .25s ease,padding .25s ease;padding:0;}
+.float-nav:hover a .fn-name{max-width:220px;padding-left:2px;}
+.float-nav a:hover{background:var(--card);}
+.float-nav a.active{background:var(--accent2);color:#fff;border-left-color:var(--accent);box-shadow:0 2px 6px rgba(192,57,43,.25);}
+.float-nav a.active .fn-num{color:rgba(255,255,255,.85);}
+.float-nav a.active .fn-name{color:#fff;}
+.float-nav .fn-top{margin-top:6px;padding-top:6px;border-top:1px solid var(--card-border);justify-content:center;}
+.float-nav .fn-top .fn-num{width:auto;color:var(--accent2);font-size:.78rem;}
+@media(max-width:768px){
+  .float-nav{right:8px;top:auto;bottom:14px;transform:none;padding:6px 5px;max-height:70vh;}
+  .float-nav .fn-title{display:none;}
+  .float-nav a{padding:4px 7px;}
+  .float-nav a .fn-num{width:26px;font-size:.62rem;}
+}
+
+/* Chapter nav */
+.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin:2rem 0 0;flex-wrap:wrap;}
+.chapter-nav a{flex:1;min-width:220px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:1rem 1.3rem;text-decoration:none;color:var(--ink);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.chapter-nav a:hover{border-color:var(--accent2);transform:translateY(-2px);}
+.chapter-nav .nav-dir{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.1em;}
+.chapter-nav .nav-title{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--accent2);}
+.chapter-nav a.next{text-align:right;}
+
+footer{text-align:center;padding:2rem;font-size:.85rem;color:var(--muted);border-top:1px solid var(--card-border);}
+footer a{color:var(--accent2);}
+
+/* 🤖 Ask-AI / discussion box */
+.ai-box{background:var(--card);border:2px dashed #8e44ad;border-radius:12px;padding:1.2rem 1.4rem;margin:1.3rem 0;position:relative;}
+.ai-box .ai-label{position:absolute;top:-11px;left:14px;background:#8e44ad;color:#fff;font-size:.74rem;font-weight:700;padding:2px 10px;border-radius:4px;letter-spacing:.05em;}
+.ai-box p:last-child{margin-bottom:0;}
+.ai-box .ai-prompt{font-family:'JetBrains Mono',monospace;font-size:.85rem;background:rgba(142,68,173,.08);border-radius:6px;padding:.4rem .8rem;display:block;margin:.4rem 0;color:#6c3485;}
+
+/* 🎓 Chapter-end bridge */
+.bridge-box{background:#eafaf1;border:2px solid var(--accent3);border-radius:12px;padding:1.3rem 1.5rem;margin:2rem 0 0;}
+.bridge-box .bb-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent3);font-weight:700;letter-spacing:.12em;margin-bottom:.5rem;}
+.bridge-box ul{margin:.3rem 0 .8rem 1.3rem;font-size:.92rem;}
+.bridge-box .bb-next{font-size:.9rem;color:var(--accent2);border-top:1px dashed var(--accent3);padding-top:.6rem;margin-bottom:0;}
+
+/* Materials map */
+.mat-map{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.9rem 0;padding:.7rem 1rem;background:var(--card);border:1px solid var(--card-border);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.mat-map .mm-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.12em;margin-right:.3rem;}
+.mat-map a{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:6px;text-decoration:none;border:2px solid var(--card-border);color:var(--accent2);transition:all .2s;background:var(--paper);}
+.mat-map a:hover{border-color:var(--accent2);}
+</style>
+</head>
+<body>
+
+<nav class="float-nav">
+  <div class="fn-title">P1 · Python Basics</div>
+  <a href="#s11" data-target="s11"><span class="fn-num">P1.1</span><span class="fn-name">From algorithm to program</span></a>
+  <a href="#s12" data-target="s12"><span class="fn-num">P1.2</span><span class="fn-name">Numbers, strings &amp; operators</span></a>
+  <a href="#s13" data-target="s13"><span class="fn-num">P1.3</span><span class="fn-name">Variables &amp; types</span></a>
+  <a href="#s14" data-target="s14"><span class="fn-num">P1.4</span><span class="fn-name">Debugging</span></a>
+  <a href="#s15" data-target="s15"><span class="fn-num">P1.5</span><span class="fn-name">Your first script</span></a>
+  <a href="#quiz" data-target="quiz"><span class="fn-num">QUIZ</span><span class="fn-name">Self-check quiz</span></a>
+  <a href="#cards" data-target="cards"><span class="fn-num">CARD</span><span class="fn-name">Key-term flashcards</span></a>
+  <a href="#reference" data-target="reference"><span class="fn-num">REF</span><span class="fn-name">Cheat sheet</span></a>
+  <a href="#top" class="fn-top" title="Back to top"><span class="fn-num">↑ TOP</span></a>
+</nav>
+
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="chapter-tag">PREREQUISITE P1 · SUPPLEMENTARY · NOT GRADED</div>
+    <h1>Python <span class="green">Basics</span></h1>
+    <div class="subtitle">Programs, values, variables, and the art of reading an error message — the foundations every module of this course quietly assumes. Skim what you know; slow down where you hesitate.</div>
+    <div class="big-formula">algorithm → pseudocode → program ｜ print() ｜ variables ｜ types</div>
+    <div class="scroll-hint">Scroll down to start<span>↓</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="prereq-banner">
+  <div class="pb-title">📌 SUPPLEMENTARY PREREQUISITE — NOT PART OF THE ASSIGNMENTS</div>
+  <p>The prerequisite pages (P1–P8) review the basic Python that Modules 1–5 assume you already know. They are <strong>optional background material for self-study: nothing on these pages is graded, and none of it will appear in the course assignments</strong>（補充先備知識，不列入作業範圍）. Use them to warm up before Module 1, or to look things up whenever a module uses a Python idiom you have forgotten.</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">CONTENTS · A REFRESHER, NOT A LECTURE — READ AT YOUR OWN PACE</div>
+  <div class="toc-grid">
+    <a href="#s11"><span class="toc-num">P1.1</span>From algorithm to program</a>
+    <a href="#s12"><span class="toc-num">P1.2</span>Numbers, strings &amp; operators</a>
+    <a href="#s13"><span class="toc-num">P1.3</span>Variables &amp; types</a>
+    <a href="#s14"><span class="toc-num">P1.4</span>Debugging: three kinds of bugs</a>
+    <a href="#s15"><span class="toc-num">P1.5</span>Your first script &amp; the Zen of Python</a>
+    <a href="#quiz"><span class="toc-num">QUIZ</span>Self-check quiz (7 questions)</a>
+    <a href="#cards"><span class="toc-num">CARD</span>Key-term flashcards (22 cards)</a>
+    <a href="#reference"><span class="toc-num">REF</span>Python basics cheat sheet</a>
+  </div>
+</div>
+
+<div class="info-box green">
+  <div class="info-label">📖 HOW TO USE THE P-PAGES</div>
+  <p style="margin-bottom:.4rem;">Unlike the module pages, there are no course videos here — the source is a Jupyter notebook you can run yourself:</p>
+  <p style="margin-bottom:0;">① <strong>Read</strong> each digest section below → ② <strong>Run</strong> the matching notebook cells (one click on the Colab badge — predict each output <em>before</em> you run it) → ③ <strong>Quiz</strong> yourself and flip the <a href="#cards">flashcards</a>. If everything feels obvious, you are ready — move on.</p>
+</div>
+
+<div class="mat-map">
+  <span class="mm-title">SOURCE NOTEBOOK ▸</span>
+  <a href="https://colab.research.google.com/github/phonchi/nsysu-math106A/blob/master/static_files/presentations/01_Python.ipynb" target="_blank" rel="noopener">🚀 Open 01_Python.ipynb in Colab</a>
+  <a href="https://github.com/phonchi/nsysu-math106A/blob/master/static_files/presentations/01_Python.ipynb" target="_blank" rel="noopener">📓 View on GitHub</a>
+</div>
+
+<!-- ============================================================ -->
+<section id="s11">
+  <div class="section-number">PREREQ P1.1 · FROM ALGORITHM TO PROGRAM</div>
+  <h2>P1.1 From algorithm to program</h2>
+
+  <p>Problem solving is the heart of computing, and the solutions you design are <strong>algorithms</strong>: step-by-step lists of instructions that are well-defined, unambiguous, and guaranteed to finish. An algorithm is like a recipe — it must be followed exactly, and it must end. For a triangle's hypotenuse, the recipe might read:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="com"># Pseudocode — precise English, not yet a program</span></span>
+<span class="line">Ask for the first side's length; call it a</span>
+<span class="line">Ask for the second side's length; call it b</span>
+<span class="line">Let hypotenuse = √(a² + b²)</span>
+<span class="line">Display the hypotenuse</span></div>
+  <p><strong>Programming</strong> is translating that pseudocode into a notation a computer can follow — a program, written in a <strong>programming language</strong> like Python:</p>
+  <div class="pseudo-code">
+<span class="line">side_a = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter the length of the first side:"</span>))</span>
+<span class="line">side_b = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter the length of the second side:"</span>))</span>
+<span class="line">hypotenuse = (side_a**<span class="num">2</span> + side_b**<span class="num">2</span>)**(<span class="num">1</span>/<span class="num">2</span>)</span>
+<span class="line"><span class="fn">print</span>(<span class="str">"The hypotenuse of that triangle is:"</span>, hypotenuse)   <span class="com"># → 5.0 for sides 3, 4</span></span></div>
+  <p>Python is an <strong>interpreted language</strong>: the <strong>interpreter</strong> reads your <strong>statements</strong> one line at a time, computing as it goes (a <em>compiler</em>, in contrast, translates the whole program before anything runs). That is why you can type Python into an interactive prompt and get an answer immediately.</p>
+
+  <h3>Hello, World — more going on than you'd think</h3>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">print</span>(<span class="str">'Hello, World!'</span>)</span></div>
+  <ul>
+    <li><code>print()</code> is a built-in <strong>function</strong> — a pre-defined operation. The value between the parentheses is its <strong>argument</strong>.</li>
+    <li><code>'Hello, World!'</code> is a string <strong>constant</strong> — fixed data, written with single or double quotes. The quotes mark where the string begins and ends; they are not printed.</li>
+    <li><code>print('Hello', 'World')</code> prints multiple values separated by spaces; a trailing <code>\</code> lets a statement span two lines.</li>
+  </ul>
+  <p>Strings come with <strong>methods</strong> — actions attached to the data itself, called with a dot: <code>'hi python'.title()</code> → <code>Hi Python</code>, plus <code>.upper()</code>, <code>.lower()</code>, and <code>.strip()</code> (trim surrounding whitespace). And everything to the right of a <code>#</code> is a <strong>comment</strong> — notes for humans that Python ignores.</p>
+
+  <div class="info-box">
+    <div class="info-label">🔍 PREDICT, THEN RUN</div>
+    <p style="margin-bottom:0;">The single best habit for learning to read code: <strong>predict</strong> what a snippet will output <em>before</em> running it, then run it and compare. Where your prediction fails is exactly where your mental model needs repair — the same habit this course asks of you with AI-generated code.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s12">
+  <div class="section-number">PREREQ P1.2 · NUMBERS, STRINGS &amp; OPERATORS</div>
+  <h2>P1.2 Numbers, strings &amp; operators</h2>
+
+  <p>An <strong>expression</strong> combines values and operators to compute a new value — <code>2 + 3</code> is an expression; so is <code>(a**2 + b**2)**(1/2)</code>. Python's arithmetic follows the precedence rules you know from math, with two operators that surprise newcomers:</p>
+  <table class="cmp-table">
+    <tr><th>Operator</th><th>Meaning</th><th>Example</th><th>Result</th></tr>
+    <tr><td>+ − * </td><td class="tl">add, subtract, multiply</td><td>7 * 8</td><td>56</td></tr>
+    <tr><td>/</td><td class="tl">true division — always float</td><td>45 / 4</td><td>11.25</td></tr>
+    <tr><td>//</td><td class="tl">floor division — drop the fraction</td><td>45 // 4</td><td>11</td></tr>
+    <tr><td>%</td><td class="tl">modulus — the remainder</td><td>45 % 4</td><td>1</td></tr>
+    <tr><td>**</td><td class="tl">exponentiation (NOT ^ — that's bitwise XOR)</td><td>2 ** 10</td><td>1024</td></tr>
+  </table>
+  <div class="info-box warm">
+    <div class="info-label">⚠️ TWO CLASSIC TRAPS</div>
+    <ul style="margin-bottom:0;">
+      <li><code>18.0 // 4</code> → <code>4.0</code>, not <code>4</code> — floor division <em>truncates</em>, but mixing a float in makes the <em>result</em> a float.</li>
+      <li><code>16 - 2 * 5 // 3 + 1</code> → <code>14</code> — precedence: <code>2*5</code> first, then <code>10//3 → 3</code>, then left to right. When in doubt, add parentheses.</li>
+    </ul>
+  </div>
+  <p>The same operators do double duty on strings: <code>+</code> <strong>concatenates</strong> and <code>*</code> <strong>replicates</strong>:</p>
+  <div class="pseudo-code">
+<span class="line">s = <span class="str">'hello'</span> + <span class="str">'world'</span>    <span class="com"># 'helloworld'</span></span>
+<span class="line">t = s * <span class="num">4</span>                <span class="com"># 'helloworldhelloworldhelloworldhelloworld'</span></span></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s13">
+  <div class="section-number">PREREQ P1.3 · VARIABLES &amp; TYPES</div>
+  <h2>P1.3 Variables &amp; types</h2>
+
+  <p>A <strong>variable</strong> stores a value for later use. You create one with an <strong>assignment statement</strong> — name, equals sign, value — and Python creates it the first time you assign to it. Assigning again <em>overwrites</em> (the old value is forgotten):</p>
+  <div class="pseudo-code">
+<span class="line">spam = <span class="str">'Hello'</span>     <span class="com"># 'Hello' is a string object…</span></span>
+<span class="line">spam = <span class="str">'Goodbye'</span>   <span class="com"># …now spam refers to a different object</span></span></div>
+  <div class="info-box">
+    <div class="info-label">🏷 LABELS, NOT BOXES</div>
+    <p style="margin-bottom:0;">In Python <strong>everything is an object</strong>, and a variable is best pictured as a <strong>label (reference) attached to an object</strong> — not a box containing it. Unlike algebra, where <em>x</em> = 3 for the whole derivation, a Python name can be re-attached to a new value at any time — even a value of a different type. This picture pays off again in P4, when two labels end up on the <em>same</em> list.</p>
+  </div>
+  <p><strong>Naming rules:</strong> names use letters, digits, and underscores, cannot start with a digit (<code>current_balance</code> ✔, <code>4account</code> ✘, <code>current-balance</code> ✘), and are <strong>case-sensitive</strong> — <code>size</code>, <code>Size</code>, and <code>SIZE</code> are three different variables. A few reserved <strong>keywords</strong> (<code>if</code>, <code>for</code>, <code>class</code>, …) can never be variable names — <code>help('keywords')</code> lists them.</p>
+
+  <h3>Every value has a type</h3>
+  <div class="pseudo-code">
+<span class="line"><span class="fn">type</span>(<span class="str">'Hello!'</span>), <span class="fn">type</span>(<span class="kw">False</span>), <span class="fn">type</span>(<span class="num">4</span>), <span class="fn">type</span>(<span class="num">3.2</span>), <span class="fn">type</span>(<span class="num">3</span>+<span class="num">5j</span>)</span>
+<span class="line"><span class="com"># (str, bool, int, float, complex)</span></span></div>
+  <p>You convert between types two ways. <strong>Explicitly</strong>, with a <strong>cast</strong>: <code>int(3.9)</code> → <code>3</code> (truncation — no rounding!), <code>float(3)</code> → <code>3.0</code>, <code>str(3)</code> → <code>'3'</code>, <code>int('3')</code> → <code>3</code>. <strong>Implicitly</strong>, when you mix numeric types in one expression — Python widens to the more precise type (<code>5 + 4.2</code> → <code>9.2</code>), following the ladder <code>bool → int → float → complex</code>. Two small friends worth remembering: <code>ord('A')</code> → <code>65</code> and <code>chr(65)</code> → <code>'A'</code> convert between a character and its Unicode code point.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="s14">
+  <div class="section-number">PREREQ P1.4 · DEBUGGING</div>
+  <h2>P1.4 Debugging: three kinds of bugs</h2>
+
+  <p>You will spend a real fraction of your programming life finding and fixing errors — <strong>debugging</strong>. It goes much faster once you can name what kind of bug you are looking at:</p>
+  <table class="cmp-table">
+    <tr><th>Kind</th><th>What went wrong</th><th>Example</th><th>How it announces itself</th></tr>
+    <tr><td>Syntax error</td><td class="tl">the code breaks Python's grammar</td><td>print(5 + )</td><td class="tl">refuses to run at all — message points at a line</td></tr>
+    <tr><td>Runtime error</td><td class="tl">legal code hits an impossible situation while running</td><td>5 / 0 · pront(5)</td><td class="tl">crashes mid-run: ZeroDivisionError, NameError, …</td></tr>
+    <tr><td>Semantic error</td><td class="tl">the program runs — and computes the wrong thing</td><td>'3' + '5' → '35'</td><td class="worst">silence — no message at all</td></tr>
+  </table>
+  <p>The classic semantic bug in beginner code: <code>input()</code> <strong>always returns a string</strong>, even when the user types a number. Forget the conversion and <code>+</code> quietly concatenates:</p>
+  <div class="pseudo-code">
+<span class="line">num1 = <span class="fn">input</span>(<span class="str">'Enter a number:'</span>)        <span class="com"># user types 3   → '3' (a string!)</span></span>
+<span class="line">num2 = <span class="fn">input</span>(<span class="str">'Enter another number:'</span>)  <span class="com"># user types 5   → '5'</span></span>
+<span class="line"><span class="fn">print</span>(num1 + num2)                     <span class="com"># '35' — concatenation, not addition</span></span>
+<span class="line"><span class="fn">print</span>(<span class="fn">int</span>(num1) + <span class="fn">int</span>(num2))          <span class="com"># 8 — convert first ✔</span></span></div>
+  <div class="info-box green">
+    <div class="info-label">🎯 THE DEBUGGING LOOP</div>
+    <p style="margin-bottom:0;">Semantic errors give no error message, so <em>you</em> must supply the alarm: decide the expected output for a known input (a <strong>test case</strong>) <em>before</em> running, then compare. When they disagree, <code>print()</code> the intermediate values until you find where reality and expectation part ways. Syntax and runtime errors are kinder — <strong>read the message</strong>: it names the line and the problem.</p>
+  </div>
+  <div class="ai-box">
+    <div class="ai-label">🤖 THINK · DISCUSS · ASK AN AI</div>
+    <p>Debugging is where an AI assistant genuinely shines — if you drive:</p>
+    <span class="ai-prompt">Paste a full error message and ask: "Explain what this error means and list the 3 most common causes — but don't fix my code yet."</span>
+    <span class="ai-prompt">Why does Python print 35 for input 3 and 5 in the snippet above, with no error at all? Which of the three bug kinds is this?</span>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s15">
+  <div class="section-number">PREREQ P1.5 · YOUR FIRST SCRIPT</div>
+  <h2>P1.5 Your first script &amp; the Zen of Python</h2>
+
+  <p>The interactive prompt is for experiments; real programs live in a <strong>script</strong> — a plain text file of statements, run top to bottom. This little program uses everything from this page:</p>
+  <div class="pseudo-code">
+<span class="line"><span class="str">"""This program says hello and asks for your name and age."""</span>  <span class="com"># multiline comment</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">'Hello, world!'</span>)</span>
+<span class="line">myName = <span class="fn">input</span>(<span class="str">'What is your name? '</span>)          <span class="com"># input() returns a string</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">'It is good to meet you, '</span> + myName)     <span class="com"># + concatenates strings</span></span>
+<span class="line"><span class="fn">print</span>(<span class="str">'The length of your name is:\n'</span> + <span class="fn">str</span>(<span class="fn">len</span>(myName)))  <span class="com"># \n = newline</span></span>
+<span class="line">myAge = <span class="fn">input</span>(<span class="str">'What is your age? '</span>)</span>
+<span class="line"><span class="fn">print</span>(<span class="str">'You will be '</span> + <span class="fn">str</span>(<span class="fn">int</span>(myAge) + <span class="num">1</span>) + <span class="str">' in a year.'</span>)</span></div>
+  <p>Trace the conversions in the last line from the inside out: <code>input()</code> gives a string → <code>int()</code> makes it a number so <code>+ 1</code> is arithmetic → <code>str()</code> makes it a string again so <code>+</code> can concatenate. <code>len()</code> returns the number of characters in a string. In Jupyter, the magics <code>%%writefile hello.py</code> and <code>%run hello.py</code> save and execute a script without leaving the notebook.</p>
+
+  <h3>The Zen of Python</h3>
+  <p>Type <code>import this</code> in any Python prompt and you get the language's design philosophy as a poem. Two lines are worth adopting as a student: <em>"Simple is better than complex"</em> and <em>"Readability counts."</em> Don't try to write perfect code — write code that <strong>works</strong>, check it, and only then decide whether it is worth polishing. (When you are ready for the community's formatting conventions, the reference is <a href="https://peps.python.org/pep-0008/" target="_blank" rel="noopener">PEP 8</a>.)</p>
+
+  <div class="info-box warm">
+    <div class="info-label">✍️ TRY IT (OPTIONAL — NOT GRADED)</div>
+    <p style="margin-bottom:0;">Read a five-digit integer, e.g. <code>42339</code>, and print its digits separated by spaces: <code>4 2 3 3 9</code>. Hint: <code>%</code> peels off the last digit, <code>//</code> discards it — alternate the two. Check yourself in the notebook, where the exercise cell is waiting.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="quiz">
+  <div class="section-number">QUIZ · PREREQUISITE SELF-CHECK · NOT GRADED</div>
+  <h2>Self-check quiz: 7 questions</h2>
+  <p>Purely for your own calibration — <strong>this quiz is not graded and not part of the course assignments</strong>. Click the option you believe is right; every option explains itself, so a wrong click still teaches you something.</p>
+  <div class="quiz-progress" id="quizProgress">Solved 0 / 7</div>
+  <div id="quizContainer"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="cards">
+  <div class="section-number">FLASHCARDS · KEY TERMS</div>
+  <h2>Key-term flashcards: click to flip</h2>
+  <p>All 22 key terms from the Python Basics notebook. Say the definition out loud <strong>before</strong> flipping!</p>
+  <div class="card-controls">
+    <button class="btn btn-step" id="flipAll">Flip all</button>
+    <button class="btn btn-reset" id="unflipAll">Unflip all</button>
+    <button class="btn btn-play" id="shuffleCards">🔀 Shuffle</button>
+  </div>
+  <div class="flash-grid" id="flashGrid"></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="reference">
+  <div class="section-number">REFERENCE · CHEAT SHEET</div>
+  <h2>P1 cheat sheet</h2>
+
+  <h3>Operators at a glance</h3>
+  <table class="cmp-table">
+    <tr><th>Expression</th><th>Value</th><th>Watch out for</th></tr>
+    <tr><td>45 / 4</td><td>11.25</td><td class="tl">/ always returns a float</td></tr>
+    <tr><td>45 // 4 · 45 % 4</td><td>11 · 1</td><td class="tl">floor division truncates (no rounding); % gives the remainder</td></tr>
+    <tr><td>18.0 // 4</td><td>4.0</td><td class="tl">a float operand makes the result a float — even for //</td></tr>
+    <tr><td>2 ** 10</td><td>1024</td><td class="tl">exponent is **, not ^</td></tr>
+    <tr><td>'ab' + 'cd' · 'ab' * 2</td><td>'abcd' · 'abab'</td><td class="tl">+ concatenates, * replicates — strings only combine with strings</td></tr>
+  </table>
+
+  <h3>Type conversions</h3>
+  <table class="cmp-table">
+    <tr><th>Call</th><th>Result</th><th>Note</th></tr>
+    <tr><td>int(53.785)</td><td>53</td><td class="tl">truncates toward zero — never rounds</td></tr>
+    <tr><td>float(3) · str(3) · int('3')</td><td>3.0 · '3' · 3</td><td class="tl">explicit casts between the basic types</td></tr>
+    <tr><td>5 + 4.2</td><td>9.2</td><td class="tl">implicit widening: bool → int → float → complex</td></tr>
+    <tr><td>ord('A') · chr(65)</td><td>65 · 'A'</td><td class="tl">character ↔ Unicode code point</td></tr>
+    <tr><td>input(...)</td><td>always str</td><td class="tl">convert with int()/float() before doing math</td></tr>
+  </table>
+
+  <h3>The three kinds of bugs</h3>
+  <table class="cmp-table">
+    <tr><th>Kind</th><th>Detected</th><th>Your move</th></tr>
+    <tr><td>Syntax</td><td class="tl">before the program runs</td><td class="tl">read the message — line number and description included</td></tr>
+    <tr><td>Runtime</td><td class="tl">mid-run crash (NameError, ZeroDivisionError…)</td><td class="tl">read the traceback bottom-up; the last line names the error</td></tr>
+    <tr><td>Semantic</td><td class="worst">never — output is silently wrong</td><td class="tl">test case first, then print() intermediate values</td></tr>
+  </table>
+
+  <h3>Further reading</h3>
+  <ul>
+    <li><a href="https://automatetheboringstuff.com/" target="_blank" rel="noopener">Automate the Boring Stuff with Python</a> — chapter 1 covers this same ground, free online</li>
+    <li><a href="https://www.py4e.com/" target="_blank" rel="noopener">Python for Everybody</a> — gentle videos + exercises if you want more repetition</li>
+  </ul>
+
+  <div class="bridge-box">
+    <div class="bb-title">🎓 AFTER THIS REFRESHER, YOU CAN…</div>
+    <ul>
+      <li>Explain the path from algorithm → pseudocode → program, and what the interpreter does with each statement</li>
+      <li>Evaluate expressions with / vs //, %, and ** — respecting precedence — by hand</li>
+      <li>Read an assignment as attaching a label to an object, and name the type of any basic value</li>
+      <li>Classify any bug as syntax, runtime, or semantic — and know which one hides silently</li>
+    </ul>
+    <p class="bb-next">NEXT ▸ P2 · Flow Control — if/elif/else, while and for: programs that decide and repeat.</p>
+  </div>
+
+  <div class="chapter-nav">
+    <a href="index.html"><div class="nav-dir">◂ COURSE HOME</div><div class="nav-title">Scientific Computing with Python · overview</div></a>
+    <a href="p2_flow_control.html" class="next"><div class="nav-dir">NEXT PREREQ ▸</div><div class="nav-title">P2 · Flow Control</div></a>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  Scientific Computing with Python · Prerequisite P1: Python Basics · supplementary self-study — not graded, not part of the assignments<br>
+  Digest of <code>01_Python.ipynb</code> · quiz &amp; flashcards from the notebook's own question bank
+</footer>
+<script>
+/* ============================================================
+   Shared engines: Quiz / Flashcards
+   (buildQuiz extended for the P-pages: answers flagged isCode
+   render monospace with newlines preserved)
+   ============================================================ */
+function buildQuiz(containerId, progressId, data) {
+  const container = document.getElementById(containerId);
+  const progress  = document.getElementById(progressId);
+  const solved = new Set();
+  const LETTERS = 'ABCDEFGH';
+
+  data.forEach((q, qi) => {
+    const box = document.createElement('div');
+    box.className = 'quiz-box';
+    box.innerHTML =
+      `<div class="quiz-label">Q${qi+1} / ${data.length}${q.multi ? ' <span class="multi-badge">MULTI</span>' : ''}</div>` +
+      `<div class="quiz-q">${q.question}</div>` +
+      (q.code ? `<div class="quiz-code">${q.code.replace(/</g,'&lt;')}</div>` : '') +
+      `<div class="quiz-options">` +
+      q.answers.map((a, ai) =>
+        `<div class="quiz-opt" data-q="${qi}" data-a="${ai}">
+           <div class="opt-head"><span class="opt-letter">${LETTERS[ai]}</span><span${a.isCode ? ' class="opt-code"' : ''}>${String(a.answer).replace(/</g,'&lt;')}</span></div>
+           <div class="opt-fb"></div>
+         </div>`
+      ).join('') + `</div>`;
+    container.appendChild(box);
+  });
+
+  container.addEventListener('click', e => {
+    const opt = e.target.closest('.quiz-opt');
+    if (!opt || opt.classList.contains('revealed')) return;
+    const q = data[+opt.dataset.q], a = q.answers[+opt.dataset.a];
+    opt.classList.add('revealed', a.correct ? 'correct' : 'wrong');
+    opt.querySelector('.opt-fb').textContent = (a.correct ? '✔ Correct: ' : '✘ Not quite: ') + a.feedback;
+    if (a.correct) {
+      solved.add(+opt.dataset.q);
+      progress.textContent = `Solved ${solved.size} / ${data.length}`;
+    }
+  });
+}
+
+function buildFlashcards(gridId, data) {
+  const grid = document.getElementById(gridId);
+  function render(cards) {
+    grid.innerHTML = cards.map(c =>
+      `<div class="flashcard">
+         <div class="fc-inner">
+           <div class="fc-face fc-front"><div>${c.front}</div><div class="fc-hint">CLICK TO FLIP</div></div>
+           <div class="fc-face fc-back">${c.back}</div>
+         </div>
+       </div>`).join('');
+  }
+  render(data);
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.flashcard');
+    if (card) card.classList.toggle('flipped');
+  });
+  document.getElementById('flipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.add('flipped')));
+  document.getElementById('unflipAll').addEventListener('click', ()=> grid.querySelectorAll('.flashcard').forEach(c=>c.classList.remove('flipped')));
+  document.getElementById('shuffleCards').addEventListener('click', ()=>{
+    const shuffled = [...data].sort(()=>Math.random()-.5);
+    render(shuffled);
+  });
+}
+
+/* ============================================================
+   QUIZ — questions/ch1 of the prerequisite notebook
+   (answers and feedback carried over verbatim)
+   ============================================================ */
+const QUIZ_DATA = [
+  { question:"Which one is the definition of an algorithm?", multi:true, answers:[
+    { answer:"A special kind of notation used to describe how to solve a problem.", correct:false, feedback:"Programmers used notation such as Pseudo Code to illustrate an algorithm, but this is not the definition of an algorithm." },
+    { answer:"It must be decribed using programming language.", correct:false, feedback:"It can be described in many ways incluing Pseudo Code and Programming language." },
+    { answer:"A step-by-step list of instructions for solving any instance of the problem that might arise", correct:true, feedback:"Correct." },
+    { answer:"It contains well-defined, unambiguous steps and must procude result in a finite time.", correct:true, feedback:"The formal definition of algorithm." } ] },
+  { question:"What is printed when the following statements execute?", code:"day = \"Thursday\" \nday = 32.5 \nday = 19 \nprint(day)", answers:[
+    { answer:"Nothing is printed. A runtime error occurs.", correct:false, feedback:"It is legal to change the type of data that a variable holds in Python." },
+    { answer:"Thursday", correct:false, feedback:"This is the first value assigned to the variable day, but the next statements reassign that variable to new values." },
+    { answer:"32.5", correct:false, feedback:"This is the second value assigned to the variable day, but the next statement reassigns that variable to a new value." },
+    { answer:"19", correct:true, feedback:"The variable day will contain the last value assigned to it when it is printed." } ] },
+  { question:"Which of the following is a semantic error?", answers:[
+    { answer:"Attempting to divide by 0.", correct:false, feedback:"A semantic error is an error in logic. In this case the program does not produce the correct output because the problem is not solved correctly. This would be considered a run-time error." },
+    { answer:"Forgetting the closing parenthesis ) on a print statement.", correct:false, feedback:"In this case the program does not produce the correct output because the code can not be processed by the compiler or interpreter. This would be considered a syntax error." },
+    { answer:"Forgetting to divide by 100 when printing a percentage amount.", correct:true, feedback:"This will produce the wrong answer because the programmer implemented the solution incorrectly. This is a semantic error." } ] },
+  { question:"What value is printed when the following statement executes?", code:"print(int(53.785))", answers:[
+    { answer:"Nothing is printed. It generates a runtime error.", correct:false, feedback:"The statement is valid Python code. It calls the int function on 53.785 and then prints the value that is returned." },
+    { answer:"53", correct:true, feedback:"The int function truncates all values after the decimal and prints the integer value." },
+    { answer:"54", correct:false, feedback:"When converting to an integer, the int function does not round." },
+    { answer:"53.785", correct:false, feedback:"The int function removes the fractional part of 53.785 and returns an integer, which is then printed." } ] },
+  { question:"What is the value of the follwing expression?", code:"16 - 2 * 5 // 3 + 1", answers:[
+    { answer:"14", correct:true, feedback:"Using parentheses, the expression is evaluated as (2*5) first, then (10 // 3), then (16-3), and then (13+1)." },
+    { answer:"24", correct:false, feedback:"Remember that * has precedence over -." },
+    { answer:"3", correct:false, feedback:"Remember that // has precedence over -." },
+    { answer:"13.667", correct:false, feedback:"Remember that // does integer division." } ] },
+  { question:"What appears in the output window when the following statement executes?", code:"print(\"Hello!\")", answers:[
+    { answer:"Nothing is printed. It generates a runtime error.", correct:false, feedback:"The syntax is correct!" },
+    { answer:"\"Hello!\"", correct:false, feedback:"The literal in the program includes the quote marks, but the printed representation omits them." },
+    { answer:"Hello!", correct:true, feedback:"Correct." },
+    { answer:"哈囉!", correct:false, feedback:"It will not perfom translation." } ] },
+  { question:"What value is printed when the following statement executes?", code:"print(18.0 // 4)", answers:[
+    { answer:"4.5", correct:false, feedback:"// does truncated division." },
+    { answer:"5", correct:false, feedback:"Neither / nor // leads to rounding up" },
+    { answer:"4", correct:false, feedback:"Even though it truncates, it produces a floating point result!" },
+    { answer:"4.0", correct:true, feedback:"When working with different numerical type, it will implicitly converted to a wider or more precise type before calculation." } ] },
+];
+buildQuiz('quizContainer', 'quizProgress', QUIZ_DATA);
+
+/* ============================================================
+   FLASHCARDS — Key terms from the Python Basics notebook
+   ============================================================ */
+const CARD_DATA = [
+  {front:"algorithm", back:"It contains well-defined, unambiguous steps and must produce a result in a finite time."},
+  {front:"pseudocode", back:"A simple way to describe the steps of an algorithm in plain language that looks like code."},
+  {front:"programming", back:"The process of writing instructions (code) that a computer follows to perform tasks."},
+  {front:"programming language", back:"A set of rules and syntax used to write code that computers can understand."},
+  {front:"interpreted language", back:"A programming language where the code is executed directly, line-by-line, without first being compiled."},
+  {front:"interpreter", back:"A tool that reads and executes code one line at a time."},
+  {front:"statement", back:"A single line of code that tells the computer to perform an action."},
+  {front:"function", back:"A reusable block of code that performs a specific task when you call it."},
+  {front:"arguments", back:"The values or information you pass into a function to help it work."},
+  {front:"constants", back:"Values that, once set, should not change while the program is running."},
+  {front:"method", back:"A function that belongs to an object, used to perform actions with that object."},
+  {front:"comment", back:"Notes in the code meant for humans to read; these are ignored by the computer."},
+  {front:"expression", back:"A combination of values, variables, and operators that computes a new value."},
+  {front:"floor division", back:"A division operation using '//' that returns the largest whole number less than or equal to the result."},
+  {front:"variable", back:"A name that holds a value which can change as the program runs."},
+  {front:"assignment statement", back:"A line of code that assigns a value to a variable using the '=' sign."},
+  {front:"keywords", back:"Reserved words in Python that have special meanings and cannot be used as names for your variables or functions."},
+  {front:"type", back:"The category of data stored in a variable, such as numbers (int, float) or text (str)."},
+  {front:"debugging", back:"The process of finding and fixing errors in your code."},
+  {front:"syntax error", back:"An error caused by code that doesn't follow the proper rules or grammar of Python."},
+  {front:"semantic error", back:"An error where the code runs without crashing, but doesn't do what you intended because of a logical mistake."},
+  {front:"runtime error", back:"An error that occurs while the program is running, often stopping the program unexpectedly."},
+];
+buildFlashcards('flashGrid', CARD_DATA);
+
+/* ============================================================
+   Floating nav active highlight
+   ============================================================ */
+(function initFloatNav(){
+  const links = document.querySelectorAll('.float-nav a[data-target]');
+  const sections = [...links].map(a => document.getElementById(a.dataset.target)).filter(Boolean);
+  function update(){
+    let active = sections[0] && sections[0].id;
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= window.innerHeight * 0.35) active = s.id;
+    }
+    links.forEach(a => a.classList.toggle('active', a.dataset.target === active));
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>

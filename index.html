@@ -305,7 +305,8 @@ a.mm-doc.placeholder{opacity:.55;cursor:default;pointer-events:none;border-style
   <div class="info-box">
     <div class="info-label">🎒 PREREQUISITES</div>
     <p style="margin-bottom:.4rem;">Basic Python: variables, flow control, functions, containers, and a nodding acquaintance with OOP vocabulary (class, object, method, attribute). The modules are designed for first- and second-year college students and reinforce linear algebra, calculus, and statistics along the way.</p>
-    <p style="margin-bottom:0;">Need a refresher first? <a href="https://www.py4e.com/" target="_blank" rel="noopener">Python for Everybody</a> · <a href="https://automatetheboringstuff.com/" target="_blank" rel="noopener">Automate the Boring Stuff with Python</a> · <a href="https://ehmatthes.github.io/pcc_3e/" target="_blank" rel="noopener">Python Crash Course</a></p>
+    <p style="margin-bottom:.4rem;">Need a refresher first? This site includes <a href="#prereq">eight optional prerequisite pages (P1–P8)</a> covering exactly that ground — supplementary background only, <strong>not part of the course assignments</strong>.</p>
+    <p style="margin-bottom:0;">Prefer a full external course? <a href="https://www.py4e.com/" target="_blank" rel="noopener">Python for Everybody</a> · <a href="https://automatetheboringstuff.com/" target="_blank" rel="noopener">Automate the Boring Stuff with Python</a> · <a href="https://ehmatthes.github.io/pcc_3e/" target="_blank" rel="noopener">Python Crash Course</a></p>
   </div>
 </section>
 
@@ -405,6 +406,75 @@ a.mm-doc.placeholder{opacity:.55;cursor:default;pointer-events:none;border-style
     <p>Every module page includes "Think · Discuss · Ask an AI" prompts. Two habits that make AI a study partner instead of an answer machine:</p>
     <span class="ai-prompt">Before asking: write down your own prediction. Then ask the AI and compare — where you disagree is where you learn.</span>
     <span class="ai-prompt">After a quiz mistake: paste the question and YOUR wrong answer, and ask the AI to explain why the right one wins — not just what it is.</span>
+  </div>
+
+</section>
+
+<!-- ============================================================ -->
+<section id="prereq">
+  <div class="section-number">PREREQUISITES · OPTIONAL PYTHON REFRESHER</div>
+  <h2>Prerequisite pages: brush up your basic Python</h2>
+  <div class="info-box warm">
+    <div class="info-label">📌 SUPPLEMENTARY — NOT GRADED</div>
+    <p style="margin-bottom:0;">These eight P-pages review the basic Python that Modules 1–5 assume you already know. They are <strong>supplementary prerequisite material: nothing here is graded, and none of it will appear in the course assignments</strong>（補充先備知識，不列入作業範圍）. Work through them in order before Module 1, or jump straight to the one topic you are shaky on — each page ends with a self-check quiz and key-term flashcards.</p>
+  </div>
+  <div class="module-grid">
+    <a class="module-card" href="p1_python_basics.html">
+      <div class="mc-num">PREREQ P1</div>
+      <div class="mc-title">Python Basics</div>
+      <div class="mc-desc">Algorithms to programs, print(), expressions and operators, variables as labels, types and casting — and the three kinds of bugs.</div>
+      <div class="mc-meta"><span class="pill pill-orange">not graded</span><span class="pill pill-green">7-question quiz</span><span class="pill pill-blue">22 flashcards</span></div>
+      <div class="mc-topics">print() · // and % · variables · type() · int()/str() · debugging</div>
+    </a>
+    <a class="module-card" href="p2_flow_control.html">
+      <div class="mc-num">PREREQ P2</div>
+      <div class="mc-title">Flow Control</div>
+      <div class="mc-desc">Programs that decide and repeat: booleans and comparisons, if/elif/else, while and for loops, break and continue, importing modules.</div>
+      <div class="mc-meta"><span class="pill pill-orange">not graded</span><span class="pill pill-green">6-question quiz</span><span class="pill pill-blue">25 flashcards</span></div>
+      <div class="mc-topics">booleans · if/elif/else · while · for &amp; range() · break/continue · import</div>
+    </a>
+    <a class="module-card" href="p3_functions.html">
+      <div class="mc-num">PREREQ P3</div>
+      <div class="mc-title">Functions</div>
+      <div class="mc-desc">Name a computation once and reuse it: def, parameters and arguments, return values and None, keyword arguments, local vs global scope.</div>
+      <div class="mc-meta"><span class="pill pill-orange">not graded</span><span class="pill pill-green">7-question quiz</span><span class="pill pill-blue">18 flashcards</span></div>
+      <div class="mc-topics">def · parameters · return · None · keyword args · scope</div>
+    </a>
+    <a class="module-card" href="p4_lists_tuples.html">
+      <div class="mc-num">PREREQ P4</div>
+      <div class="mc-title">Sequences: Lists &amp; Tuples</div>
+      <div class="mc-desc">Ordered collections: indexing and slicing, list methods, tuples and immutability — and the references-vs-copies picture that explains Python's sharpest surprise.</div>
+      <div class="mc-meta"><span class="pill pill-orange">not graded</span><span class="pill pill-green">7-question quiz</span><span class="pill pill-blue">16 flashcards</span></div>
+      <div class="mc-topics">index &amp; slice · append/sort · tuples · mutability · references · copy</div>
+    </a>
+    <a class="module-card" href="p5_dicts_sets.html">
+      <div class="mc-num">PREREQ P5</div>
+      <div class="mc-title">Dictionaries &amp; Sets</div>
+      <div class="mc-desc">Look values up by name instead of position: key–value pairs, get() and setdefault(), plus sets for uniqueness and set algebra.</div>
+      <div class="mc-meta"><span class="pill pill-orange">not graded</span><span class="pill pill-green">5-question quiz</span><span class="pill pill-blue">7 flashcards</span></div>
+      <div class="mc-topics">{key: value} · keys/values/items · get() · sets · union &amp; intersection</div>
+    </a>
+    <a class="module-card" href="p6_strings.html">
+      <div class="mc-num">PREREQ P6</div>
+      <div class="mc-title">Manipulating Strings</div>
+      <div class="mc-desc">Text is data too: quotes and escapes, slicing, the everyday string methods, and f-strings for clean formatted output.</div>
+      <div class="mc-meta"><span class="pill pill-orange">not graded</span><span class="pill pill-green">5-question quiz</span><span class="pill pill-blue">7 flashcards</span></div>
+      <div class="mc-topics">escapes · raw strings · slice · split/join · f-strings</div>
+    </a>
+    <a class="module-card" href="p7_files_exceptions.html">
+      <div class="mc-num">PREREQ P7</div>
+      <div class="mc-title">Files &amp; Exceptions</div>
+      <div class="mc-desc">Make results outlive the program: reading and writing files with with-open, storing data as JSON, and failing gracefully with try/except.</div>
+      <div class="mc-meta"><span class="pill pill-orange">not graded</span><span class="pill pill-green">4-question quiz</span><span class="pill pill-blue">7 flashcards</span></div>
+      <div class="mc-topics">with open() · read/write · json · try/except · raise</div>
+    </a>
+    <a class="module-card" href="p8_oop.html">
+      <div class="mc-num">PREREQ P8</div>
+      <div class="mc-title">Object-Oriented Programming</div>
+      <div class="mc-desc">The vocabulary every library in this course speaks: classes and instances, __init__ and self, attributes and methods, inheritance.</div>
+      <div class="mc-meta"><span class="pill pill-orange">not graded</span><span class="pill pill-green">6-question quiz</span><span class="pill pill-blue">25 flashcards</span></div>
+      <div class="mc-topics">class · __init__ · self · attributes · methods · inheritance</div>
+    </a>
   </div>
 
   <div class="chapter-nav">
